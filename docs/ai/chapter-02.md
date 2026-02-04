@@ -964,6 +964,667 @@ for chunk in chain.stream("讲个故事"):
 
 ---
 
+## 常见问题 FAQ
+
+### Q1: LangChain 和直接调用 OpenAI API 有什么区别？
+
+**A:**
+
+```python
+# 直接调用API的问题
+❌ 需要手动管理对话历史
+❌ 提示词写死在代码里
+❌ 难以串联多个步骤
+❌ 没有标准化的组件
+
+# LangChain的优势
+✅ 统一的模型接口（切换模型只需改一行代码）
+✅ 提示词模板化管理
+✅ Chain自动串联多个操作
+✅ Memory自动管理对话历史
+✅ 丰富的预制组件和集成
+
+# 对比示例
+# 直接调用
+response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[...]  # 需要手动维护
+)
+
+# LangChain
+chain = prompt | chat | parser  # 简洁优雅
+response = chain.invoke({"topic": "..."})
+```
+
+### Q2: LCEL（LangChain Expression Language）是什么？为什么要用？
+
+**A:**
+
+```python
+# LCEL是LangChain推荐的新的链式语法
+# 特点：
+✅ 使用管道操作符 | 连接组件
+✅ 代码更简洁易读
+✅ 自动支持流式输出
+✅ 内置异步支持
+✅ 更好的错误处理
+
+# 传统写法（旧版）
+from langchain.chains import LLMChain
+chain = LLMChain(llm=chat, prompt=prompt)
+result = chain.run(topic="Python")
+
+# LCEL写法（推荐）
+chain = prompt | chat | StrOutputParser()
+result = chain.invoke({"topic": "Python"})
+
+# LCEL的优势在于：
+# 1. 声明式，代码即文档
+# 2. 组合性强，可以任意连接组件
+# 3. 自动优化，性能更好
+```
+
+### Q3: 什么时候用 ConversationBufferMemory，什么时候用 ConversationSummaryMemory？
+
+**A:**
+
+```python
+✅ ConversationBufferMemory 适合：
+- 对话轮次不多（< 10轮）
+- 需要记住完整对话内容
+- Token预算充足
+
+# 示例场景
+- 客服对话（短期）
+- 问答系统（会话短）
+
+❌ 不适合：
+- 长对话（会超出Token限制）
+- 成本敏感的应用
+
+---
+
+✅ ConversationSummaryMemory 适合：
+- 对话轮次很多（> 10轮）
+- 只需要关键信息，不需要完整对话
+- 想节省Token成本
+
+# 示例场景
+- 长期学习助手
+- 健康咨询（需要记住历史但不需要逐字记录）
+
+❌ 不适合：
+- 需要精确引用之前的对话
+- 对话细节很重要
+
+---
+
+✅ ConversationBufferWindowMemory 适合：
+- 只关心最近几轮对话
+- 对话很长但历史不重要
+- 平衡记忆和成本
+
+# 示例场景
+- 实时聊天机器人
+- 短期任务助手
+```
+
+### Q4: 如何在 Chain 中传递多个变量？
+
+**A:**
+
+```python
+# 方法1：使用字典传递多个变量
+prompt = ChatPromptTemplate.from_template(
+    "你是{role}，用{style}的风格解释{topic}"
+)
+
+chain = prompt | chat | StrOutputParser()
+
+result = chain.invoke({
+    "role": "Python专家",
+    "style": "幽默",
+    "topic": "装饰器"
+})
+
+# 方法2：使用RunnablePassthrough处理
+from langchain_core.runnables import RunnablePassthrough
+
+chain = (
+    RunnablePassthrough.assign(
+        style=lambda x: x.get("style", "专业"),
+        role=lambda x: x.get("role", "助手")
+    )
+    | prompt
+    | chat
+    | StrOutputParser()
+)
+
+# 方法3：使用部分变量（partial_variables）
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "你是{role}助手"),
+    ("human", "{input}")
+])
+
+# 预设role
+prompt_partial = prompt.partial(role="Python")
+
+# 使用时只需传input
+chain = prompt_partial | chat
+result = chain.invoke({"input": "什么是装饰器？"})
+```
+
+### Q5: OutputParser 有哪些类型？如何选择？
+
+**A:**
+
+```python
+# 1. StrOutputParser - 最简单
+from langchain_core.output_parsers import StrOutputParser
+
+chain = chat | StrOutputParser()
+# 适用：只需要纯文本输出
+
+# 2. JsonOutputParser - JSON格式
+from langchain_core.output_parsers import JsonOutputParser
+
+chain = prompt | chat | JsonOutputParser()
+# 适用：需要结构化数据，但不需要类型验证
+
+# 3. PydanticOutputParser - 推荐！
+from langchain_core.output_parsers import PydanticOutputParser
+from pydantic import BaseModel
+
+class Response(BaseModel):
+    summary: str
+    score: int
+
+parser = PydanticOutputParser(pydantic_object=Response)
+chain = prompt | chat | parser
+# 适用：
+# - 需要严格的数据类型验证
+# - 需要自动生成JSON Schema
+# - 需要更好的错误提示
+
+# 4. CommaSeparatedListOutputParser
+from langchain_core.output_parsers import CommaSeparatedListOutputParser
+
+parser = CommaSeparatedListOutputParser()
+chain = prompt | chat | parser
+# 适用：需要列表输出（如：苹果,香蕉,橙子）
+
+# 选择建议：
+# 简单文本 → StrOutputParser
+# 简单JSON → JsonOutputParser
+# 生产环境 → PydanticOutputParser（类型安全）
+# 列表数据 → CommaSeparatedListOutputParser
+```
+
+### Q6: 如何实现条件分支的 Chain？
+
+**A:**
+
+```python
+from langchain_core.runnables import RunnableBranch
+
+# 定义不同的分支
+code_chain = ChatPromptTemplate.from_template("写{language}代码：{input}") | chat
+text_chain = ChatPromptTemplate.from_template("写文本：{input}") | chat
+general_chain = ChatPromptTemplate.from_template("回答：{input}") | chat
+
+# 定义路由逻辑
+branch = RunnableBranch(
+    (lambda x: "代码" in x["input"], code_chain),
+    (lambda x: "文本" in x["input"], text_chain),
+    general_chain  # 默认分支
+)
+
+# 使用
+result = branch.invoke({"input": "写Python代码实现快速排序"})
+# 会路由到code_chain
+
+# 或者使用自定义路由函数
+def route_func(inputs):
+    query = inputs["input"].lower()
+    if "代码" in query or "编程" in query:
+        return "code"
+    elif "文章" in query or "文案" in query:
+        return "text"
+    else:
+        return "general"
+
+# 结合RunnableLambda
+from langchain_core.runnables import RunnableLambda
+
+router = RunnableLambda(route_func).bind(
+    code=code_chain,
+    text=text_chain,
+    general=general_chain
+)
+```
+
+### Q7: 如何调试 Chain？看到中间步骤？
+
+**A:**
+
+```python
+# 方法1：使用verbose=True
+from langchain.chains import ConversationChain
+
+conversation = ConversationChain(
+    llm=chat,
+    memory=memory,
+    verbose=True  # 打印详细日志
+)
+
+# 方法2：使用回调函数
+from langchain.callbacks import StdOutCallbackHandler
+
+handler = StdOutCallbackHandler()
+response = chain.invoke(
+    {"input": "你好"},
+    config={"callbacks": [handler]}
+)
+
+# 方法3：使用RunnablePassthrough查看中间值
+from langchain_core.runnables import RunnablePassthrough
+
+debug_chain = (
+    RunnablePassthrough.assign(
+        prompt_content=lambda x: print(f"📝 Prompt: {x}")
+    )
+    | prompt
+    | RunnablePassthrough.assign(
+        llm_output=lambda x: print(f"🤖 LLM Output: {x}")
+    )
+    | StrOutputParser()
+)
+
+# 方法4：使用debug全局调试
+from langchain.globals import debug
+
+debug = True  # 开启全局调试
+result = chain.invoke({"input": "测试"})
+debug = False  # 关闭调试
+
+# 方法5：使用get_graph()可视化
+chain.get_graph().print_ascii()
+# 会打印出Chain的结构图
+```
+
+### Q8: Memory 会占用很多 Token 吗？如何优化？
+
+**A:**
+
+```python
+# 问题：Memory会累积历史，导致Token越来越多
+
+✅ 优化策略：
+
+# 1. 使用WindowMemory限制长度
+from langchain.memory import ConversationBufferWindowMemory
+
+memory = ConversationBufferWindowMemory(k=3)
+# 只保留最近3轮对话
+
+# 2. 使用SummaryMemory压缩历史
+from langchain.memory import ConversationSummaryMemory
+
+memory = ConversationSummaryMemory(llm=chat, max_token_limit=500)
+# 超过500 token就自动摘要
+
+# 3. 结合使用
+from langchain.memory import CombinedMemory
+
+buffer_memory = ConversationBufferWindowMemory(k=2)
+summary_memory = ConversationSummaryMemory(llm=chat)
+
+memory = CombinedMemory(
+    memories=[buffer_memory, summary_memory]
+)
+
+# 4. 定期清理
+# 保存重要信息到自定义存储
+def compress_memory(memory):
+    # 提取关键信息
+    history = memory.load_memory_variables({})
+    # 存储到数据库/文件
+    save_to_db(history)
+    # 清空Memory
+    memory.clear()
+
+# 5. 使用TokenBuffer自动限制
+from langchain.memory import ConversationTokenBufferMemory
+
+memory = ConversationTokenBufferMemory(
+    llm=chat,
+    max_token_limit=1000  # 超过1000就自动删除旧内容
+)
+
+# 选择建议：
+- 短对话 → BufferMemory
+- 长对话 → SummaryMemory 或 WindowMemory
+- 成本敏感 → TokenBuffer 或定期清理
+```
+
+### Q9: 如何处理 API 调用失败的情况？
+
+**A:**
+
+```python
+# 方法1：使用tenacity自动重试
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+@retry(
+    stop=stop_after_attempt(3),  # 最多重试3次
+    wait=wait_exponential(min=1, max=10)  # 指数退避
+)
+def invoke_with_retry(chain, inputs):
+    return chain.invoke(inputs)
+
+# 方法2：使用try-except包裹
+def safe_invoke(chain, inputs, fallback="抱歉，我遇到了问题"):
+    try:
+        return chain.invoke(inputs)
+    except Exception as e:
+        print(f"错误：{e}")
+        return fallback
+
+# 方法3：使用RunnableParallel的fallback
+from langchain_core.runnables import RunnableParallel
+
+chain_with_fallback = (
+    prompt | chat
+).with_fallbacks(
+    [backup_llm],  # 备用模型
+    exceptions_to_handle=(Exception,)
+)
+
+# 方法4：使用回调监控错误
+from langchain.callbacks import BaseCallbackHandler
+
+class ErrorHandler(BaseCallbackHandler):
+    def on_llm_error(self, error, **kwargs):
+        print(f"LLM错误: {error}")
+        # 记录日志、发送通知等
+
+chain.invoke(
+    {"input": "测试"},
+    config={"callbacks": [ErrorHandler()]}
+)
+```
+
+### Q10: LangChain 和 LlamaIndex 有什么区别？如何选择？
+
+**A:**
+
+```python
+LangChain vs LlamaIndex 对比：
+
+┌─────────────┬──────────────────┬──────────────────┐
+│   特性      │   LangChain      │   LlamaIndex     │
+├─────────────┼──────────────────┼──────────────────┤
+│ 定位        │ 全能LLM应用框架  │ 专注于RAG/数据索引│
+│ 擅长        │ Agent/Chain      │ 文档检索/问答    │
+│ 学习曲线    │ 中等             │ 较低             │
+│ 灵活性      │ 很高             │ 中等             │
+│ 文档质量    │ 优秀             │ 优秀             │
+│ 社区        │ 庞大             │ 活跃             │
+└─────────────┴──────────────────┴──────────────────┘
+
+✅ 使用 LangChain 的场景：
+- 需要构建Agent
+- 复杂的工作流（多步Chain）
+- 需要多种工具集成
+- 需要灵活控制
+- 企业级应用
+
+示例：
+- AI客服系统
+- 代码生成工具
+- 自动化Agent
+
+✅ 使用 LlamaIndex 的场景：
+- 专注于文档问答（RAG）
+- 数据索引和检索
+- 知识库构建
+- 快速原型开发
+
+示例：
+- 技术文档问答
+- 企业知识库
+- 论文检索系统
+
+✅ 同时使用两者：
+# LangChain处理Agent逻辑
+# LlamaIndex处理数据检索
+
+from llama_index import VectorStoreIndex
+from langchain.agents import AgentExecutor
+
+# 用LlamaIndex构建索引
+index = VectorStoreIndex.from_documents(docs)
+
+# 用LangChain构建Agent
+agent = AgentExecutor(
+    agent=agent,
+    tools=[index.as_tool()]
+)
+```
+
+---
+
+## 学习清单
+
+检查你掌握了以下技能：
+
+### 基础概念 ✅
+
+- [ ] 理解LangChain的六大核心模块
+- [ ] 知道LangChain解决了哪些问题
+- [ ] 能够安装和配置LangChain环境
+- [ ] 理解Model I/O、Chains、Memory的作用
+
+### Model I/O ✅
+
+- [ ] 会使用ChatOpenAI调用模型
+- [ ] 理解不同Message类型的作用
+- [ ] 会创建ChatPromptTemplate模板
+- [ ] 会使用PromptTemplate管理提示词
+- [ ] 会使用StrOutputParser解析文本
+- [ ] 会使用JsonOutputParser解析JSON
+- [ ] 会使用PydanticOutputParser进行类型安全解析
+
+### Chains ✅
+
+- [ ] 理解Chain的概念和作用
+- [ ] 会创建LLMChain基础链
+- [ ] 会使用SequentialChain串联多个步骤
+- [ ] 理解并会使用LCEL语法（| 操作符）
+- [ ] 会使用RunnablePassthrough处理数据
+- [ ] 会创建RouterChain实现条件分支
+- [ ] 能够构建复杂的Chain工作流
+
+### Memory ✅
+
+- [ ] 理解Memory的必要性
+- [ ] 会使用ConversationBufferMemory保存完整对话
+- [ ] 会使用ConversationBufferWindowMemory限制长度
+- [ ] 会使用ConversationSummaryMemory压缩历史
+- [ ] 知道不同Memory类型的适用场景
+- [ ] 会在LCEL中使用Memory
+- [ ] 会保存和加载Memory
+
+### 实战能力 ✅
+
+- [ ] 能够独立构建智能问答系统
+- [ ] 能够实现多轮对话
+- [ ] 能够处理API调用失败
+- [ ] 知道如何调试Chain
+- [ ] 理解Token成本优化方法
+- [ ] 能够设计合理的提示词模板
+
+### 最佳实践 ✅
+
+- [ ] 知道如何组织提示词模板
+- [ ] 理解错误处理和重试策略
+- [ ] 会使用缓存优化成本
+- [ ] 知道如何选择合适的模型
+- [ ] 理解LCEL vs 传统Chain的区别
+- [ ] 能够阅读和理解LangChain文档
+
+---
+
+## 拓展练习
+
+### 练习1：构建多角色对话系统
+
+**要求**：
+- 实现3个不同性格的AI角色
+- 用户可以选择与哪个角色对话
+- 每个角色有独立的Memory
+- 角色之间可以相互引用
+
+```python
+# 提示：
+# 1. 为每个角色创建独立的Chain和Memory
+# 2. 使用RouterChain根据用户选择路由
+# 3. 在提示词中定义角色特点
+```
+
+### 练习2：实现带知识库的问答系统
+
+**要求**：
+- 维护一个知识字典（如：课程信息、FAQ）
+- 用户提问时先查知识库
+- 知识库没有答案再用LLM回答
+- 记录所有问答历史
+
+```python
+# 提示：
+# 1. 使用RouterChain实现逻辑分支
+# 2. 第一个分支：查知识库
+# 3. 第二个分支：LLM回答
+# 4. 使用Memory保存历史
+```
+
+### 练习3：构建代码审查助手
+
+**要求**：
+- 接收代码和问题描述
+- 逐步分析代码问题
+- 给出修改建议和示例
+- 支持多轮对话追问
+
+```python
+# 提示：
+# 1. 使用SequentialChain分步骤分析
+# 2. 步骤1：理解代码结构
+# 3. 步骤2：识别问题
+# 4. 步骤3：生成建议
+# 5. 使用Memory支持追问
+```
+
+### 练习4：实现多语言翻译系统
+
+**要求**：
+- 支持中英日韩四种语言互译
+- 自动检测源语言
+- 保持上下文一致性
+- 可以调整翻译风格（正式/口语）
+
+```python
+# 提示：
+# 1. 使用RouterChain根据目标语言选择
+# 2. 提示词中定义语言特征
+# 3. 使用Memory保持翻译上下文
+# 4. 添加风格参数
+```
+
+### 练习5：构建学习进度追踪系统
+
+**要求**：
+- 记录用户学习过的主题
+- 根据历史调整回答深度
+- 生成个性化的学习建议
+- 提供相关练习题
+
+```python
+# 提示：
+# 1. 使用SummaryMemory总结学习内容
+# 2. 在提示词中注入学习历史
+# 3. 根据用户水平调整提示词
+# 4. 使用Chain生成练习题
+```
+
+---
+
+## 进阶学习方向
+
+恭喜你完成 LangChain 基础学习！接下来可以：
+
+### 1. 深入 LangChain
+
+**RAG（检索增强生成）**：
+- Document Loaders：加载各种文档
+- Text Splitters：智能分割文本
+- Vector Stores：向量数据库
+- Retrievers：检索器
+
+**Agents（智能代理）**：
+- Tools：自定义工具
+- Agent Types：ReAct、Self-Ask
+- Agent Executors：执行器
+- 计划和推理
+
+**LangChain 生态**：
+- LangServe：部署服务
+- LangSmith：调试和监控
+- Templates：预制模板
+
+### 2. 实践项目
+
+```bash
+✅ 动手实践：
+1. 构建个人知识库问答系统
+2. 开发AI客服机器人
+3. 创建代码助手Agent
+4. 实现文档分析工具
+5. 开发自动化工作流
+```
+
+### 3. 学习资源
+
+- **LangChain 官方文档**：https://python.langchain.com
+- **LangChain GitHub**：https://github.com/langchain-ai/langchain
+- **LangSmith**：https://smith.langchain.com（调试平台）
+- **示例项目**：https://github.com/langchain-ai/langchain/tree/master/cookbook
+
+### 4. 社区和资讯
+
+- **Discord 社区**：加入 LangChain Discord
+- **Twitter**：关注 @langchainai
+- **中文社区**：微信公众号、知乎专栏
+- **实战案例**：学习开源项目
+
+### 5. 最佳实践
+
+```python
+✅ 开发建议：
+1. 从简单开始，逐步增加复杂度
+2. 重视提示词设计
+3. 使用 Memory 管理对话
+4. 善用 LCEL 简化代码
+5. 注意 Token 成本优化
+6. 做好错误处理
+7. 使用 LangSmith 调试
+8. 编写测试保证质量
+```
+
+**下一章预告**：Prompt Engineering - 掌握提示词的高级技巧！
+
+---
+
 **遇到问题？**
 - 查看代码示例：`examples/` 目录
 - 参考官方文档：https://python.langchain.com

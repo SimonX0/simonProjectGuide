@@ -1113,6 +1113,325 @@ git remote prune origin
 
 ---
 
+## 3.8 练习题
+
+### 3.8.1 基础练习
+
+**练习 1：创建和管理分支**
+
+```bash
+# 任务：完成分支创建、切换和删除
+
+# 1. 查看当前分支
+git branch
+
+# 2. 创建 feature 分支
+git branch feature/login
+
+# 3. 切换到 feature 分支
+git checkout feature/login
+
+# 4. 在新分支创建文件
+echo "Login Feature" > login.js
+git add login.js
+git commit -m "feat: 添加登录功能"
+
+# 5. 切换回 main 分支
+git checkout main
+
+# 6. 合并 feature 分支
+git merge feature/login
+
+# 7. 删除 feature 分支
+git branch -d feature/login
+
+# 8. 查看分支列表
+git branch
+```
+
+**练习 2：解决冲突**
+
+```bash
+# 任务：模拟分支冲突并解决
+
+# 1. 创建并切换到 branch-a
+git checkout -b branch-a
+echo "Version A" > config.txt
+git add config.txt
+git commit -m "feat: 版本A"
+
+# 2. 切换回 main
+git checkout main
+echo "Version B" > config.txt
+git add config.txt
+git commit -m "feat: 版本B"
+
+# 3. 尝试合并 branch-a（会有冲突）
+git merge branch-a
+
+# 4. 解决冲突
+# 编辑 config.txt，选择保留哪个版本或合并
+# 例如：保留版本B并添加版本A的内容
+echo "Version B
+Version A (merged)" > config.txt
+
+# 5. 标记冲突已解决
+git add config.txt
+
+# 6. 完成合并
+git commit -m "merge: 合并分支，解决冲突"
+
+# 7. 删除 branch-a
+git branch -d branch-a
+```
+
+**练习 3：远程分支操作**
+
+```bash
+# 任务：学习远程分支管理
+
+# 1. 推送本地分支到远程
+git checkout -b feature/new
+echo "New Feature" > feature.txt
+git add feature.txt
+git commit -m "feat: 新功能"
+
+# 2. 推送到远程（创建远程分支）
+git push -u origin feature/new
+
+# 3. 查看远程分支
+git branch -r
+
+# 4. 删除远程分支（在本地删除）
+git push origin --delete feature/new
+
+# 5. 删除本地分支
+git branch -d feature/new
+```
+
+**练习 4：分支重命名**
+
+```bash
+# 任务：重命名分支
+
+# 1. 重命名当前分支
+git branch -m old-name new-name
+
+# 2. 重命名指定分支
+git branch -m old-name new-name
+
+# 3. 重命名远程分支
+git branch -m new-name old-name  # 先重命名本地
+git push origin :old-name new-name  # 再推送远程
+```
+
+### 3.8.2 进阶练习
+
+**练习 5：Rebase 实战**
+
+```bash
+# 任务：使用 rebase 整理提交历史
+
+# 1. 创建测试分支
+git checkout -b test-rebase
+
+# 2. 创建多个提交
+echo "Change 1" > test.txt
+git add test.txt
+git commit -m "add: 第一次修改"
+
+echo "Change 2" >> test.txt
+git add test.txt
+git commit -m "update: 更新内容"
+
+echo "Typo fix" >> test.txt
+git add test.txt
+git commit -m "fix: 修正错别字"
+
+echo "Feature complete" >> test.txt
+git add test.txt
+git commit -m "done: 功能完成"
+
+# 3. 查看历史（会有4个提交）
+git log --oneline
+
+# 4. 交互式 rebase（合并前3个提交）
+git rebase -i HEAD~4
+# 在编辑器中：
+# - 将前3个提交的 pick 改为 squash
+# - 保存并退出
+
+# 5. 写一个新的提交信息
+# 例如："feat: 实现测试功能（包含多次修改）"
+
+# 6. 查看结果（只有2个提交）
+git log --oneline
+```
+
+**练习 6：查看分支图**
+
+```bash
+# 任务：学习不同的分支图查看方式
+
+# 1. 查看本地分支图
+git log --graph --oneline --all
+
+# 2. 查看分支图
+git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)' --abbrev-commit
+
+# 3. 查看分支关系
+git show-branch
+
+# 4. 查看合并历史
+git log --graph --merges
+```
+
+**练习 7：cherry-pick 实战**
+
+```bash
+# 任务：选择性合并其他分支的提交
+
+# 1. 创建 branch-a
+git checkout -b branch-a
+echo "Feature A1" > feature.txt
+git add feature.txt
+git commit -m "feat(A1): 功能A第一部分"
+
+# 2. 在 branch-a 上再添加一个提交
+echo "Feature A2" >> feature.txt
+git add feature.txt
+git commit -m "feat(A2): 功能A第二部分"
+
+# 3. 切换回 main
+git checkout main
+
+# 4. 从 branch-a 挑选某一个提交
+git cherry-pick <commit-hash-of-A2>
+
+# 5. 查看结果
+git log --oneline -3
+
+# 6. 删除 branch-a
+git branch -D branch-a
+```
+
+**练习 8：stash 实战**
+
+```bash
+# 任务：使用 stash 临时保存工作
+
+# 1. 在当前分支修改文件
+echo "Work in progress" > working.txt
+git status
+
+# 2. 临时保存工作
+git stash
+git status  # 应该是干净的
+
+# 3. 切换到其他分支工作
+git checkout main
+echo "Hot fix" > hotfix.txt
+git add hotfix.txt
+git commit -m "fix: 紧急修复"
+
+# 4. 切回原分支
+git checkout -
+
+# 5. 恢复工作
+git stash pop
+
+# 6. 查看所有 stash
+git stash list
+
+# 7. 清除 stash
+git stash drop
+```
+
+---
+
+## 3.9 学习检查清单
+
+完成本章学习后，请检查自己是否掌握以下内容：
+
+### 分支基础 ⭐⭐⭐⭐⭐
+
+- [ ] 理解分支的概念和作用
+- [ ] 能够创建、切换、删除分支
+- [ ] 掌握 `git checkout` 的各种用法
+- [ ] 理解 HEAD 指针的概念
+- [ ] 知道如何查看所有分支
+
+### 分支合并 ⭐⭐⭐⭐
+
+- [ ] 能够使用 `git merge` 合并分支
+- [ ] 了解常见的合并冲突原因
+- [ ] 能够独立解决基本的合并冲突
+- [ ] 理解 `--no-ff` 和 `--squash` 的区别
+- [ ] 知道如何处理复杂冲突
+
+### 远程分支 ⭐⭐⭐⭐
+
+- [ ] 理解本地分支和远程分支的关系
+- [ ] 能够推送新分支到远程
+- [ ] 掌握 `git pull` 和 `git fetch` 的区别
+- [ ] 能够删除远程分支
+- [ ] 理解分支追踪（tracking）
+
+### 高级操作 ⭐⭐⭐
+
+- [ ] 能够使用 `git rebase` 整理提交历史
+- [ ] 理解 rebase 和 merge 的区别
+- [ ] 能够使用 `git cherry-pick` 选择提交
+- [ ] 掌握 `git stash` 管理临时工作
+- [ ] 了解分支命名规范和最佳实践
+
+### 💡 实战能力
+
+**完成以下任务来检验学习成果**：
+
+1. ✅ 能够创建并管理 feature 分支
+2. ✅ 能够独立解决分支合并冲突
+3. ✅ 能够正确使用远程分支进行协作
+4. ✅ 能够使用 rebase 整理提交历史
+5. ✅ 知道什么时候使用 merge，什么时候使用 rebase
+
+---
+
+## 3.10 相关章节推荐
+
+学完本章后，你可以继续学习：
+
+**必读章节**：
+- 📚 [第4章：Git工作流程](workflow) - 学习完整的团队协作流程
+- 🛠️ [第5章：Git实战技巧](chapter-05) - 提升工作效率
+
+**实战项目**：
+- 💻 在实际项目中使用分支进行功能开发
+- 👥 与团队成员协作，使用分支管理代码
+- 📝 建立自己的分支管理规范
+
+---
+
+## 3.11 延伸阅读
+
+**推荐资源**：
+- [Git Branching 模型](https://learngitbranching.js.org/) - 可视化学习 Git 分支
+- [Git Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/) - 了解不同的工作流程
+- [Interactive Rebase](https://git-scm.com/docs/git-rebase) -深入学习 rebase
+
+**工具推荐**：
+- [SourceTree](https://www.sourcetreeapp.com/) - 免费的 Git 图形化客户端
+- [GitKraken](https://www.gitkraken.com/) - 界面优美的 Git 客户端
+- [Git GUI Clients](https://git-scm.com/downloads/guis) - 官方推荐的客户端列表
+
+**视频教程**：
+- [Git 分支管理详解](https://www.bilibili.com/video/BV1pY4y1p7Mh)
+- [Git 合并冲突解决](https://www.bilibili.com/video/BV16Nuxh6QYg)
+
+准备好进入下一章了吗？让我们学习实际的[工作流程 →](workflow)！
+
+---
+
 ## 下一步
 
 掌握了分支管理后，让我们学习[工作流程 →](workflow)

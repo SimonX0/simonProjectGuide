@@ -576,6 +576,479 @@ index 0000000..1234567
 
 ---
 
+## 2.5 常见问题（FAQ）
+
+### 2.5.1 基础操作问题
+
+**Q1: git status 显示很多文件，但我不想全部提交，怎么办？**
+
+A: 有几种选择：
+```bash
+# 方式1：只添加特定文件
+git add index.html
+git add style.css
+
+# 方式式2：交互式添加（推荐）
+git add -i
+# 会进入交互模式，可以选择要添加的文件
+
+# 方式式3：按模式添加
+git add *.js        # 只添加 .js 文件
+git add docs/       # 只添加 docs 目录
+```
+
+**Q2: 提交后发现信息写错了，怎么修改？**
+
+A: 分两种情况：
+```bash
+# 情况1：还未推送到远程
+git commit --amend -m "正确的提交信息"
+
+# 情况2：已推送到远程
+git commit --amend -m "正确的提交信息"
+git push origin +force  # 警告：强制推送会覆盖远程历史
+```
+
+**Q3: git add 和 git add . 有什么区别？**
+
+A:
+```bash
+git add .      # 添加当前目录及子目录的所有修改
+git add -A     # 添加所有修改（包括删除的文件）
+git add -u     # 只更新已跟踪的文件
+```
+
+**示例**：
+```bash
+# 场景：删除了文件 old.txt
+git add .      # ❌ 不会记录删除
+git add -A     # ✅ 会记录删除
+```
+
+**Q4: 怎么查看我刚才提交了什么？**
+
+A:
+```bash
+# 查看最近一次提交
+git show
+
+# 查看最近3次提交
+git log -3 --oneline
+
+# 查看某个提交的详细信息
+git show <commit-hash>
+
+# 查看提交的文件变更统计
+git log --stat
+```
+
+### 2.5.2 撤销和回退问题
+
+**Q5: 修改了文件但后悔了，怎么撤销？**
+
+A:
+```bash
+# 情况1：文件还未 add（在工作区）
+git restore file.txt          # 撤销单个文件
+git restore .                  # 撤销所有修改
+
+# 情况2：文件已 add（在暂存区）
+git restore --staged file.txt # 从暂存区移除
+git restore file.txt          # 撤销工作区修改
+
+# 情况3：已经 commit 了
+git reset --soft HEAD~1        # 撤销提交，保留修改
+```
+
+**Q6: 提交错了，想回退到上一个版本？**
+
+A:
+```bash
+# 方式1：软回退（推荐，保留修改）
+git reset --soft HEAD~1
+# 撤销 commit，保留修改在暂存区
+
+# 方式2：混合回退
+git reset --mixed HEAD~1
+# 撤销 commit 和 add，保留修改在工作区
+
+# 方式3：硬回退（危险！）
+git reset --hard HEAD~1
+# 撤销 commit、add 和工作区修改 ⚠️
+
+# 方式4：回退到指定提交
+git reset --soft abc1234
+```
+
+**Q7: git restore 和 git reset 有什么区别？**
+
+A:
+```bash
+git restore file.txt      # 撤销工作区修改
+git reset file.txt       # 从暂存区移除（不影响工作区）
+
+git restore --staged    # 操作暂存区
+git reset               # 也操作暂存区
+```
+
+### 2.5.3 历史查看问题
+
+**Q8: 怎么查看某行代码是谁写的？**
+
+A:
+```bash
+# 查看文件的每一行是谁修改的
+git blame file.txt
+
+# 查看特定行
+git blame -L 10,20 file.txt
+
+# 显示邮箱地址
+git blame -e file.txt
+```
+
+**Q9: 怎么查看某个文件的修改历史？**
+
+A:
+```bash
+# 查看文件的所有修改记录
+git log --follow file.txt
+
+# 查看文件的详细修改
+git log -p file.txt
+
+# 查看文件是谁删除的
+git log --diff-filter=D -- file.txt
+```
+
+### 2.5.4 远程仓库问题
+
+**Q10: git push 时提示 "Updates were rejected" 怎么办？**
+
+A: 这是因为远程有新提交，需要先拉取：
+```bash
+# 方式1：拉取并合并
+git pull origin main
+# 然后解决冲突后再 push
+
+# 方式2：拉取并变基
+git pull --rebase origin main
+# 保持提交历史更清晰
+```
+
+**Q11: 怎么查看远程仓库信息？**
+
+A:
+```bash
+# 查看所有远程仓库
+git remote -v
+
+# 查看远程分支
+git branch -r
+
+# 查看远程仓库详细信息
+git remote show origin
+```
+
+**Q12: 怎么克隆特定分支？**
+
+A:
+```bash
+# 克隆所有分支（默认）
+git clone https://github.com/user/repo.git
+
+# 只克隆特定分支
+git clone -b dev https://github.com/user/repo.git
+
+# 克隆后深度为1（加快速度）
+git clone --depth 1 https://github.com/user/repo.git
+```
+
+---
+
+## 2.6 练习题
+
+### 2.6.1 基础练习
+
+**练习 1：基础操作流程**
+
+```bash
+# 任务：完成以下操作流程
+# 1. 创建一个新文件 hello.txt
+echo "Hello Git" > hello.txt
+
+# 2. 查看状态
+git status
+
+# 3. 添加到暂存区
+git add hello.txt
+
+# 4. 提交
+git commit -m "feat: 添加问候文件"
+
+# 5. 修改文件内容
+echo "Hello Git World" > hello.txt
+
+# 6. 查看差异
+git diff
+
+# 7. 再次提交
+git add .
+git commit -m "feat: 扩展问候内容"
+
+# 8. 查看提交历史
+git log --oneline -3
+```
+
+**练习 2：查看历史**
+
+```bash
+# 任务：查看提交历史
+# 1. 查看最近5次提交，一行一个
+git log --oneline -5
+
+# 2. 查看最近一次提交的详细信息
+git show
+
+# 3. 图形化查看历史
+git log --graph --oneline --all
+
+# 4. 查看某个文件的修改历史
+git log --follow hello.txt
+```
+
+**练习 3：撤销操作**
+
+```bash
+# 任务：练习各种撤销操作
+# 1. 创建文件并提交
+echo "Test content" > test.txt
+git add test.txt
+git commit -m "test: 添加测试文件"
+
+# 2. 修改文件但不想提交
+echo "Modified" >> test.txt
+git restore test.txt  # 撤销修改
+
+# 3. 重新修改并提交
+echo "Modified again" >> test.txt
+git add test.txt
+git commit -m "test: 修改测试文件"
+
+# 4. 撤销最后一次提交（保留修改）
+git reset --soft HEAD~1
+
+# 5. 查看状态
+git status
+```
+
+### 2.6.2 进阶练习
+
+**练习 4：暂存区操作**
+
+```bash
+# 任务：分批提交不同类型的文件
+
+# 1. 创建多个文件
+mkdir css js
+echo "body { margin: 0; }" > style.css
+echo "console.log('hi');" > app.js
+echo "# README" > README.md
+
+# 2. 只添加 CSS 文件
+git add css/style.css
+
+# 3. 提交 CSS
+git commit -m "style: 添加基础样式"
+
+# 4. 添加 JS 文件
+git add js/app.js
+
+# 5. 提交 JS
+git commit -m "feat: 添加应用逻辑"
+
+# 6. 添加 README
+git add README.md
+git commit -m "docs: 添加说明文档"
+```
+
+**练习 5：查看和对比**
+
+```bash
+# 任务：学习查看差异
+
+# 1. 修改文件
+echo "New line 1" >> file.txt
+echo "New line 2" >> file.txt
+
+# 2. 查看工作区和暂存区的差异
+git diff
+
+# 3. 查看暂存区和上一次提交的差异
+git diff --staged
+
+# 4. 查看工作区和上一次提交的差异
+git diff HEAD
+
+# 5. 交互式添加文件
+git add -i
+# 在交互模式中：
+# - 输入 status 查看状态
+# - 输入 1 更新文件（add）
+# - 输入 3 查看差异
+# - 输入 5 离开
+```
+
+**练习 6：修改提交信息**
+
+```bash
+# 任务：练习修改提交信息
+
+# 1. 创建一个提交
+echo "Content" > test.txt
+git add test.txt
+git commit -m "typo: 错误的提交信息"
+
+# 2. 修改提交信息
+git commit --amend -m "fix: 修正提交信息"
+
+# 3. 查看修改结果
+git log -1 --format="%s"
+
+# 4. 如果已经推送，修改并强制推送
+git commit --amend -m "fix: 最终的提交信息"
+git push origin +force  # ⚠️ 危险操作
+```
+
+**练习 7：查看特定文件的历史**
+
+```bash
+# 任务：追踪文件的变更历史
+
+# 1. 创建文件
+echo "Version 1" > history.txt
+git add history.txt
+git commit -m "feat: 初始版本"
+
+# 2. 第一次修改
+echo "Version 2" >> history.txt
+git add history.txt
+git commit -m "feat: 添加第二段"
+
+# 3. 第二次修改
+echo "Version 3" >> history.txt
+git add history.txt
+git commit -m "feat: 添加第三段"
+
+# 4. 查看文件的完整历史
+git log --follow --patch history.txt
+
+# 5. 查看是谁修改了每一行
+git blame history.txt
+```
+
+---
+
+## 2.7 学习检查清单
+
+完成本章学习后，请检查自己是否掌握以下内容：
+
+### 基础操作 ⭐⭐⭐⭐⭐
+
+- [ ] 能够解释 Git 的三个区域（工作区、暂存区、版本库）
+- [ ] 熟练使用 `git status` 查看状态
+- [ ] 正确使用 `git add` 添加文件到暂存区
+- [ ] 能够编写清晰的提交信息
+- [ ] 理解 `git commit` 的工作原理
+
+### 查看历史 ⭐⭐⭐⭐
+
+- [ ] 能够使用 `git log` 查看提交历史
+- [ ] 理解不同的日志格式选项
+- [ ] 能够使用 `git show` 查看提交详情
+- [ ] 掌握 `git diff` 查看文件差异
+- [ ] 了解 `git blame` 追踪代码作者
+
+### 撤销操作 ⭐⭐⭐
+
+- [ ] 能够使用 `git restore` 撤销工作区修改
+- [ ] 掌握 `git restore --staged` 管理暂存区
+- [ ] 理解 `git reset` 的三种模式
+- [ ] 能够安全地修改提交信息
+- [ ] 知道何时使用 `git reset` 和 `git revert`
+
+### 远程协作 ⭐⭐⭐⭐
+
+- [ ] 能够使用 `git clone` 克隆仓库
+- [ ] 熟练使用 `git pull` 拉取更新
+- [ ] 正确使用 `git push` 推送代码
+- [ ] 能够查看远程仓库信息
+- [ ] 处理 "Updates were rejected" 错误
+
+### 进阶技能 ⭐⭐
+
+- [ ] 能够使用 `.gitignore` 忽略文件
+- [ ] 理解 `git add -i` 交互式添加
+- [ ] 能够使用 `git blame` 追踪代码历史
+- [ ] 理解 HEAD 指针的概念
+- [ ] 知道如何查看特定文件的修改历史
+
+### 💡 自我测试
+
+**完成以下任务来检验学习成果**：
+
+1. ✅ 能够独立完成完整的：修改 → 暂存 → 提交 → 推送流程
+2. ✅ 能够查看和理解项目的提交历史
+3. ✅ 能够安全地撤销错误的操作
+4. ✅ 能够处理基本的远程协作冲突
+
+---
+
+## 2.8 相关章节推荐
+
+学完本章后，你可以继续学习：
+
+**必读章节**：
+- 📚 [第3章：Git分支管理](chapter-03) - 掌握分支的使用
+- 📚 [第4章：Git工作流程](workflow) - 学习完整的开发流程
+
+**进阶章节**：
+- 🛠️ [第5章：Git实战技巧](chapter-05) - 提升工作效率
+
+**实战应用**：
+- 💻 在实际项目中练习这些命令
+- 📝 建立自己的 Git 操作习惯
+
+---
+
+## 2.9 延伸阅读
+
+**官方文档**：
+- [Git 官方文档](https://git-scm.com/doc) - 最权威的参考资料
+- [Pro Git 书籍](https://git-scm.com/book/zh/v2) - 免费的中文版电子书
+
+**在线学习资源**：
+- [Learn Git Branching](https://learngitbranching.js.org/) - 可视化学习 Git 分支
+- [Git Immersion](https://gitimmersion.com/) - Git 闯关游戏
+
+**工具推荐**：
+- [Git GUI 客户端](https://git-scm.com/downloads/guis/) - 图形化工具
+- [GitHub Desktop](https://desktop.github.com/) - GitHub 官方客户端
+- [Sourcetree](https://www.sourcetreeapp.com/) - 免费的 Git 客户端
+
+**常见 Git 平台**：
+- GitHub - 全球最大的代码托管平台
+- GitLab - 企业级 Git 托管
+- Gitee - 国内知名的 Git 托管平台
+
+**视频教程推荐**：
+- [尚硅谷 Git 教程](https://www.bilibili.com/video/BV1fv411p7r4)
+- [黑马程序员 Git 教程](https://www.bilibili.com/video/BV1pY4y1p7Mh)
+
+准备好进入下一章了吗？让我们学习更强大的[分支管理 →](chapter-03)！
+
+---
+
 ## 常用命令速查表
 
 | 命令 | 作用 | 使用频率 |
