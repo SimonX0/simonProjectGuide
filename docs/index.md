@@ -6,6 +6,10 @@ hero:
   text: "持续充电 · 不断进步"
 
 features:
+  - title: 🔧 Git版本控制
+    details: Git基础, 分支管理, 团队协作与版本控制最佳实践
+    link: /git/
+    linkText: 从零开始 →
   - title: 📚 前端开发
     details: Vue3, React, TypeScript, 现代前端工程化体系
     link: /guide/
@@ -46,6 +50,7 @@ features:
     <p class="hero-subtitle">持续充电 · 不断进步</p>
     <p class="hero-description">系统化学习前沿技术</p>
     <div class="hero-tags">
+      <span class="hero-tag">🔧 Git</span>
       <span class="hero-tag">💻 前端开发</span>
       <span class="hero-tag">☕ Java</span>
       <span class="hero-tag">🐍 Python</span>
