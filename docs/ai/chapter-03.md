@@ -1,4 +1,4 @@
-# 第3章：Prompt Engineering技巧
+# Prompt工程
 
 ## 本章导读
 
@@ -16,9 +16,9 @@
 
 ---
 
-## 3.1 什么是Prompt Engineering？
+## 什么是Prompt Engineering？
 
-### 3.1.1 Prompt Engineering的定义
+### Prompt Engineering的定义
 
 **Prompt Engineering** 是指通过设计和优化输入给大语言模型的提示词，以引导模型生成更准确、更相关、更符合预期的输出的技术。
 
@@ -42,7 +42,7 @@
 └─────────────────────────────────────────┘
 ```
 
-### 3.1.2 为什么Prompt Engineering很重要？
+### 为什么Prompt Engineering很重要？
 
 | 方面 | 说明 |
 |------|------|
@@ -52,7 +52,7 @@
 | **可控性** | 让AI输出更符合你的预期 |
 | **稳定性** | 一致的Prompt带来一致的输出 |
 
-### 3.1.3 Prompt的基本结构
+### Prompt的基本结构
 
 一个有效的Prompt通常包含以下要素：
 
@@ -79,19 +79,21 @@ prompt = """
 - 使用emoji增加可读性
 
 {示例格式}
-## 装饰器是什么
+### 核心概念
 ...
 
-## 应用场景1：计时器
+### 应用场景1：计时器
 ...
 """
 ```
 
 ---
 
-## 3.2 Prompt设计的核心原则
+## Prompt设计的核心原则 {#核心原则}
 
-### 3.2.1 原则1：清晰具体（Be Specific）
+掌握这5个核心原则，让你的Prompt质量提升一个台阶！
+
+### 原则1：清晰具体（Be Specific）
 
 ❌ **不好的示例**：
 ```python
@@ -126,7 +128,7 @@ prompt = """
 """
 ```
 
-### 3.2.2 原则2：提供上下文（Provide Context）
+### 原则2：提供上下文（Provide Context）
 
 ❌ **不好的示例**：
 ```python
@@ -160,7 +162,7 @@ print(bubble_sort([5, 2, 8, 1, 9]))
 """
 ```
 
-### 3.2.3 原则3：明确输出格式（Specify Output Format）
+### 原则3：明确输出格式（Specify Output Format）
 
 ❌ **不好的示例**：
 ```python
@@ -186,7 +188,7 @@ prompt = """
 """
 ```
 
-### 3.2.4 原则4：使用示例（Use Examples）
+### 原则4：使用示例（Use Examples）
 
 提供示例让AI更好地理解你的期望。
 
@@ -226,7 +228,7 @@ evens = [i for i in range(20) if i % 2 == 0]
 """
 ```
 
-### 3.2.5 原则5：设定角色（Assign a Role）
+### 原则5：设定角色（Assign a Role）
 
 ```python
 # 角色化提示词效果更好
@@ -252,9 +254,11 @@ prompts = {
 
 ---
 
-## 3.3 常用提示词模式
+## 常用提示词模式 {#常用提示词模式}
 
-### 3.3.1 模式1：思维链（Chain of Thought）
+本节介绍5种最实用的提示词模式，让你的Prompt效果倍增！
+
+### 模式1：思维链（Chain of Thought）
 
 引导AI展示推理过程，提高复杂问题的准确率。
 
@@ -280,7 +284,7 @@ prompt = """
 """
 ```
 
-### 3.3.2 模式2：Few-shot Learning
+### 模式2：Few-shot Learning
 
 提供少量示例，让AI快速学习任务模式。
 
@@ -308,7 +312,7 @@ prompt = """
 # AI输出：正面
 ```
 
-### 3.3.3 模式3：Self-Consistency（自洽性）
+### 模式3：Self-Consistency（自洽性）
 
 让AI多次生成答案，选择最一致的结果。
 
@@ -329,7 +333,7 @@ prompt = """
 """
 ```
 
-### 3.3.4 模式4：Generate Then Refine先生成后优化
+### 模式4：Generate Then Refine先生成后优化
 
 先生成初稿，再进行优化。
 
@@ -354,7 +358,7 @@ refine_prompt = """
 """
 ```
 
-### 3.3.5 模式5：Role Playing（角色扮演）
+### 模式5：Role Playing（角色扮演）
 
 ```python
 # 技术面试
@@ -392,9 +396,11 @@ review_prompt = """
 
 ---
 
-## 3.4 高级技巧
+## 高级技巧 {#高级技巧}
 
-### 3.4.1 技巧1：思维树（Tree of Thoughts）
+本节介绍更高级的提示词技巧，让你的AI应用更智能！
+
+### 技巧1：思维树（Tree of Thoughts）
 
 让AI探索多个可能的解决方案，然后选择最优的。
 
@@ -413,7 +419,7 @@ prompt = """
 """
 ```
 
-### 3.4.2 技巧2：逆向提示（Reverse Prompting）
+### 技巧2：逆向提示（Reverse Prompting）
 
 先让AI生成答案，再反推问题或改进。
 
@@ -440,7 +446,466 @@ def memoize(func):
 """
 ```
 
-### 3.4.3 技巧3：渐进式提示（Progressive Prompting）
+### 技巧2.5：Prompt Chaining（提示词链）
+
+**Prompt Chaining** 是将多个 Prompt 串联起来，让前一个 Prompt 的输出作为后一个 Prompt 的输入，逐步完成复杂任务。
+
+#### 什么是 Prompt Chaining？
+
+Prompt Chaining ≠ Chain of Thought
+- **Chain of Thought**：单个 Prompt 内让 AI 展示推理过程
+- **Prompt Chaining**：多个 Prompt 串联，多次 API 调用，逐步细化
+
+```
+输入 → Prompt1 → 中间结果1 → Prompt2 → 中间结果2 → ... → 最终输出
+```
+
+#### Prompt Chaining 的优势
+
+✅ **分解复杂性**：将复杂任务拆分为简单步骤
+✅ **提高准确率**：每步专注一个目标，减少错误累积
+✅ **可控性强**：可以在中间加入人工审核和调整
+✅ **易于调试**：定位哪一步出问题
+✅ **模块复用**：每个环节可以独立优化
+
+#### Prompt Chaining 策略 {#prompt-chaining-策略}
+
+##### 1. **Sequential Chaining（顺序链）**
+
+最简单的链式结构，依次执行。
+
+```python
+from langchain.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain.chains import LLMChain
+
+# 第一步：理解需求
+understand_prompt = PromptTemplate(
+    input_variables=["user_query"],
+    template="分析用户需求：{user_query}\n\n提取核心功能点，用JSON格式输出。"
+)
+
+# 第二步：设计方案
+design_prompt = PromptTemplate(
+    input_variables=["requirements"],
+    template="基于需求设计技术方案：\n{requirements}\n\n请给出：\n1. 技术栈选择\n2. 目录结构\n3. 核心模块"
+)
+
+# 第三步：生成代码
+code_prompt = PromptTemplate(
+    input_variables=["design"],
+    template="实现以下设计：\n{design}\n\n请提供完整代码，包含注释和类型提示。"
+)
+
+# 构建链
+llm = ChatOpenAI(temperature=0)
+understand_chain = LLMChain(llm=llm, prompt=understand_prompt, output_key="requirements")
+design_chain = LLMChain(llm=llm, prompt=design_prompt, output_key="design")
+code_chain = LLMChain(llm=llm, prompt=code_prompt, output_key="code")
+
+# 顺序执行
+result = understand_chain.invoke({"user_query": "创建一个待办事项应用"})
+result.update(design_chain.invoke(result))
+result.update(code_chain.invoke(result))
+
+print(result["code"])
+```
+
+##### 2. **Conditional Chaining（条件链）**
+
+根据上一步结果，选择不同的下一步。
+
+```python
+def conditional_chain(user_input):
+    # 第一步：分类意图
+    classify_prompt = f"""
+    分类用户意图：{user_input}
+
+    请只返回以下类别之一：
+    - code_writing：需要写代码
+    - code_review：需要审查代码
+    - question：回答问题
+    - other：其他
+    """
+
+    intent = llm.invoke(classify_prompt).content.strip().lower()
+
+    # 第二步：根据分类选择不同路径
+    if intent == "code_writing":
+        return code_writing_chain(user_input)
+    elif intent == "code_review":
+        return code_review_chain(user_input)
+    elif intent == "question":
+        return answer_chain(user_input)
+    else:
+        return general_chain(user_input)
+
+# 使用
+result = conditional_chain("帮我写一个快速排序算法")
+```
+
+##### 3. **Looping Chaining（循环链）**
+
+重复执行某个步骤，直到满足条件。
+
+```python
+def iterative_refinement(initial_request, max_iterations=3):
+    content = initial_request
+
+    for i in range(max_iterations):
+        # 生成内容
+        generation_prompt = f"生成以下内容：{content}"
+        generated = llm.invoke(generation_prompt).content
+
+        # 评审并给出改进意见
+        review_prompt = f"""
+        评审以下内容，指出需要改进的地方：
+        {generated}
+
+        请从以下方面评审：
+        1. 准确性
+        2. 完整性
+        3. 可读性
+        4. 最佳实践
+
+        如果已经很好，回复"APPROVED"，否则给出具体改进建议。
+        """
+        feedback = llm.invoke(review_prompt).content
+
+        if "APPROVED" in feedback:
+            print(f"第 {i+1} 轮迭代：已通过审核")
+            return generated
+
+        # 根据反馈改进
+        content = f"原内容：{generated}\n\n改进建议：{feedback}\n\n请根据建议重新生成。"
+        print(f"第 {i+1} 轮迭代：继续改进...")
+
+    return generated
+
+# 使用
+result = iterative_refinement("写一个Python快速排序函数")
+```
+
+##### 4. **Parallel Chaining（并行链）**
+
+多个 Prompt 同时执行，然后汇总结果。
+
+```python
+import asyncio
+
+async def parallel_analysis(topic):
+    # 并行执行多个分析任务
+    prompts = [
+        f"从技术角度分析：{topic}",
+        f"从商业角度分析：{topic}",
+        f"从用户角度分析：{topic}"
+    ]
+
+    # 并发调用
+    tasks = [llm.ainvoke(prompt) for prompt in prompts]
+    results = await asyncio.gather(*tasks)
+
+    # 汇总结果
+    summary_prompt = f"""
+    综合以下三个角度的分析，给出完整结论：
+
+    技术角度：{results[0].content}
+
+    商业角度：{results[1].content}
+
+    用户角度：{results[2].content}
+
+    请提供：
+    1. 综合评估
+    2. 机会与风险
+    3. 建议行动
+    """
+
+    final = await llm.ainvoke(summary_prompt)
+    return final.content
+
+# 使用
+result = await parallel_analysis("开发一个AI写作助手")
+```
+
+#### 实战案例：自动化报告生成 {#实战案例自动化报告生成}
+
+```python
+from langchain.chains import SequentialChain
+
+# Step 1: 数据收集
+collect_chain = LLMChain(
+    llm=llm,
+    prompt=PromptTemplate(
+        input_variables=["topic"],
+        template="收集关于'{topic}'的最新数据、趋势和案例。"
+    ),
+    output_key="data"
+)
+
+# Step 2: 数据分析
+analyze_chain = LLMChain(
+    llm=llm,
+    prompt=PromptTemplate(
+        input_variables=["data"],
+        template="分析以下数据，提取关键洞察：\n{data}"
+    ),
+    output_key="analysis"
+)
+
+# Step 3: 生成大纲
+outline_chain = LLMChain(
+    llm=llm,
+    prompt=PromptTemplate(
+        input_variables=["analysis"],
+        template="基于分析结果，生成报告大纲：\n{analysis}"
+    ),
+    output_key="outline"
+)
+
+# Step 4: 撰写报告
+write_chain = LLMChain(
+    llm=llm,
+    prompt=PromptTemplate(
+        input_variables=["outline", "analysis"],
+        template="""
+        基于以下大纲和分析，撰写完整报告：
+
+        大纲：
+        {outline}
+
+        分析要点：
+        {analysis}
+
+        要求：
+        - 专业、准确、有深度
+        - 包含具体案例和数据支持
+        - 结构清晰，逻辑严密
+        - 1500-2000字
+        """
+    ),
+    output_key="report"
+)
+
+# Step 5: 质量检查
+review_chain = LLMChain(
+    llm=llm,
+    prompt=PromptTemplate(
+        input_variables=["report"],
+        template="""
+        审查以下报告质量：
+        {report}
+
+        检查清单：
+        - [ ] 内容准确性
+        - [ ] 逻辑连贯性
+        - [ ] 数据充分性
+        - [ ] 专业术语使用
+        - [ ] 格式规范
+
+        给出评分（1-10）和改进建议。如果低于8分，提供具体修改意见。
+        """
+    ),
+    output_key="review"
+)
+
+# 构建完整链
+full_chain = SequentialChain(
+    chains=[collect_chain, analyze_chain, outline_chain, write_chain, review_chain],
+    input_variables=["topic"],
+    output_variables=["report", "review"]
+)
+
+# 执行
+result = full_chain.invoke({"topic": "2024年AI应用开发趋势"})
+
+print("=== 报告 ===")
+print(result["report"])
+print("\n=== 审核 ===")
+print(result["review"])
+```
+
+#### Prompt Chaining 最佳实践
+
+##### ✅ DO（推荐做法）
+
+1. **明确每个环节的目标**
+```python
+# 好的做法：每个Prompt有明确目标
+step1 = "提取文章中的所有关键数字"
+step2 = "分析这些数字的趋势"
+step3 = "生成可视化建议"
+```
+
+2. **使用结构化输出**
+```python
+# 让AI输出JSON，便于下一个Prompt使用
+prompt = """
+分析数据，输出JSON格式：
+{
+    "trend": "上升/下降/平稳",
+    "key_points": ["点1", "点2"],
+    "confidence": 0.85
+}
+"""
+```
+
+3. **添加中间检查点**
+```python
+def chain_with_checkpoints(input_data):
+    # Step 1
+    result1 = step1(input_data)
+    print(f"Step 1 完成: {result1}")  # 检查点
+
+    # 可以插入人工审核
+    if manual_review:
+        user_feedback = input("是否继续？(y/n)")
+        if user_feedback == 'n':
+            return "用户中断"
+
+    # Step 2
+    result2 = step2(result1)
+    print(f"Step 2 完成: {result2}")  # 检查点
+
+    return result2
+```
+
+4. **处理错误和回退**
+```python
+def robust_chain(input_data, max_retries=3):
+    for attempt in range(max_retries):
+        try:
+            result = step1(input_data)
+
+            # 验证输出
+            if not validate(result):
+                raise ValueError("输出不符合预期")
+
+            return result
+        except Exception as e:
+            if attempt == max_retries - 1:
+                return f"失败：{str(e)}"
+
+            # 回退并重试
+            input_data = f"上次尝试失败：{str(e)}\n请重新处理：{input_data}"
+```
+
+##### ❌ DON'T（避免做法）
+
+1. **不要让链过长**
+```python
+# 不好的做法：10个步骤的链
+step1 → step2 → step3 → step4 → step5 → step6 → step7 → step8 → step9 → step10
+
+# 好的做法：拆分成多个子链
+sub_chain1 = step1 → step2 → step3
+sub_chain2 = step4 → step5 → step6
+sub_chain3 = step7 → step8 → step9 → step10
+```
+
+2. **不要丢失上下文**
+```python
+# 不好的做法：只传递部分信息
+chain1 = "提取摘要"
+chain2 = "翻译摘要"  # 丢失了原文上下文
+
+# 好的做法：保留完整上下文
+chain2 = "基于原文和摘要进行翻译\n原文：{text}\n摘要：{summary}"
+```
+
+3. **不要过度依赖 AI 自动纠错**
+```python
+# 不好的做法：希望AI自动发现并修复所有错误
+chain = "生成代码 → 修复代码中的bug → 优化性能"
+
+# 好的做法：明确指出要检查什么
+chain = """
+step1: 生成代码
+step2: 检查以下问题：
+    - 类型安全
+    - 边界条件
+    - 异常处理
+step3: 优化性能：
+    - 算法复杂度
+    - 内存使用
+"""
+```
+
+#### Prompt Chaining vs 其他模式
+
+| 模式 | 调用次数 | 适用场景 | 复杂度 | 可控性 |
+|------|---------|---------|--------|--------|
+| **单次Prompt** | 1 | 简单任务 | 低 | 低 |
+| **Chain of Thought** | 1 | 需要推理的任务 | 低 | 中 |
+| **Prompt Chaining** | 多次 | 复杂、多步骤任务 | 中 | 高 |
+| **Agent** | 动态 | 不确定、需要工具的任务 | 高 | 中 |
+
+#### 何时使用 Prompt Chaining？
+
+✅ **适合使用的场景**：
+- 复杂文档生成（报告、论文、方案）
+- 多阶段数据处理（收集→分析→可视化）
+- 迭代优化（初稿→评审→修改→定稿）
+- 需要中间人工审核的流程
+- 需要保存中间结果的场景
+
+❌ **不适合使用的场景**：
+- 简单问答
+- 单步任务
+- 对延迟敏感（多次调用增加总时间）
+- Token 成本敏感（每次调用都会重复上下文）
+
+#### LangChain 实现
+
+LangChain 提供了多种 Chain 类型：
+
+```python
+from langchain.chains import (
+    SimpleSequentialChain,  # 简单顺序链
+    SequentialChain,        # 多输入输出链
+    TransformChain,         # 转换链
+    RouterChain,            # 路由链
+)
+
+# 1. SimpleSequentialChain
+simple_chain = SimpleSequentialChain(
+    chains=[chain1, chain2, chain3]
+)
+
+# 2. SequentialChain（多输入输出）
+complex_chain = SequentialChain(
+    chains=[collect_chain, analyze_chain, write_chain],
+    input_variables=["topic"],
+    output_variables=["report", "analysis"],
+    verbose=True  # 打印每步输出
+)
+
+# 3. 自定义Chain
+from langchain.chains.base import Chain
+
+class MyCustomChain(Chain):
+    input_variables = ["input"]
+    output_variables = ["output"]
+
+    def _call(self, inputs):
+        # 自定义逻辑
+        step1_result = self.step1(inputs["input"])
+        step2_result = self.step2(step1_result)
+        return {"output": step2_result}
+```
+
+#### 小结
+
+**Prompt Chaining** 核心要点：
+- 📌 **分解任务**：将复杂任务拆分为多个简单步骤
+- 📌 **传递上下文**：确保每一步都有必要的信息
+- 📌 **验证输出**：在每步后检查结果质量
+- 📌 **处理错误**：添加重试和回退机制
+- 📌 **控制成本**：避免过长的链和重复的上下文
+
+---
+
+### 技巧3：渐进式提示（Progressive Prompting）
 
 从简单到复杂，逐步引导AI。
 
@@ -474,7 +939,7 @@ level4 = """
 """
 ```
 
-### 3.4.4 技巧4：比较式提示（Comparative Prompting）
+### 技巧4：比较式提示（Comparative Prompting）
 
 让AI对比不同方案。
 
@@ -497,7 +962,7 @@ prompt = """
 """
 ```
 
-### 3.4.5 技巧5：反思与改进（Reflection and Improvement）
+### 技巧5：反思与改进（Reflection and Improvement）
 
 ```python
 prompt = """
@@ -521,9 +986,9 @@ prompt = """
 
 ---
 
-## 3.5 不同场景的Prompt模板
+## 不同场景的Prompt模板
 
-### 3.5.1 代码生成
+### 代码生成
 
 ```python
 code_gen_prompt = """
@@ -565,7 +1030,7 @@ def function_name():
 """
 ```
 
-### 3.5.2 代码审查
+### 代码审查
 
 ```python
 code_review_prompt = """
@@ -622,7 +1087,7 @@ code_review_prompt = """
 """
 ```
 
-### 3.5.3 文档生成
+### 文档生成
 
 ```python
 doc_gen_prompt = """
@@ -670,7 +1135,7 @@ def function_name(param1, param2):
 """
 ```
 
-### 3.5.4 调试助手
+### 调试助手
 
 ```python
 debug_prompt = """
@@ -711,7 +1176,7 @@ debug_prompt = """
 """
 ```
 
-### 3.5.5 教学讲解
+### 教学讲解
 
 ```python
 teaching_prompt = """
@@ -771,9 +1236,9 @@ teaching_prompt = """
 
 ---
 
-## 3.6 Prompt优化实战案例
+## Prompt优化实战案例
 
-### 3.6.1 案例1：从差Prompt到好Prompt
+### 案例1：从差Prompt到好Prompt
 
 **原始Prompt（差）**：
 ```python
@@ -858,7 +1323,7 @@ if __name__ == "__main__":
 """
 ```
 
-### 3.6.2 案例2：复杂任务分解
+### 案例2：复杂任务分解
 
 **任务**：构建一个智能代码审查系统
 
@@ -914,9 +1379,9 @@ final_report_prompt = """
 
 ---
 
-## 3.7 Prompt测试与迭代
+## Prompt测试与迭代
 
-### 3.7.1 A/B测试
+### A/B测试
 
 ```python
 # 测试两个不同的Prompt
@@ -938,7 +1403,7 @@ prompts = {
 # - 实用性
 ```
 
-### 3.7.2 Prompt版本管理
+### Prompt版本管理
 
 ```python
 # 使用字典管理不同版本
@@ -966,9 +1431,9 @@ best_prompt = PROMPT_VERSIONS["v3.0"]["prompt"]
 
 ---
 
-## 3.8 本章小结
+## 本章小结
 
-### 3.8.1 核心要点
+### 核心要点
 
 ✅ **五大核心原则**：
 1. 清晰具体（Be Specific）
@@ -990,7 +1455,7 @@ best_prompt = PROMPT_VERSIONS["v3.0"]["prompt"]
 - Progressive Prompting（渐进式提示）
 - Comparative Prompting（比较式提示）
 
-### 3.8.2 实践建议
+### 实践建议
 
 1. **从简单开始**：先构建基础Prompt，再逐步优化
 2. **持续迭代**：通过测试不断改进Prompt
@@ -1000,7 +1465,7 @@ best_prompt = PROMPT_VERSIONS["v3.0"]["prompt"]
 
 ---
 
-## 3.9 练习题
+## 练习题
 
 ### 练习1：优化Prompt
 

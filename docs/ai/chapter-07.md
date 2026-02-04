@@ -1,4 +1,4 @@
-# 第7章：AI应用进阶
+# 应用进阶
 
 ## 本章导读
 
@@ -14,9 +14,9 @@
 
 ---
 
-## 7.1 主流LLM模型对比
+## 主流LLM模型对比 {#主流llm模型对比}
 
-### 7.1.1 模型全景图
+### 模型全景图
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -43,7 +43,7 @@
 └─────────────────────────────────────────────────────┘
 ```
 
-### 7.1.2 主流模型详细对比
+### 主流模型详细对比
 
 | 模型 | 开发者 | 上下文 | 优势 | 劣势 | 价格 | 最适合场景 |
 |------|--------|--------|------|------|------|-----------|
@@ -56,7 +56,7 @@
 | **Qwen 72B** | 阿里 | 32K | 中文优秀 | 需要部署 | 免费 | 中文场景 |
 | **Gemini Pro** | Google | 32K | 多模态 | 稳定性 | $$ | 多模态任务 |
 
-### 7.1.3 模型选择策略
+### 模型选择策略
 
 #### 决策树
 
@@ -118,9 +118,9 @@
 
 ---
 
-## 7.2 Claude API使用
+## Claude API使用 {#claude-api使用}
 
-### 7.2.1 Claude简介
+### Claude简介
 
 **Claude** 是Anthropic开发的AI助手，以安全性、长文本处理能力著称。
 
@@ -129,7 +129,7 @@
 - **Sonnet**：平衡，200K上下文
 - **Haiku**：最快，100K上下文
 
-### 7.2.2 安装和配置
+### 安装和配置
 
 ```bash
 # 安装
@@ -167,7 +167,7 @@ class ClaudeConfig:
         return models.get(tier, cls.DEFAULT_MODEL)
 ```
 
-### 7.2.3 基础使用
+### 基础使用
 
 ```python
 from anthropic import Anthropic
@@ -189,7 +189,7 @@ print(message.content[0].text)
 # 输出：你好！我是Claude，由Anthropic公司开发的AI助手...
 ```
 
-### 7.2.4 流式输出
+### 流式输出
 
 ```python
 def stream_chat(prompt: str):
@@ -210,7 +210,7 @@ def stream_chat(prompt: str):
 stream_chat("用Python写一个快速排序")
 ```
 
-### 7.2.5 长文档处理（Claude的强项）
+### 长文档处理（Claude的强项）
 
 ```python
 def analyze_long_document(document_path: str):
@@ -245,7 +245,7 @@ result = analyze_long_document("long_document.txt")
 print(result)
 ```
 
-### 7.2.6 多图理解（多模态）
+### 多图理解（多模态）
 
 ```python
 import base64
@@ -291,7 +291,7 @@ result = analyze_image(
 print(result)
 ```
 
-### 7.2.7 LangChain中使用Claude
+### LangChain中使用Claude
 
 ```python
 from langchain_anthropic import ChatAnthropic
@@ -318,7 +318,7 @@ response = chain.invoke({"input": "解释什么是RAG"})
 print(response.content)
 ```
 
-### 7.2.8 Claude vs GPT对比
+### Claude vs GPT对比
 
 | 特性 | Claude 3 | GPT-4 |
 |------|----------|-------|
@@ -347,9 +347,9 @@ print(response.content)
 
 ---
 
-## 7.3 开源模型和本地部署
+## 开源模型和本地部署 {#开源模型和本地部署}
 
-### 7.3.1 Ollama：最简单的本地部署
+### Ollama：最简单的本地部署
 
 **安装Ollama**：
 ```bash
@@ -418,7 +418,7 @@ response = llm.invoke("解释什么是机器学习")
 print(response)
 ```
 
-### 7.3.2 性能对比
+### 性能对比
 
 | 模型 | 参数量 | 显存需求 | 速度 | 质量 |
 |------|--------|----------|------|------|
@@ -435,7 +435,7 @@ print(response)
 # 无GPU：使用Ollama CPU模式（较慢）
 ```
 
-### 7.3.3 成本对比
+### 成本对比
 
 ```
 场景：处理100万个tokens
@@ -457,11 +457,984 @@ Claude 3 Sonnet：
 结论：高频使用场景，本地部署最经济
 ```
 
+### Ollama Docker 部署
+
+**为什么使用 Docker 部署 Ollama**？
+- 🐳 环境隔离，不污染系统
+- 🚀 快速部署和扩缩容
+- 🔧 便于配置和管理
+- 📦 版本控制方便
+
+#### 方案 1：基础 Docker 部署
+
+**快速启动**：
+
+```bash
+# 拉取 Ollama 官方镜像
+docker pull ollama/ollama:latest
+
+# 运行容器
+docker run -d \
+  --name ollama \
+  -p 11434:11434 \
+  -v ollama_models:/root/.ollama \
+  ollama/ollama:latest
+
+# 进入容器下载模型
+docker exec -it ollama ollama pull llama3
+
+# 测试
+curl http://localhost:11434/api/generate -d '{
+  "model": "llama3",
+  "prompt": "你好",
+  "stream": false
+}'
+```
+
+#### 方案 2：Docker Compose 部署（推荐）
+
+**`docker-compose.yml`**：
+
+```yaml
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*  # 允许所有来源访问
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - ai_network
+    # GPU 支持（可选）
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # Open WebUI（可选：Web 界面）
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    volumes:
+      - open_webui_data:/app/backend/data
+    depends_on:
+      - ollama
+    networks:
+      - ai_network
+
+volumes:
+  ollama_data:
+    driver: local
+  open_webui_data:
+    driver: local
+
+networks:
+  ai_network:
+    driver: bridge
+```
+
+**启动和管理**：
+
+```bash
+# 启动服务
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f ollama
+
+# 下载模型
+docker exec -it ollama ollama pull llama3
+docker exec -it ollama ollama pull qwen
+docker exec -it ollama ollama pull mistral
+
+# 查看已下载的模型
+docker exec -it ollama ollama list
+
+# 停止服务
+docker-compose down
+
+# 删除所有数据（包括模型）
+docker-compose down -v
+```
+
+#### 方案 3：带 GPU 加速的部署
+
+**NVIDIA GPU 支持**：
+
+```yaml
+# docker-compose.gpu.yml
+version: '3.8'
+
+services:
+  ollama-gpu:
+    image: ollama/ollama:latest
+    container_name: ollama-gpu
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
+    volumes:
+      - ollama_gpu_data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - ai_network
+
+volumes:
+  ollama_gpu_data:
+    driver: local
+
+networks:
+  ai_network:
+    driver: bridge
+```
+
+**启动 GPU 版本**：
+
+```bash
+# 需要先安装 nvidia-docker
+# 安装：https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+
+# 启动
+docker-compose -f docker-compose.gpu.yml up -d
+
+# 检查 GPU 使用情况
+nvidia-smi
+
+# 查看 Ollama GPU 使用
+docker exec -it ollama-gpu ollama ps
+```
+
+#### 方案 4：生产级部署（带 Nginx 反向代理）
+
+**架构**：
+
+```
+                    Internet
+                       ↓
+                 [Nginx :443]
+                       ↓
+              [Ollama :11434]
+                       ↓
+              [模型存储卷]
+```
+
+**`docker-compose.prod.yml`**：
+
+```yaml
+version: '3.8'
+
+services:
+  # Nginx 反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: ollama-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - ollama
+    networks:
+      - ai_network
+
+  # Ollama 服务
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-prod
+    restart: unless-stopped
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=https://your-domain.com
+    volumes:
+      - ollama_prod_data:/root/.ollama
+    networks:
+      - ai_network
+    # 不对外暴露端口，只通过 Nginx 访问
+    expose:
+      - "11434"
+
+  # Prometheus 监控（可选）
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ollama-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - ai_network
+
+volumes:
+  ollama_prod_data:
+    driver: local
+  nginx_logs:
+    driver: local
+  prometheus_data:
+    driver: local
+
+networks:
+  ai_network:
+    driver: bridge
+```
+
+**Nginx 配置** (`nginx/nginx.conf`):
+
+```nginx
+events {
+    worker_connections 1024;
+}
+
+http {
+    upstream ollama_backend {
+        server ollama:11434;
+    }
+
+    # 限流配置
+    limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
+
+    server {
+        listen 80;
+        server_name your-domain.com;
+        return 301 https://$server_name$request_uri;
+    }
+
+    server {
+        listen 443 ssl http2;
+        server_name your-domain.com;
+
+        ssl_certificate /etc/nginx/ssl/cert.pem;
+        ssl_certificate_key /etc/nginx/ssl/key.pem;
+        ssl_protocols TLSv1.2 TLSv1.3;
+
+        # API 端点
+        location /api/ {
+            limit_req zone=api_limit burst=20 nodelay;
+
+            proxy_pass http://ollama_backend/api/;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            # 超时配置（流式响应）
+            proxy_read_timeout 3600s;
+            proxy_send_timeout 3600s;
+            chunked_transfer_encoding on;
+        }
+
+        # 健康检查
+        location /health {
+            proxy_pass http://ollama_backend/;
+        }
+    }
+}
+```
+
+**Prometheus 配置** (`prometheus/prometheus.yml`):
+
+```yaml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'ollama'
+    static_configs:
+      - targets: ['ollama:11434']
+    metrics_path: '/metrics'
+```
+
+#### Python 客户端连接 Docker Ollama
+
+```python
+import requests
+import json
+from typing import Optional, Iterator
+
+class DockerOllamaClient:
+    """Docker Ollama 客户端"""
+
+    def __init__(
+        self,
+        base_url: str = "http://localhost:11434",
+        model: str = "llama3"
+    ):
+        self.base_url = base_url.rstrip('/')
+        self.model = model
+
+    def chat(self, prompt: str, stream: bool = False) -> str:
+        """聊天对话"""
+        response = requests.post(
+            f"{self.base_url}/api/chat",
+            json={
+                "model": self.model,
+                "messages": [{"role": "user", "content": prompt}],
+                "stream": stream
+            }
+        )
+
+        if stream:
+            return self._stream_response(response)
+        else:
+            return response.json()['message']['content']
+
+    def generate(self, prompt: str, stream: bool = False) -> str:
+        """文本生成"""
+        response = requests.post(
+            f"{self.base_url}/api/generate",
+            json={
+                "model": self.model,
+                "prompt": prompt,
+                "stream": stream
+            }
+        )
+
+        if stream:
+            return self._stream_response(response)
+        else:
+            return response.json()['response']
+
+    def _stream_response(self, response) -> Iterator[str]:
+        """处理流式响应"""
+        for line in response.iter_lines():
+            if line:
+                data = json.loads(line)
+                if 'response' in data:
+                    yield data['response']
+                elif 'message' in data:
+                    yield data['message']['content']
+
+    def list_models(self) -> list:
+        """列出所有模型"""
+        response = requests.get(f"{self.base_url}/api/tags")
+        return response.json()['models']
+
+    def pull_model(self, model: str) -> dict:
+        """拉取模型"""
+        response = requests.post(
+            f"{self.base_url}/api/pull",
+            json={"name": model},
+            stream=True
+        )
+
+        for line in response.iter_lines():
+            if line:
+                data = json.loads(line)
+                print(f"Downloading: {data.get('completed', 0)}/{data.get('total', 0)}")
+
+        return {"status": "success"}
+
+# 使用示例
+if __name__ == "__main__":
+    # 初始化客户端
+    client = DockerOllamaClient(
+        base_url="http://localhost:11434",
+        model="llama3"
+    )
+
+    # 列出模型
+    print("可用模型：", client.list_models())
+
+    # 聊天
+    response = client.chat("解释什么是深度学习")
+    print("回复：", response)
+
+    # 流式生成
+    for chunk in client.generate("写一首关于AI的诗", stream=True):
+        print(chunk, end="", flush=True)
+```
+
+#### LangChain 集成 Docker Ollama
+
+```python
+from langchain_community.llms import Ollama
+from langchain_community.embeddings import OllamaEmbeddings
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
+
+# 初始化 LLM
+llm = Ollama(
+    base_url="http://localhost:11434",  # Docker Ollama 地址
+    model="llama3",
+    temperature=0.7
+)
+
+# 初始化 Embeddings
+embeddings = OllamaEmbeddings(
+    base_url="http://localhost:11434",
+    model="llama3"
+)
+
+# 创建对话链
+memory = ConversationBufferMemory()
+conversation = ConversationChain(
+    llm=llm,
+    memory=memory,
+    verbose=True
+)
+
+# 使用
+response = conversation.predict(input="你好，我是小明")
+print(response)
+
+response = conversation.predict(input="我叫什么名字？")
+print(response)  # 应该记得"小明"
+```
+
+#### Moltbot 集成 Docker Ollama
+
+```python
+from moltbot import Agent
+from moltbot.llm import OllamaLLM
+
+# 使用 Docker Ollama
+llm = OllamaLLM(
+    base_url="http://localhost:11434",
+    model="llama3"
+)
+
+# 创建 Agent
+agent = Agent(
+    name="本地助手",
+    llm=llm,
+    instructions="你是一个友好的AI助手"
+)
+
+# 对话
+response = agent.chat("你好")
+print(response)
+```
+
+#### 性能优化建议
+
+**1. 模型量化（节省显存）**：
+
+```bash
+# 拉取量化版本（4-bit）
+ollama pull llama3:8b-q4_0  # 4-bit 量化
+ollama pull llama3:8b-q8_0  # 8-bit 量化
+
+# 对比显存占用
+# llama3:8b         - 约 6GB
+# llama3:8b-q4_0    - 约 4GB
+# llama3:8b-q8_0    - 约 5GB
+```
+
+**2. 并发处理**：
+
+```yaml
+# docker-compose.scale.yml
+services:
+  ollama:
+    image: ollama/ollama:latest
+    deploy:
+      replicas: 3  # 启动 3 个实例
+    # ... 其他配置
+```
+
+**3. 缓存配置**：
+
+```bash
+# 设置环境变量
+OLLAMA_NUM_PARALLEL=4  # 并发请求数
+OLLAMA_MAX_QUEUE=100   # 最大队列长度
+OLLAMA_LOAD_TIMEOUT=5m  # 模型加载超时
+```
+
+**4. 监控和日志**：
+
+```bash
+# 查看 Ollama 统计信息
+curl http://localhost:11434/api/tags
+
+# 查看运行中的模型
+docker exec ollama ollama ps
+
+# 查看日志
+docker logs -f ollama
+```
+
+### RAGFlow：企业级 RAG 平台
+
+**RAGFlow** 是一个基于深度文档理解的开源 RAG（检索增强生成）引擎，由 infiniflow/ragflow 开发。
+
+#### 核心特性
+
+```
+┌─────────────────────────────────────────────┐
+│          RAGFlow 核心特性                     │
+├─────────────────────────────────────────────┤
+│                                             │
+│  📚 智能文档解析                              │
+│  - 支持复杂 PDF 表格解析                     │
+│  - 多模态文档理解                            │
+│  - OCR 文字识别                              │
+│  - 自动文档分块                              │
+│                                             │
+│  🎯 高质量检索                                │
+│  - 混合检索（向量+关键词）                   │
+│  - 重排序优化                                │
+│  - 上下文智能召回                            │
+│  - 多路召回融合                              │
+│                                             │
+│  🤖 多模型支持                                │
+│  - OpenAI GPT系列                            │
+│  - Claude 系列                               │
+│  - 本地模型（Ollama）                        │
+│  - 国产模型（通义千问、DeepSeek）             │
+│                                             │
+│  🔄 工作流编排                                │
+│  - 可视化流程设计                            │
+│  - 自定义处理节点                            │
+│  - API 集成                                  │
+│                                             │
+│  📊 企业级特性                                │
+│  - 多租户支持                                │
+│  - 权限管理                                  │
+│  - 审计日志                                  │
+│  - API 限流                                  │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+#### RAGFlow vs 其他 RAG 框架
+
+| 特性 | RAGFlow | LangChain | LlamaIndex | Dify |
+|------|---------|-----------|------------|------|
+| **文档解析** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **部署难度** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **可视化** | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **中文支持** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **本地模型** | ✅ | ✅ | ✅ | ✅ |
+| **开源免费** | ✅ | ✅ | ✅ | ✅ |
+| **学习曲线** | 中等 | 较陡 | 较陡 | 平缓 |
+
+**RAGFlow 最适合**：
+- 🎯 需要处理大量复杂文档（PDF、表格等）
+- 🎯 需要高质量检索和问答
+- 🎯 企业级知识库系统
+- 🎯 需要可视化配置界面
+
+#### Docker 快速部署
+
+**1. 基础部署**：
+
+```bash
+# 克隆仓库
+git clone https://github.com/infiniflow/ragflow.git
+cd ragflow/docker
+
+# 启动服务
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f
+
+# 访问 Web 界面
+# 浏览器打开：http://localhost:80
+# 默认账号：admin / admin
+```
+
+**2. 完整部署配置**：
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: ragflow-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ragflow
+      MYSQL_USER: ragflow
+      MYSQL_PASSWORD: ragflow
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ragflow_network
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: ragflow-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - ragflow_network
+
+  # Elasticsearch（可选，用于全文检索）
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: ragflow-es
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms2g -Xmx2g
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - ragflow_network
+
+  # MinIO（对象存储）
+  minio:
+    image: minio/minio:latest
+    container_name: ragflow-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    networks:
+      - ragflow_network
+    command: server /data --console-address ":9001"
+
+  # RAGFlow 主服务
+  ragflow:
+    image: infiniflow/ragflow:latest
+    container_name: ragflow-server
+    restart: unless-stopped
+    depends_on:
+      - mysql
+      - redis
+      - minio
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=ragflow
+      - MYSQL_PASSWORD=ragflow
+      - MYSQL_DATABASE=ragflow
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - ES_ENDPOINT=http://elasticsearch:9200
+    volumes:
+      - ragflow_data:/ragflow/data
+    networks:
+      - ragflow_network
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  es_data:
+    driver: local
+  minio_data:
+    driver: local
+  ragflow_data:
+    driver: local
+
+networks:
+  ragflow_network:
+    driver: bridge
+```
+
+**3. 使用 Ollama 本地模型**：
+
+```yaml
+# 修改 ragflow 服务的环境变量
+  ragflow:
+    image: infiniflow/ragflow:latest
+    environment:
+      # ... 其他配置
+      - LLM_TYPE=ollama  # 使用 Ollama
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - EMBEDDING_MODEL=ollama:llama3
+      - LLM_MODEL=ollama:llama3
+    depends_on:
+      - ollama  # 添加 Ollama 服务依赖
+
+  # 添加 Ollama 服务
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ragflow-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - ragflow_network
+
+volumes:
+  ollama_data:
+    driver: local
+```
+
+#### 使用指南
+
+**1. 创建知识库**：
+
+```bash
+# 访问 Web 界面：http://localhost:80
+# 登录：admin / admin
+
+# 步骤：
+# 1. 点击"知识库" → "创建知识库"
+# 2. 上传文档（PDF、Word、TXT 等）
+# 3. 等待文档解析和向量化
+# 4. 测试检索效果
+```
+
+**2. API 使用**：
+
+```python
+import requests
+import json
+
+RAGFLOW_API_URL = "http://localhost:80/api/v1"
+
+class RAGFlowClient:
+    """RAGFlow 客户端"""
+
+    def __init__(self, base_url: str = RAGFLOW_API_URL):
+        self.base_url = base_url
+        self.token = None
+
+    def login(self, username: str, password: str):
+        """登录"""
+        response = requests.post(
+            f"{self.base_url}/login",
+            json={"username": username, "password": password}
+        )
+        self.token = response.json()['token']
+        return self.token
+
+    def create_dataset(self, name: str, description: str = ""):
+        """创建数据集"""
+        headers = {"Authorization": f"Bearer {self.token}"}
+        response = requests.post(
+            f"{self.base_url}/datasets",
+            headers=headers,
+            json={"name": name, "description": description}
+        )
+        return response.json()
+
+    def upload_document(self, dataset_id: str, file_path: str):
+        """上传文档"""
+        headers = {"Authorization": f"Bearer {self.token}"}
+        with open(file_path, 'rb') as f:
+            files = {'file': f}
+            response = requests.post(
+                f"{self.base_url}/datasets/{dataset_id}/documents",
+                headers=headers,
+                files=files
+            )
+        return response.json()
+
+    def search(self, dataset_id: str, query: str, top_k: int = 5):
+        """搜索文档"""
+        headers = {"Authorization": f"Bearer {self.token}"}
+        response = requests.post(
+            f"{self.base_url}/datasets/{dataset_id}/search",
+            headers=headers,
+            json={"query": query, "top_k": top_k}
+        )
+        return response.json()
+
+    def chat(self, dataset_id: str, question: str):
+        """基于知识库问答"""
+        headers = {"Authorization": f"Bearer {self.token}"}
+        response = requests.post(
+            f"{self.base_url}/datasets/{dataset_id}/chat",
+            headers=headers,
+            json={"question": question}
+        )
+        return response.json()
+
+# 使用示例
+if __name__ == "__main__":
+    # 初始化客户端
+    client = RAGFlowClient()
+
+    # 登录
+    client.login("admin", "admin")
+
+    # 创建数据集
+    dataset = client.create_dataset(
+        name="产品文档",
+        description="公司产品使用手册"
+    )
+    dataset_id = dataset['id']
+
+    # 上传文档
+    client.upload_document(dataset_id, "manual.pdf")
+
+    # 搜索
+    results = client.search(dataset_id, "如何安装？")
+    print("搜索结果：", results)
+
+    # 问答
+    answer = client.chat(dataset_id, "产品支持哪些操作系统？")
+    print("回答：", answer['answer'])
+```
+
+**3. 集成到 FastAPI**：
+
+```python
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import requests
+
+app = FastAPI()
+
+class ChatRequest(BaseModel):
+    question: str
+
+class ChatResponse(BaseModel):
+    answer: str
+    sources: list
+
+@app.post("/api/chat", response_model=ChatResponse)
+async def chat_with_ragflow(request: ChatRequest):
+    """使用 RAGFlow 进行问答"""
+
+    # 调用 RAGFlow API
+    ragflow_response = requests.post(
+        "http://ragflow:80/api/v1/datasets/1/chat",
+        json={"question": request.question},
+        headers={"Authorization": "Bearer YOUR_TOKEN"}
+    )
+
+    if ragflow_response.status_code != 200:
+        raise HTTPException(status_code=500, detail="RAGFlow API error")
+
+    data = ragflow_response.json()
+
+    return ChatResponse(
+        answer=data['answer'],
+        sources=data.get('sources', [])
+    )
+```
+
+#### 高级配置
+
+**1. 自定义解析器**：
+
+```python
+# RAGFlow 支持自定义文档解析器
+# 通过配置文件指定解析规则
+
+{
+  "parsers": {
+    "pdf": {
+      "extract_tables": true,
+      "ocr_enabled": true,
+      "layout_analysis": true
+    },
+    "docx": {
+      "extract_images": true,
+      "preserve_format": true
+    }
+  }
+}
+```
+
+**2. 检索优化**：
+
+```yaml
+# 高级检索配置
+retrieval:
+  method: "hybrid"  # 混合检索：向量 + 关键词
+  vector_similarity_weight: 0.7  # 向量相似度权重
+  keyword_weight: 0.3  # 关键词权重
+  rerank_enabled: true  # 启用重排序
+  top_k: 20  # 初步召回数量
+  final_top_k: 5  # 最终返回数量
+```
+
+**3. 性能优化**：
+
+```bash
+# 增加并发处理
+docker-compose up -d --scale ragflow=3
+
+# 调整 Elasticsearch 内存
+ES_JAVA_OPTS=-Xms4g -Xmx4g
+
+# 启用缓存
+REDIS_CACHE_TTL=3600
+```
+
+#### 实战案例
+
+**企业知识库系统架构**：
+
+```
+┌─────────────────────────────────────────────────┐
+│           企业知识库系统架构                      │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│  ┌───────────┐      ┌───────────┐              │
+│  │   用户     │ ←→  │  Web UI   │              │
+│  └───────────┘      └─────┬─────┘              │
+│                           ↓                     │
+│  ┌─────────────────────────────────────────┐   │
+│  │         RAGFlow 核心服务                  │   │
+│  │  ┌───────────┐  ┌───────────┐           │   │
+│  │  │ 文档解析   │  │  检索引擎  │           │   │
+│  │  └───────────┘  └─────┬─────┘           │   │
+│  │                       ↓                  │   │
+│  │  ┌──────────────────────────────────┐    │   │
+│  │  │      LLM (GPT-4/Ollama)          │    │   │
+│  │  └──────────────────────────────────┘    │   │
+│  └─────────────────────────────────────────┘   │
+│           ↓          ↓          ↓              │
+│  ┌──────────┐  ┌─────────┐  ┌──────────┐      │
+│  │  MySQL   │  │  Redis  │  │ MinIO    │      │
+│  └──────────┘  └─────────┘  └──────────┘      │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
 ---
 
-## 7.4 Moltbot框架
+## Moltbot框架 {#moltbot框架}
 
-### 7.4.1 什么是Moltbot？
+### 什么是Moltbot？
 
 **Moltbot**（原名ClawdBot）是一个轻量级、易用的AI Agent开发框架，专门为快速构建智能助手而设计。
 
@@ -493,7 +1466,7 @@ Claude 3 Sonnet：
 └─────────────────────────────────────────────┘
 ```
 
-### 7.4.2 为什么选择Moltbot？
+### 为什么选择Moltbot？
 
 | 特性 | Moltbot | LangChain | AutoGen |
 |------|---------|-----------|---------|
@@ -510,7 +1483,7 @@ Claude 3 Sonnet：
 - 🎯 学习Agent开发
 - 🎯 团队协作工具
 
-### 7.4.3 安装和配置
+### 安装和配置
 
 ```bash
 # 安装Moltbot
@@ -547,7 +1520,7 @@ class MoltbotConfig:
     CACHE_TTL = int(os.getenv("CACHE_TTL", "3600"))
 ```
 
-### 7.4.4 快速开始
+### 快速开始
 
 #### 创建第一个Moltbot Agent
 
@@ -617,7 +1590,7 @@ response = agent.chat("计算123 * 456")
 # Agent会自动调用calculator工具
 ```
 
-### 7.4.5 高级功能
+### 高级功能
 
 #### 1. 记忆管理
 
@@ -745,7 +1718,7 @@ agent.add_tools(db_plugin.to_tools())
 response = agent.chat("查询用户表有多少条记录")
 ```
 
-### 7.4.6 实战案例
+### 实战案例
 
 #### 案例1：智能客服系统
 
@@ -851,7 +1824,7 @@ assistant = CodeAssistant(llm)
 print(assistant.chat("写一个Python快排并执行测试"))
 ```
 
-### 7.4.7 Moltbot vs LangChain
+### Moltbot vs LangChain
 
 **何时选择Moltbot**：
 ```python
@@ -890,7 +1863,7 @@ agent = initialize_agent(
 response = agent.run("问题")
 ```
 
-### 7.4.8 最佳实践
+### 最佳实践
 
 ```python
 # 1. 清晰的指令
@@ -934,7 +1907,7 @@ agent = Agent(name="助手", llm=llm, cost_tracker=tracker)
 print(f"总成本：${tracker.total_cost():.4f}")
 ```
 
-### 7.4.9 性能优化
+### 性能优化
 
 ```python
 # 1. 启用缓存
@@ -952,11 +1925,2365 @@ for chunk in agent.stream_chat("长问题"):
     print(chunk, end="", flush=True)
 ```
 
+### 完整部署指南
+
+本节将带你从零开始，完成 Moltbot 应用的完整部署流程。
+
+#### 部署架构概览
+
+```
+┌──────────────────────────────────────────────────────────┐
+│              Moltbot 应用部署架构                          │
+├──────────────────────────────────────────────────────────┤
+│                                                           │
+│  ┌──────────────┐      ┌──────────────┐                 │
+│  │   客户端      │ ←→  │  API Gateway  │                 │
+│  │ (Web/Mobile) │      │   (Nginx)    │                 │
+│  └──────────────┘      └──────┬───────┘                 │
+│                                ↓                          │
+│  ┌─────────────────────────────────────────────┐        │
+│  │         应用服务器 (Gunicorn + Uvicorn)      │        │
+│  │  ┌──────────────────────────────────────┐  │        │
+│  │  │   Moltbot Agent 应用                 │  │        │
+│  │  │  - FastAPI REST API                  │  │        │
+│  │  │  - WebSocket (实时通信)              │  │        │
+│  │  │  - 任务队列 (Celery/Redis)           │  │        │
+│  │  └──────────────────────────────────────┘  │        │
+│  └─────────────────────────────────────────────┘        │
+│           ↓                ↓             ↓              │
+│  ┌──────────────┐  ┌──────────┐  ┌─────────────┐      │
+│  │   Redis      │  │ PostgreSQL│  │ 向量数据库   │      │
+│  │  (缓存/队列)  │  │  (数据)   │  │  (Chroma)   │      │
+│  └──────────────┘  └──────────┘  └─────────────┘      │
+│                                                           │
+│  ┌─────────────────────────────────────────────┐        │
+│  │           监控和日志                          │        │
+│  │  - Prometheus (指标)                         │        │
+│  │  - Grafana (可视化)                          │        │
+│  │  - ELK Stack (日志)                          │        │
+│  └─────────────────────────────────────────────┘        │
+│                                                           │
+└──────────────────────────────────────────────────────────┘
+```
+
+#### 本地开发环境搭建
+
+**项目结构**：
+
+```bash
+moltbot-production-app/
+├── app/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI 应用入口
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   ├── base.py          # Agent 基类
+│   │   ├── customer_service.py
+│   │   └── code_assistant.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── routes.py        # API 路由
+│   │   └── schemas.py       # Pydantic 模型
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py        # 配置管理
+│   │   ├── security.py      # 安全认证
+│   │   └── logger.py        # 日志配置
+│   └── utils/
+│       ├── __init__.py
+│       └── helpers.py
+├── tests/
+│   ├── test_agents.py
+│   └── test_api.py
+├── scripts/
+│   ├── start.sh             # 启动脚本
+│   └── deploy.sh            # 部署脚本
+├── deployments/
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── kubernetes/          # K8s 配置
+├── .env.example
+├── requirements.txt
+├── pyproject.toml
+└── README.md
+```
+
+**配置文件 (`app/core/config.py`)**：
+
+```python
+from pydantic_settings import BaseSettings
+from typing import Optional
+import os
+
+class Settings(BaseSettings):
+    """应用配置"""
+
+    # 应用信息
+    APP_NAME: str = "Moltbot Production App"
+    APP_VERSION: str = "1.0.0"
+    DEBUG: bool = False
+
+    # API 配置
+    API_HOST: str = "0.0.0.0"
+    API_PORT: int = 8000
+    API_PREFIX: str = "/api/v1"
+
+    # CORS
+    CORS_ORIGINS: list = ["http://localhost:3000", "https://yourdomain.com"]
+
+    # LLM 配置
+    LLM_PROVIDER: str = "openai"  # openai, claude, ollama
+    OPENAI_API_KEY: str
+    ANTHROPIC_API_KEY: Optional[str] = None
+    MODEL_NAME: str = "gpt-4-turbo-preview"
+    TEMPERATURE: float = 0.7
+    MAX_TOKENS: int = 2000
+
+    # 数据库配置
+    DATABASE_URL: str = "postgresql://user:password@localhost/moltbot"
+    REDIS_URL: str = "redis://localhost:6379/0"
+
+    # 向量数据库
+    CHROMA_PERSIST_DIR: str = "./data/chroma"
+
+    # 安全配置
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ALGORITHM: str = "HS256"
+
+    # 任务队列
+    CELERY_BROKER_URL: str = "redis://localhost:6379/1"
+    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"
+
+    # 监控配置
+    ENABLE_METRICS: bool = True
+    SENTRY_DSN: Optional[str] = None
+
+    # 限流配置
+    RATE_LIMIT_PER_MINUTE: int = 60
+
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+settings = Settings()
+```
+
+**主应用 (`app/main.py`)**：
+
+```python
+from fastapi import FastAPI, Request, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import JSONResponse
+from contextlib import asynccontextmanager
+import logging
+from prometheus_client import make_asgi_app
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+from app.core.config import settings
+from app.core.logger import setup_logger
+from app.api.routes import api_router
+from app.agents.customer_service import customer_service_agent
+
+# 日志配置
+logger = setup_logger(__name__)
+
+# 限流器
+limiter = Limiter(key_func=get_remote_address)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """应用生命周期管理"""
+    logger.info("🚀 应用启动中...")
+
+    # 初始化 Agent
+    logger.info("加载 Moltbot Agents...")
+    await customer_service_agent.initialize()
+
+    logger.info("✅ 应用启动完成")
+    yield
+
+    # 清理资源
+    logger.info("🛑 应用关闭中...")
+    await customer_service_agent.cleanup()
+    logger.info("✅ 应用已关闭")
+
+# 创建 FastAPI 应用
+app = FastAPI(
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
+    debug=settings.DEBUG,
+    lifespan=lifespan
+)
+
+# CORS 中间件
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Gzip 压缩
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+# 限流器
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, lambda req, exc: JSONResponse(
+    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+    content={"detail": "请求过于频繁，请稍后再试"}
+))
+
+# Prometheus 指标
+metrics_app = make_asgi_app()
+app.mount("/metrics", metrics_app)
+
+# 注册路由
+app.include_router(api_router, prefix=settings.API_PREFIX)
+
+# 健康检查
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "version": settings.APP_VERSION,
+        "agents": {
+            "customer_service": "ready"
+        }
+    }
+
+# 根路径
+@app.get("/")
+async def root():
+    return {
+        "message": "Moltbot Production API",
+        "version": settings.APP_VERSION,
+        "docs": "/docs"
+    }
+
+# 全局异常处理
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"全局异常: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": "内部服务器错误"}
+    )
+```
+
+**API 路由 (`app/api/routes.py`)**：
+
+```python
+from fastapi import APIRouter, Depends, HTTPException, status
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from typing import List
+
+from app.api.schemas import (
+    ChatRequest,
+    ChatResponse,
+    AgentInfo,
+    HealthResponse
+)
+from app.agents.base import get_agent
+from app.agents.customer_service import customer_service_agent
+from app.core.security import get_current_user
+from app.core.logger import logger
+
+router = APIRouter()
+limiter = Limiter(key_func=get_remote_address)
+
+@router.post("/chat", response_model=ChatResponse)
+@limiter.limit("60/minute")
+async def chat(
+    request: ChatRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    与 Agent 对话
+
+    - **agent_id**: Agent ID
+    - **message**: 用户消息
+    - **session_id**: 会话 ID（可选）
+    """
+    try:
+        logger.info(f"用户 {current_user['username']} 发送消息到 {request.agent_id}")
+
+        # 获取对应的 Agent
+        agent = get_agent(request.agent_id)
+
+        # 执行对话
+        response = await agent.chat_async(
+            message=request.message,
+            session_id=request.session_id,
+            user_id=current_user["user_id"]
+        )
+
+        return ChatResponse(
+            agent_id=request.agent_id,
+            response=response["message"],
+            session_id=response["session_id"],
+            timestamp=response["timestamp"]
+        )
+
+    except Exception as e:
+        logger.error(f"聊天错误: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="处理请求时出错"
+        )
+
+@router.get("/agents", response_model=List[AgentInfo])
+async def list_agents():
+    """获取可用的 Agent 列表"""
+    return [
+        {
+            "id": "customer_service",
+            "name": "智能客服",
+            "description": "专业的客户服务助手",
+            "capabilities": ["订单查询", "退款处理", "产品咨询"]
+        },
+        {
+            "id": "code_assistant",
+            "name": "代码助手",
+            "description": "编程开发助手",
+            "capabilities": ["代码生成", "Bug修复", "代码优化"]
+        }
+    ]
+
+@router.get("/agents/{agent_id}", response_model=AgentInfo)
+async def get_agent_info(agent_id: str):
+    """获取 Agent 详细信息"""
+    agents = {
+        "customer_service": {
+            "id": "customer_service",
+            "name": "智能客服",
+            "description": "专业的客户服务助手",
+            "capabilities": ["订单查询", "退款处理", "产品咨询"]
+        },
+        "code_assistant": {
+            "id": "code_assistant",
+            "name": "代码助手",
+            "description": "编程开发助手",
+            "capabilities": ["代码生成", "Bug修复", "代码优化"]
+        }
+    }
+
+    if agent_id not in agents:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Agent {agent_id} 不存在"
+        )
+
+    return agents[agent_id]
+```
+
+**Pydantic 模型 (`app/api/schemas.py`)**：
+
+```python
+from pydantic import BaseModel, Field
+from typing import Optional, List
+from datetime import datetime
+
+class ChatRequest(BaseModel):
+    """聊天请求"""
+    agent_id: str = Field(..., description="Agent ID")
+    message: str = Field(..., min_length=1, max_length=2000, description="用户消息")
+    session_id: Optional[str] = Field(None, description="会话 ID")
+
+class ChatResponse(BaseModel):
+    """聊天响应"""
+    agent_id: str
+    response: str
+    session_id: str
+    timestamp: datetime
+
+class AgentInfo(BaseModel):
+    """Agent 信息"""
+    id: str
+    name: str
+    description: str
+    capabilities: List[str]
+
+class HealthResponse(BaseModel):
+    """健康检查响应"""
+    status: str
+    version: str
+    agents: dict
+```
+
+#### Docker 容器化部署
+
+**Dockerfile**：
+
+```dockerfile
+# 多阶段构建 - 生产优化
+FROM python:3.11-slim as builder
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装系统依赖
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 复制依赖文件
+COPY requirements.txt .
+
+# 安装 Python 依赖
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# 生产镜像
+FROM python:3.11-slim
+
+# 创建非 root 用户
+RUN useradd -m -u 1000 appuser
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装运行时依赖
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 从 builder 复制虚拟环境
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# 复制应用代码
+COPY --chown=appuser:appuser . .
+
+# 切换到非 root 用户
+USER appuser
+
+# 暴露端口
+EXPOSE 8000
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# 启动命令
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+**docker-compose.yml（本地开发）**：
+
+```yaml
+version: '3.8'
+
+services:
+  # FastAPI 应用
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: moltbot-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=${DEBUG:-False}
+      - DATABASE_URL=postgresql://moltbot:${POSTGRES_PASSWORD}@postgres:5432/moltbot
+      - REDIS_URL=redis://redis:6379/0
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./app:/app/app
+      - ./data:/app/data
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    networks:
+      - moltbot-network
+
+  # PostgreSQL 数据库
+  postgres:
+    image: postgres:16-alpine
+    container_name: moltbot-postgres
+    environment:
+      - POSTGRES_DB=moltbot
+      - POSTGRES_USER=moltbot
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - moltbot-network
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: moltbot-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - moltbot-network
+
+  # Prometheus 监控
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: moltbot-prometheus
+    volumes:
+      - ./deployments/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    networks:
+      - moltbot-network
+
+  # Grafana 可视化
+  grafana:
+    image: grafana/grafana:latest
+    container_name: moltbot-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./deployments/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - moltbot-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  moltbot-network:
+    driver: bridge
+```
+
+**Prometheus 配置 (`deployments/prometheus.yml`)**：
+
+```yaml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'moltbot-api'
+    static_configs:
+      - targets: ['api:8000']
+    metrics_path: '/metrics'
+```
+
+**启动脚本 (`scripts/start.sh`)**：
+
+```bash
+#!/bin/bash
+
+set -e
+
+echo "🚀 启动 Moltbot 应用..."
+
+# 检查环境变量
+if [ ! -f .env ]; then
+    echo "❌ .env 文件不存在"
+    echo "请复制 .env.example 到 .env 并配置环境变量"
+    exit 1
+fi
+
+# 构建并启动
+echo "📦 构建 Docker 镜像..."
+docker-compose build
+
+echo "🔄 启动服务..."
+docker-compose up -d
+
+echo "⏳ 等待服务启动..."
+sleep 10
+
+# 健康检查
+echo "🔍 健康检查..."
+if curl -f http://localhost:8000/health; then
+    echo "✅ 应用启动成功！"
+    echo ""
+    echo "📊 服务地址："
+    echo "  - API: http://localhost:8000"
+    echo "  - 文档: http://localhost:8000/docs"
+    echo "  - Prometheus: http://localhost:9090"
+    echo "  - Grafana: http://localhost:3001"
+else
+    echo "❌ 应用启动失败"
+    docker-compose logs
+    exit 1
+fi
+```
+
+#### 云服务部署
+
+本节介绍如何在三大云平台部署 Moltbot 应用。
+
+##### 选项 1：AWS 部署
+
+**架构**：
+- EC2 / ECS（应用服务器）
+- RDS PostgreSQL（数据库）
+- ElastiCache Redis（缓存）
+- Application Load Balancer（负载均衡）
+- CloudWatch（监控）
+
+**使用 ECS Fargate 部署**：
+
+```yaml
+# aws/ecs-task-definition.json
+{
+  "family": "moltbot-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "2048",
+  "memory": "4096",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "moltbot-api",
+      "image": "YOUR_ECR_REPO/moltbot:latest",
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "DATABASE_URL",
+          "value": "postgresql://user:pass@YOUR_RDS_ENDPOINT/moltbot"
+        },
+        {
+          "name": "REDIS_URL",
+          "value": "redis://YOUR_ELASTICACHE_ENDPOINT:6379"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "OPENAI_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:region:account:secret:openai-key"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/moltbot",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      ],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3
+      }
+    }
+  ]
+}
+```
+
+**部署脚本 (`aws/deploy.sh`)**：
+
+```bash
+#!/bin/bash
+
+set -e
+
+AWS_REGION="us-east-1"
+ECR_REPO="YOUR_ECR_REPO"
+ECS_CLUSTER="moltbot-cluster"
+ECS_SERVICE="moltbot-service"
+
+echo "🔨 构建 Docker 镜像..."
+docker build -t moltbot .
+
+echo "🏷️ 打标签..."
+docker tag moltbot:latest $ECR_REPO:latest
+
+echo "🔐 登录 AWS ECR..."
+aws ecr get-login-password --region $AWS_REGION | \
+  docker login --username AWS --password-stdin $ECR_REPO
+
+echo "📤 推送镜像..."
+docker push $ECR_REPO:latest
+
+echo "🔄 更新 ECS 服务..."
+aws ecs update-service \
+  --cluster $ECS_CLUSTER \
+  --service $ECS_SERVICE \
+  --force-new-deployment \
+  --region $AWS_REGION
+
+echo "⏳ 等待部署完成..."
+aws ecs wait services-stable \
+  --cluster $ECS_CLUSTER \
+  --services $ECS_SERVICE \
+  --region $AWS_REGION
+
+echo "✅ 部署完成！"
+```
+
+##### 选项 2：Google Cloud Platform (GCP)
+
+**使用 Cloud Run**：
+
+```yaml
+# gcp/cloudbuild.yaml
+steps:
+  # 构建 Docker 镜像
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/moltbot:latest', '.']
+
+  # 推送到 Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/moltbot:latest']
+
+  # 部署到 Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'moltbot'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/moltbot:latest'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - 'us-central1'
+      - '--allow-unauthenticated'
+      - '--memory'
+      - '4Gi'
+      - '--cpu'
+      - '2'
+      - '--set-env-vars'
+      - 'DATABASE_URL=${_DATABASE_URL},REDIS_URL=${_REDIS_URL}'
+      - '--set-secrets'
+      - 'OPENAI_API_KEY=openai-key:latest'
+```
+
+**部署命令**：
+
+```bash
+# 启用必要的 API
+gcloud services enable \
+  cloudbuild.googleapis.com \
+  run.googleapis.com \
+  secretmanager.googleapis.com
+
+# 创建 Secret
+echo "your-api-key" | \
+  gcloud secrets create openai-key --data-file=-
+
+# 触发构建
+gcloud builds submit --config gcp/cloudbuild.yaml
+```
+
+##### 选项 3：Azure Container Instances
+
+```bash
+# 创建资源组
+az group create --name moltbot-rg --location eastus
+
+# 创建容器注册表
+az acr create --resource-group moltbot-rg --name moltbotRegistry --sku Basic
+
+# 登录 ACR
+az acr login --name moltbotRegistry
+
+# 构建并推送
+az acr build --registry moltbotRegistry --image moltbot:latest .
+
+# 部署到 Container Instances
+az container create \
+  --resource-group moltbot-rg \
+  --name moltbot-api \
+  --image moltbotRegistry.azurecr.io/moltbot:latest \
+  --cpu 2 \
+  --memory 4 \
+  --ports 8000 \
+  --environment-variables \
+    DATABASE_URL=$DATABASE_URL \
+    REDIS_URL=$REDIS_URL \
+  --secure-environment-variables \
+    OPENAI_API_KEY=$OPENAI_API_KEY
+```
+
+#### CI/CD 自动化
+
+**GitHub Actions 工作流** (`.github/workflows/deploy.yml`):
+
+```yaml
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # 测试
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run tests
+        run: |
+          pytest tests/ --cov=app --cov-report=xml
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+
+  # 构建和推送镜像
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=semver,pattern={{version}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # 部署到生产环境
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to AWS ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: aws/ecs-task-definition.json
+          service: moltbot-service
+          cluster: moltbot-cluster
+          wait-for-service-stability: true
+
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: '部署到生产环境完成！'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()
+```
+
+**GitLab CI/CD** (`.gitlab-ci.yml`):
+
+```yaml
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
+# 测试
+test:
+  stage: test
+  image: python:3.11
+  script:
+    - pip install -r requirements.txt
+    - pip install pytest
+    - pytest tests/
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+
+# 构建
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $DOCKER_IMAGE .
+    - docker push $DOCKER_IMAGE
+
+# 部署到生产
+deploy:
+  stage: deploy
+  image: amazon/aws-cli
+  script:
+    - aws ecs update-service --cluster moltbot --service moltbot-api --force-new-deployment
+  only:
+    - main
+```
+
+#### 监控和日志
+
+**日志配置 (`app/core/logger.py`)**：
+
+```python
+import logging
+import sys
+from pathlib import Path
+from loguru import logger as loguru_logger
+
+class InterceptHandler(logging.Handler):
+    """将标准 logging 转发到 loguru"""
+
+    def emit(self, record):
+        try:
+            level = loguru_logger.level(record.levelname).name
+        except ValueError:
+            level = record.levelno
+
+        frame, depth = logging.currentframe(), 2
+        while frame.f_code.co_filename == logging.__file__:
+            frame = frame.f_back
+            depth += 1
+
+        loguru_logger.opt(depth=depth, exception=record.exc_info).log(
+            level, record.getMessage()
+        )
+
+def setup_logger(name: str = "moltbot"):
+    """配置日志系统"""
+
+    # 移除默认 handler
+    loguru_logger.remove()
+
+    # 控制台输出（带颜色）
+    loguru_logger.add(
+        sys.stdout,
+        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+        level="INFO",
+        colorize=True
+    )
+
+    # 文件输出（按日期轮转）
+    loguru_logger.add(
+        "logs/moltbot_{time:YYYY-MM-DD}.log",
+        rotation="00:00",  # 每天午夜轮转
+        retention="30 days",  # 保留 30 天
+        compression="zip",  # 压缩旧日志
+        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
+        level="DEBUG"
+    )
+
+    # 错误日志单独记录
+    loguru_logger.add(
+        "logs/errors.log",
+        rotation="10 MB",
+        retention="90 days",
+        level="ERROR"
+    )
+
+    # 拦截标准 logging
+    logging.basicConfig(handlers=[InterceptHandler()], level=0)
+
+    return loguru_logger
+
+logger = setup_logger()
+```
+
+**Prometheus 指标 (`app/core/metrics.py`)**：
+
+```python
+from prometheus_client import Counter, Histogram, Gauge, Info
+import time
+from functools import wraps
+
+# 定义指标
+request_count = Counter(
+    'moltbot_requests_total',
+    'Total requests',
+    ['method', 'endpoint', 'status']
+)
+
+request_duration = Histogram(
+    'moltbot_request_duration_seconds',
+    'Request duration',
+    ['method', 'endpoint']
+)
+
+agent_chat_count = Counter(
+    'moltbot_agent_chats_total',
+    'Total agent chats',
+    ['agent_id']
+)
+
+agent_chat_duration = Histogram(
+    'moltbot_agent_chat_duration_seconds',
+    'Agent chat duration',
+    ['agent_id']
+)
+
+active_sessions = Gauge(
+    'moltbot_active_sessions',
+    'Active sessions',
+    ['agent_id']
+)
+
+app_info = Info(
+    'moltbot_app',
+    'Moltbot application info'
+)
+
+def track_time(metric: Histogram, *labels):
+    """装饰器：跟踪函数执行时间"""
+    def decorator(func):
+        @wraps(func)
+        async def async_wrapper(*args, **kwargs):
+            start_time = time.time()
+            try:
+                result = await func(*args, **kwargs)
+                return result
+            finally:
+                duration = time.time() - start_time
+                metric.labels(*labels).observe(duration)
+
+        @wraps(func)
+        def sync_wrapper(*args, **kwargs):
+            start_time = time.time()
+            try:
+                result = func(*args, **kwargs)
+                return result
+            finally:
+                duration = time.time() - start_time
+                metric.labels(*labels).observe(duration)
+
+        return async_wrapper if hasattr(func, '__async__') else sync_wrapper
+    return decorator
+```
+
+**使用示例**：
+
+```python
+from app.core.metrics import agent_chat_count, agent_chat_duration, track_time
+from app.core.logger import logger
+
+class CustomerServiceAgent:
+    @track_time(agent_chat_duration, 'customer_service')
+    async def chat(self, message: str):
+        agent_chat_count.labels('customer_service').inc()
+
+        logger.info(f"处理消息: {message}")
+
+        # 业务逻辑
+        response = await self._process_message(message)
+
+        logger.info(f"响应: {response}")
+        return response
+```
+
+**Grafana 仪表板配置**：
+
+```json
+{
+  "dashboard": {
+    "title": "Moltbot 监控",
+    "panels": [
+      {
+        "title": "请求速率",
+        "targets": [
+          {
+            "expr": "rate(moltbot_requests_total[5m])"
+          }
+        ]
+      },
+      {
+        "title": "响应时间",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, moltbot_request_duration_seconds_bucket)"
+          }
+        ]
+      },
+      {
+        "title": "Agent 对话次数",
+        "targets": [
+          {
+            "expr": "sum by (agent_id) (moltbot_agent_chats_total)"
+          }
+        ]
+      },
+      {
+        "title": "活跃会话数",
+        "targets": [
+          {
+            "expr": "sum by (agent_id) (moltbot_active_sessions)"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+#### 安全最佳实践
+
+```python
+# app/core/security.py
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from datetime import datetime, timedelta
+from typing import Optional
+
+from app.core.config import settings
+
+# 密码哈希
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# JWT Bearer
+security = HTTPBearer()
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    """创建访问令牌"""
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    return encoded_jwt
+
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """验证 JWT 令牌"""
+    try:
+        payload = jwt.decode(
+            credentials.credentials,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
+        )
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="无效的认证凭据"
+            )
+        return {"username": username, "user_id": payload.get("user_id")}
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="无效的认证凭据"
+        )
+
+def get_current_user(current_user: dict = Depends(verify_token)):
+    """获取当前用户（依赖注入）"""
+    return current_user
+
+def hash_password(password: str) -> str:
+    """哈希密码"""
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """验证密码"""
+    return pwd_context.verify(plain_password, hashed_password)
+```
+
+#### 部署检查清单
+
+在部署到生产环境前，请确认以下项目：
+
+**环境配置**：
+- [ ] 所有环境变量已正确配置
+- [ ] `.env` 文件已从版本控制中排除
+- [ ] 敏感信息使用 Secret Manager 存储
+- [ ] 数据库连接字符串正确
+- [ ] API 密钥有效且有足够配额
+
+**安全检查**：
+- [ ] 启用 HTTPS（SSL 证书）
+- [ ] 配置 CORS 白名单
+- [ ] 启用速率限制
+- [ ] 实施输入验证
+- [ ] 使用强密码和 JWT
+- [ ] 定期更新依赖包
+
+**性能优化**：
+- [ ] 启用 Redis 缓存
+- [ ] 配置数据库连接池
+- [ ] 启用 Gzip 压缩
+- [ ] 使用 CDN（如需要）
+- [ ] 异步处理长时间任务
+
+**监控和日志**：
+- [ ] Prometheus 指标正常采集
+- [ ] 日志正确输出和轮转
+- [ ] 配置告警规则
+- [ ] Grafana 仪表板配置
+- [ ] Sentry 错误追踪（可选）
+
+**高可用性**：
+- [ ] 配置负载均衡
+- [ ] 数据库备份策略
+- [ ] 自动扩缩容配置
+- [ ] 健康检查端点正常
+- [ ] 优雅关闭机制
+
+**测试**：
+- [ ] 单元测试通过
+- [ ] 集成测试通过
+- [ ] 负载测试完成
+- [ ] 灾难恢复演练
+
 ---
 
-## 7.5 MCP (Model Context Protocol)
+**下一步**：在 7.5 节中，我们将学习完整的端到端实战项目，将以上所有内容整合到一起。
 
-### 7.4.1 什么是MCP？
+---
+
+### 端到端实战项目：企业级智能客服系统
+
+本节将带你从零到一完成一个完整的**企业级智能客服系统**，涵盖开发、测试、部署全流程。
+
+#### 项目概述
+
+**功能特性**：
+- 🤖 多轮对话智能客服（支持上下文记忆）
+- 📚 RAG 知识库（企业产品文档）
+- 🔍 工具调用（订单查询、退款处理、物流跟踪）
+- 💬 多渠道支持（Web、微信、API）
+- 📊 实时监控和分析
+- 🔐 企业级安全认证
+
+**技术栈**：
+- 后端：FastAPI + Moltbot + PostgreSQL + Redis
+- 前端：Vue3 + ElementPlus
+- 部署：Docker + Nginx + Cloud Run
+- 监控：Prometheus + Grafana + Sentry
+
+#### 项目初始化
+
+**创建项目**：
+
+```bash
+# 项目名称
+PROJECT_NAME="enterprise-cs-bot"
+
+# 创建项目目录
+mkdir -p $PROJECT_NAME/{app,tests,deployments,docs}
+cd $PROJECT_NAME
+
+# 初始化 Git
+git init
+
+# 创建 Python 虚拟环境
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# 创建基本文件结构
+touch requirements.txt
+touch README.md
+touch .env.example
+touch .gitignore
+touch docker-compose.yml
+```
+
+**`.gitignore`**：
+
+```gitignore
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# 环境变量
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 日志
+logs/
+*.log
+
+# 数据库
+*.db
+*.sqlite3
+
+# 向量数据库
+data/chroma/
+
+# Docker
+.dockerignore
+
+# 测试
+.pytest_cache/
+.coverage
+htmlcov/
+
+# MacOS
+.DS_Store
+```
+
+**`requirements.txt`**：
+
+```txt
+# FastAPI 核心
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# ASGI 服务器
+gunicorn==21.2.0
+
+# 安全认证
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# 数据库
+sqlalchemy==2.0.25
+asyncpg==0.29.0
+alembic==1.13.1
+
+# Redis
+redis==5.0.1
+hiredis==2.3.2
+
+# Moltbot
+moltbot==0.3.0
+
+# LangChain（可选，用于高级功能）
+langchain==0.1.0
+langchain-openai==0.0.5
+langchain-community==0.0.16
+
+# 向量数据库
+chromadb==0.4.22
+
+# 工具库
+httpx==0.26.0
+aiofiles==23.2.1
+python-dotenv==1.0.0
+
+# 任务队列
+celery==5.3.4
+
+# 监控和日志
+prometheus-client==0.19.0
+loguru==0.7.2
+sentry-sdk==1.40.0
+
+# 限流
+slowapi==0.1.9
+
+# CORS
+python-multipart==0.0.6
+
+# 测试
+pytest==7.4.4
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+httpx==0.26.0
+
+# 代码质量
+black==24.1.1
+flake8==7.0.0
+mypy==1.8.0
+```
+
+**`README.md`**：
+
+```markdown
+# 企业级智能客服系统
+
+基于 Moltbot 的企业级智能客服解决方案。
+
+## 功能特性
+
+- 🤖 多轮对话智能客服
+- 📚 RAG 知识库检索
+- 🔍 工具调用和自动化
+- 💬 多渠道接入
+- 📊 实时监控分析
+- 🔐 企业级安全
+
+## 快速开始
+
+\`\`\`bash
+# 安装依赖
+pip install -r requirements.txt
+
+# 配置环境变量
+cp .env.example .env
+# 编辑 .env 文件，填入你的配置
+
+# 启动服务
+docker-compose up -d
+
+# 访问文档
+open http://localhost:8000/docs
+\`\`\`
+
+## 项目结构
+
+\`\`\`
+├── app/                 # 应用代码
+├── tests/              # 测试代码
+├── deployments/        # 部署配置
+├── docs/              # 文档
+└── scripts/           # 脚本
+\`\`\`
+
+## 开发指南
+
+详见 [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
+
+## 部署指南
+
+详见 [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+
+## License
+
+MIT
+```
+
+#### 后端开发
+
+**配置管理** (`app/core/config.py`):
+
+```python
+from pydantic_settings import BaseSettings
+from typing import List, Optional
+import os
+
+class Settings(BaseSettings):
+    """应用配置"""
+
+    # 应用信息
+    APP_NAME: str = "Enterprise Customer Service Bot"
+    APP_VERSION: str = "1.0.0"
+    DEBUG: bool = False
+    ENVIRONMENT: str = "development"  # development, staging, production
+
+    # API 配置
+    API_HOST: str = "0.0.0.0"
+    API_PORT: int = 8000
+    API_PREFIX: str = "/api/v1"
+
+    # CORS
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "https://yourdomain.com"
+    ]
+
+    # LLM 配置
+    LLM_PROVIDER: str = "openai"
+    OPENAI_API_KEY: str
+    OPENAI_MODEL: str = "gpt-4-turbo-preview"
+    OPENAI_TEMPERATURE: float = 0.7
+    OPENAI_MAX_TOKENS: int = 2000
+
+    # 数据库配置
+    DATABASE_URL: str
+    DATABASE_POOL_SIZE: int = 20
+    DATABASE_MAX_OVERFLOW: int = 10
+
+    # Redis 配置
+    REDIS_URL: str
+    REDIS_MAX_CONNECTIONS: int = 50
+
+    # 向量数据库
+    CHROMA_PERSIST_DIR: str = "./data/chroma"
+    EMBEDDING_MODEL: str = "text-embedding-3-small"
+
+    # JWT 配置
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
+    # 文件上传
+    MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024  # 10MB
+    ALLOWED_FILE_TYPES: List[str] = [".pdf", ".txt", ".md", ".docx"]
+
+    # 限流配置
+    RATE_LIMIT_PER_MINUTE: int = 100
+    BURST_RATE_LIMIT: int = 200
+
+    # 监控配置
+    ENABLE_SENTRY: bool = True
+    SENTRY_DSN: Optional[str] = None
+    ENABLE_PROMETHEUS: bool = True
+
+    # 邮件配置（用于通知）
+    SMTP_HOST: Optional[str] = None
+    SMTP_PORT: int = 587
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+settings = Settings()
+```
+
+**数据库模型** (`app/models/models.py`):
+
+```python
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from datetime import datetime
+
+Base = declarative_base()
+
+class User(Base):
+    """用户表"""
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(50), unique=True, index=True, nullable=False)
+    email = Column(String(100), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(200), nullable=False)
+    is_active = Column(Boolean, default=True)
+    is_admin = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # 关系
+    conversations = relationship("Conversation", back_populates="user")
+
+class Conversation(Base):
+    """对话会话表"""
+    __tablename__ = "conversations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    session_id = Column(String(100), unique=True, index=True, nullable=False)
+    title = Column(String(200))
+    status = Column(String(20), default="active")  # active, closed, archived
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # 关系
+    user = relationship("User", back_populates="conversations")
+    messages = relationship("Message", back_populates="conversation")
+
+class Message(Base):
+    """消息表"""
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    conversation_id = Column(Integer, ForeignKey("conversations.id"), nullable=False)
+    role = Column(String(20), nullable=False)  # user, assistant, system
+    content = Column(Text, nullable=False)
+    metadata = Column(Text)  # JSON 字符串，存储额外信息
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # 关系
+    conversation = relationship("Conversation", back_populates="messages")
+
+class Document(Base):
+    """文档表（知识库）"""
+    __tablename__ = "documents"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(200), nullable=False)
+    content = Column(Text, nullable=False)
+    category = Column(String(50))
+    tags = Column(String(200))  # 逗号分隔的标签
+    file_path = Column(String(500))
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+```
+
+**数据库连接** (`app/core/database.py`):
+
+```python
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+from typing import AsyncGenerator
+from app.core.config import settings
+from app.models.models import Base
+
+# 创建异步引擎
+engine = create_async_engine(
+    settings.DATABASE_URL,
+    echo=settings.DEBUG,
+    pool_size=settings.DATABASE_POOL_SIZE,
+    max_overflow=settings.DATABASE_MAX_OVERFLOW
+)
+
+# 创建会话工厂
+async_session_maker = sessionmaker(
+    engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """获取数据库会话（依赖注入）"""
+    async with async_session_maker() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
+
+async def init_db():
+    """初始化数据库表"""
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+```
+
+**客服 Agent 实现** (`app/agents/customer_service.py`):
+
+```python
+from moltbot import Agent, Tool
+from moltbot.memory import ConversationMemory
+from moltbot.llm import OpenAILLM
+from typing import Optional, Dict, Any
+from app.core.config import settings
+from app.core.logger import logger
+from app.core.database import async_session_maker
+from app.models.models import Message, Conversation
+from sqlalchemy import select
+import json
+
+class CustomerServiceAgent:
+    """智能客服 Agent"""
+
+    def __init__(self):
+        self.llm = OpenAILLM(
+            api_key=settings.OPENAI_API_KEY,
+            model=settings.OPENAI_MODEL,
+            temperature=settings.OPENAI_TEMPERATURE,
+            max_tokens=settings.OPENAI_MAX_TOKENS
+        )
+
+        # 创建记忆系统
+        self.memory = ConversationMemory(
+            max_history=20,
+            persist=True,
+            storage_path=settings.CHROMA_PERSIST_DIR
+        )
+
+        # 创建 Agent
+        self.agent = Agent(
+            name="智能客服",
+            llm=self.llm,
+            instructions=self._get_instructions(),
+            memory=self.memory
+        )
+
+        # 添加工具
+        self._register_tools()
+
+    def _get_instructions(self) -> str:
+        """获取 Agent 指令"""
+        return """
+        你是一个专业的智能客服助手，名为"小智"。
+
+        ## 角色定位
+        - 友好、专业、耐心的客服代表
+        - 代表公司品牌形象
+        - 致力于提供卓越的客户服务
+
+        ## 工作原则
+        1. **友好热情**：使用礼貌、热情的语言
+        2. **专业准确**：提供准确的信息和解决方案
+        3. **高效快速**：快速响应，不浪费客户时间
+        4. **同理心**：理解客户的情绪和需求
+        5. **诚实透明**：不确定的信息坦诚告知
+
+        ## 对话流程
+        1. 问候和了解需求
+        2. 分析问题类型
+        3. 使用工具查询信息
+        4. 提供解决方案
+        5. 确认满意度
+        6. 记录反馈
+
+        ## 语言风格
+        - 使用简洁、清晰的语言
+        - 避免技术术语
+        - 适当使用表情符号（保持专业）
+        - 主动提供帮助
+
+        ## 限制
+        - 不透露公司内部信息
+        - 不做出无法兑现的承诺
+        - 遇到无法解决的问题，引导联系人工客服
+        """
+
+    def _register_tools(self):
+        """注册工具"""
+
+        # 工具 1：查询订单
+        self.agent.add_tool(Tool(
+            name="query_order",
+            description="查询订单信息，包括订单状态、物流信息等",
+            function=self._query_order
+        ))
+
+        # 工具 2：处理退款
+        self.agent.add_tool(Tool(
+            name="process_refund",
+            description="处理退款申请",
+            function=self._process_refund
+        ))
+
+        # 工具 3：查询产品信息
+        self.agent.add_tool(Tool(
+            name="query_product",
+            description="查询产品信息，包括价格、库存、规格等",
+            function=self._query_product
+        ))
+
+        # 工具 4：搜索知识库
+        self.agent.add_tool(Tool(
+            name="search_knowledge",
+            description="搜索公司知识库，查找常见问题解答",
+            function=self._search_knowledge
+        ))
+
+    async def _query_order(self, order_id: str) -> Dict[str, Any]:
+        """查询订单信息"""
+        logger.info(f"查询订单: {order_id}")
+
+        # 模拟数据库查询
+        # 实际应用中从数据库查询
+        order_info = {
+            "order_id": order_id,
+            "status": "已发货",
+            "products": [
+                {"name": "商品A", "quantity": 2, "price": 99.00},
+                {"name": "商品B", "quantity": 1, "price": 199.00}
+            ],
+            "total": 397.00,
+            "shipping_address": "北京市朝阳区xxx",
+            "tracking_number": "SF1234567890",
+            "estimated_delivery": "2024-03-20"
+        }
+
+        return order_info
+
+    async def _process_refund(self, order_id: str, reason: str) -> Dict[str, Any]:
+        """处理退款申请"""
+        logger.info(f"处理退款申请: 订单={order_id}, 原因={reason}")
+
+        # 模拟退款处理
+        refund_result = {
+            "success": True,
+            "refund_id": f"REF{order_id}",
+            "amount": 397.00,
+            "estimated_time": "3-5个工作日",
+            "message": "退款申请已提交，审核通过后将原路返回"
+        }
+
+        return refund_result
+
+    async def _query_product(self, product_name: str) -> Dict[str, Any]:
+        """查询产品信息"""
+        logger.info(f"查询产品: {product_name}")
+
+        # 模拟产品查询
+        product_info = {
+            "name": product_name,
+            "price": 199.00,
+            "stock": 150,
+            "description": "这是一款优质产品...",
+            "specifications": {
+                "color": "多种颜色可选",
+                "size": "S/M/L/XL",
+                "material": "优质面料"
+            },
+            "reviews": {
+                "average_rating": 4.8,
+                "total_reviews": 1250
+            }
+        }
+
+        return product_info
+
+    async def _search_knowledge(self, query: str) -> Dict[str, Any]:
+        """搜索知识库"""
+        logger.info(f"搜索知识库: {query}")
+
+        # 实际应用中使用向量搜索
+        # 这里简化为返回相关文档
+        knowledge = {
+            "query": query,
+            "results": [
+                {
+                    "title": "退款政策",
+                    "content": "订单签收后7天内可申请无理由退款...",
+                    "relevance": 0.95
+                },
+                {
+                    "title": "物流配送说明",
+                    "content": "全国包邮，2-3个工作日送达...",
+                    "relevance": 0.87
+                }
+            ]
+        }
+
+        return knowledge
+
+    async def chat(
+        self,
+        message: str,
+        user_id: int,
+        session_id: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """处理用户消息"""
+
+        logger.info(f"用户 {user_id} 发送消息: {message}")
+
+        try:
+            # 调用 Moltbot Agent
+            response = await self.agent.chat_async(
+                message=message,
+                session_id=session_id or f"session_{user_id}"
+            )
+
+            # 保存到数据库
+            await self._save_conversation(
+                user_id=user_id,
+                session_id=session_id or f"session_{user_id}",
+                user_message=message,
+                assistant_message=response
+            )
+
+            return {
+                "success": True,
+                "response": response,
+                "session_id": session_id or f"session_{user_id}"
+            }
+
+        except Exception as e:
+            logger.error(f"处理消息时出错: {e}", exc_info=True)
+            return {
+                "success": False,
+                "error": "抱歉，系统出现错误，请稍后再试"
+            }
+
+    async def _save_conversation(
+        self,
+        user_id: int,
+        session_id: str,
+        user_message: str,
+        assistant_message: str
+    ):
+        """保存对话到数据库"""
+        async with async_session_maker() as session:
+            # 查找或创建会话
+            result = await session.execute(
+                select(Conversation).filter_by(session_id=session_id)
+            )
+            conversation = result.scalar_one_or_none()
+
+            if not conversation:
+                conversation = Conversation(
+                    user_id=user_id,
+                    session_id=session_id,
+                    title=user_message[:50]  # 使用第一条消息作为标题
+                )
+                session.add(conversation)
+                await session.flush()
+
+            # 保存用户消息
+            user_msg = Message(
+                conversation_id=conversation.id,
+                role="user",
+                content=user_message
+            )
+            session.add(user_msg)
+
+            # 保存助手消息
+            assistant_msg = Message(
+                conversation_id=conversation.id,
+                role="assistant",
+                content=assistant_message
+            )
+            session.add(assistant_msg)
+
+            await session.commit()
+
+    async def get_conversation_history(
+        self,
+        session_id: str,
+        limit: int = 50
+    ) -> list:
+        """获取对话历史"""
+        async with async_session_maker() as session:
+            result = await session.execute(
+                select(Message)
+                .join(Conversation)
+                .filter(Conversation.session_id == session_id)
+                .order_by(Message.created_at)
+                .limit(limit)
+            )
+            messages = result.scalars().all()
+
+            return [
+                {
+                    "role": msg.role,
+                    "content": msg.content,
+                    "timestamp": msg.created_at.isoformat()
+                }
+                for msg in messages
+            ]
+
+    async def clear_session(self, session_id: str):
+        """清除会话"""
+        # 清除记忆
+        await self.memory.clear_session(session_id)
+
+        logger.info(f"会话 {session_id} 已清除")
+
+# 创建全局 Agent 实例
+customer_service_agent = CustomerServiceAgent()
+```
+
+#### 前端开发（Vue3）
+
+**前端项目结构**：
+
+```bash
+# 创建前端项目
+npm create vue@latest frontend
+cd frontend
+
+# 安装依赖
+npm install axios element-plus @element-plus/icons-vue
+```
+
+**主组件 (`frontend/src/views/CustomerService.vue`)**：
+
+```vue
+<template>
+  <div class="customer-service-container">
+    <el-container>
+      <!-- 头部 -->
+      <el-header class="chat-header">
+        <div class="header-content">
+          <el-avatar :size="40" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+          <div class="header-info">
+            <h3>智能客服小智</h3>
+            <el-tag type="success" size="small">在线</el-tag>
+          </div>
+        </div>
+        <el-button circle @click="clearChat">
+          <el-icon><Refresh /></el-icon>
+        </el-button>
+      </el-header>
+
+      <!-- 聊天区域 -->
+      <el-main class="chat-main">
+        <div ref="messagesContainer" class="messages-container">
+          <div
+            v-for="(msg, index) in messages"
+            :key="index"
+            :class="['message', msg.role]"
+          >
+            <el-avatar v-if="msg.role === 'assistant'" :size="32" />
+            <div class="message-content">
+              <div class="message-bubble">{{ msg.content }}</div>
+              <div class="message-time">{{ formatTime(msg.timestamp) }}</div>
+            </div>
+            <el-avatar v-if="msg.role === 'user'" :size="32" />
+          </div>
+
+          <!-- 加载中 -->
+          <div v-if="loading" class="message assistant">
+            <el-avatar :size="32" />
+            <div class="message-content">
+              <div class="message-bubble loading">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-main>
+
+      <!-- 输入区域 -->
+      <el-footer class="chat-footer">
+        <el-input
+          v-model="userInput"
+          type="textarea"
+          :rows="2"
+          placeholder="输入您的问题..."
+          @keydown.enter.prevent="sendMessage"
+          :disabled="loading"
+        />
+        <el-button
+          type="primary"
+          :icon="Promotion"
+          @click="sendMessage"
+          :loading="loading"
+          class="send-button"
+        >
+          发送
+        </el-button>
+      </el-footer>
+    </el-container>
+  </div>
+</template>
+
+<script setup>
+import { ref, nextTick, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import { Refresh, Promotion } from '@element-plus/icons-vue'
+import axios from 'axios'
+import { formatDistanceToNow } from 'date-fns'
+import { zhCN } from 'date-fns/locale'
+
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000/api/v1'
+
+// 状态
+const messages = ref([])
+const userInput = ref('')
+const loading = ref(false)
+const sessionId = ref(null)
+const messagesContainer = ref(null)
+
+// 发送消息
+const sendMessage = async () => {
+  if (!userInput.value.trim() || loading.value) return
+
+  const userMessage = userInput.value
+  userInput.value = ''
+
+  // 添加用户消息
+  messages.value.push({
+    role: 'user',
+    content: userMessage,
+    timestamp: new Date()
+  })
+
+  // 滚动到底部
+  await scrollToBottom()
+
+  // 显示加载状态
+  loading.value = true
+
+  try {
+    const response = await axios.post(`${API_BASE}/chat`, {
+      agent_id: 'customer_service',
+      message: userMessage,
+      session_id: sessionId.value
+    })
+
+    // 添加助手回复
+    messages.value.push({
+      role: 'assistant',
+      content: response.data.response,
+      timestamp: new Date()
+    })
+
+    // 更新会话 ID
+    sessionId.value = response.data.session_id
+
+  } catch (error) {
+    console.error('发送消息失败:', error)
+    ElMessage.error('发送失败，请稍后重试')
+
+    messages.value.push({
+      role: 'assistant',
+      content: '抱歉，网络连接出现问题，请稍后重试。',
+      timestamp: new Date()
+    })
+  } finally {
+    loading.value = false
+    await scrollToBottom()
+  }
+}
+
+// 滚动到底部
+const scrollToBottom = async () => {
+  await nextTick()
+  if (messagesContainer.value) {
+    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+  }
+}
+
+// 格式化时间
+const formatTime = (timestamp) => {
+  return formatDistanceToNow(new Date(timestamp), {
+    addSuffix: true,
+    locale: zhCN
+  })
+}
+
+// 清除对话
+const clearChat = () => {
+  messages.value = []
+  sessionId.value = null
+  ElMessage.success('对话已清除')
+}
+
+// 初始化
+onMounted(() => {
+  // 欢迎消息
+  messages.value.push({
+    role: 'assistant',
+    content: '您好！我是智能客服小智，很高兴为您服务。请问有什么可以帮助您？',
+    timestamp: new Date()
+  })
+})
+</script>
+
+<style scoped>
+.customer-service-container {
+  height: 100vh;
+  background: #f5f7fa;
+}
+
+.chat-header {
+  background: white;
+  border-bottom: 1px solid #e4e7ed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-info h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.chat-main {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.messages-container {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.message {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.message.user {
+  flex-direction: row-reverse;
+}
+
+.message-content {
+  max-width: 60%;
+}
+
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  line-height: 1.6;
+}
+
+.message.user .message-bubble {
+  background: #409eff;
+  color: white;
+}
+
+.message.assistant .message-bubble {
+  background: white;
+  color: #333;
+}
+
+.message-time {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 5px;
+  text-align: right;
+}
+
+.message-bubble.loading {
+  display: flex;
+  gap: 5px;
+  padding: 15px 20px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #409eff;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+.chat-footer {
+  background: white;
+  border-top: 1px solid #e4e7ed;
+  padding: 15px 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.send-button {
+  align-self: flex-end;
+}
+</style>
+```
+
+#### 部署上线
+
+**完整的部署流程在前面 7.4.10 节已详细讲解，这里提供快速部署命令**：
+
+```bash
+# 1. 构建和启动（本地开发）
+docker-compose up -d
+
+# 2. 运行测试
+pytest tests/ -v
+
+# 3. 构建生产镜像
+docker build -t enterprise-cs-bot:latest .
+
+# 4. 推送到镜像仓库
+docker tag enterprise-cs-bot:latest YOUR_REGISTRY/enterprise-cs-bot:latest
+docker push YOUR_REGISTRY/enterprise-cs-bot:latest
+
+# 5. 部署到云平台
+# 使用 GitHub Actions 自动部署（见 .github/workflows/deploy.yml）
+# 或手动部署到云平台（见 7.4.10.3 节）
+
+# 6. 验证部署
+curl https://your-domain.com/health
+```
+
+#### 监控和维护
+
+**关键指标监控**：
+- 请求成功率（目标：> 99.9%）
+- 平均响应时间（目标：< 2秒）
+- 并发会话数
+- Agent 工具调用成功率
+- 用户满意度评分
+
+**日常维护**：
+- 每日查看日志和错误报告
+- 每周分析用户反馈
+- 每月更新知识库内容
+- 定期优化 Prompt 和工具
+
+---
+
+**项目总结**：
+
+通过这个完整的实战项目，你已经掌握了：
+
+✅ 从零到一构建企业级 AI 应用
+✅ Moltbot Agent 开发的最佳实践
+✅ 前后端分离架构设计
+✅ Docker 容器化部署
+✅ CI/CD 自动化流程
+✅ 监控和日志系统
+✅ 安全认证和权限管理
+
+**下一步建议**：
+
+1. 根据实际业务需求定制功能
+2. 添加更多 Agent 工具
+3. 集成更多渠道（微信、钉钉等）
+4. 优化性能和用户体验
+5. 建立完善的测试体系
+
+---
+
+## MCP (Model Context Protocol)
+
+### 什么是MCP？
 
 **MCP** 是一个开放协议，让AI应用能够轻松连接到外部数据源和工具。
 
@@ -974,7 +4301,7 @@ MCP方式：
   ✅ 社区生态共享
 ```
 
-### 7.4.2 MCP架构
+### MCP架构
 
 ```
 ┌──────────────────────────────────────────┐
@@ -1001,7 +4328,7 @@ MCP方式：
 └──────────────────────────────────────────┘
 ```
 
-### 7.4.3 使用MCP
+### 使用MCP
 
 **安装MCP SDK**：
 ```bash
@@ -1071,7 +4398,7 @@ executor = AgentExecutor(agent=agent, tools=tools)
 result = executor.invoke({"input": "读取config.py文件"})
 ```
 
-### 7.4.4 常用MCP Servers
+### 常用MCP Servers
 
 ```bash
 # 1. 文件系统服务器
@@ -1092,9 +4419,9 @@ mcp-server-gdrive
 
 ---
 
-## 7.5 LangGraph：复杂Agent框架
+## LangGraph：复杂Agent框架 {#langgraph复杂agent框架}
 
-### 7.5.1 为什么需要LangGraph？
+### 为什么需要LangGraph？
 
 **传统Agent的局限**：
 ```python
@@ -1111,7 +4438,7 @@ mcp-server-gdrive
 - 可视化工作流
 ```
 
-### 7.5.2 LangGraph核心概念
+### LangGraph核心概念
 
 ```
 LangGraph = Graph + State
@@ -1127,7 +4454,7 @@ State（状态）：
   - 类型安全（TypedDict）
 ```
 
-### 7.5.3 构建第一个LangGraph
+### 构建第一个LangGraph
 
 ```python
 from langgraph.graph import StateGraph, END
@@ -1203,7 +4530,7 @@ result = app.invoke({
 print(result["response"])
 ```
 
-### 7.5.4 复杂示例：客服Agent
+### 复杂示例：客服Agent
 
 ```python
 from langgraph.graph import StateGraph, END
@@ -1285,7 +4612,7 @@ result = app.invoke({
 print(result["response"])
 ```
 
-### 7.5.5 可视化LangGraph
+### 可视化LangGraph
 
 ```python
 # 生成可视化图
@@ -1297,11 +4624,781 @@ except Exception:
     pass
 ```
 
+### LangGraph 常见模式 {#langgraph-常见模式}
+
+#### 模式1：循环模式（Loop Pattern）
+
+处理需要多次迭代才能完成的任务。
+
+```python
+from langgraph.graph import StateGraph, END
+from typing import TypedDict, Literal
+
+class IterationState(TypedDict):
+    content: str
+    feedback: str
+    iteration: int
+    approved: bool
+    final_output: str
+
+def generate_content(state: IterationState) -> IterationState:
+    """生成内容"""
+    if state["iteration"] == 0:
+        state["content"] = "初稿内容..."
+    else:
+        # 根据反馈改进
+        prompt = f"原内容：{state['content']}\n反馈：{state['feedback']}\n请改进"
+        state["content"] = llm.invoke(prompt).content
+
+    state["iteration"] += 1
+    return state
+
+def review_content(state: IterationState) -> IterationState:
+    """评审内容"""
+    prompt = f"""
+    评审以下内容（最多迭代{state['iteration']}次）：
+    {state['content']}
+
+    如果满意，回复"APPROVED"。
+    如果需要改进，提供具体建议。
+    """
+
+    response = llm.invoke(prompt).content
+
+    if "APPROVED" in response:
+        state["approved"] = True
+        state["final_output"] = state["content"]
+    else:
+        state["feedback"] = response
+        state["approved"] = False
+
+    return state
+
+def should_continue(state: IterationState) -> Literal["continue", "end"]:
+    """决定是否继续迭代"""
+    if state["approved"]:
+        return "end"
+    if state["iteration"] >= 3:  # 最多迭代3次
+        state["final_output"] = state["content"]
+        return "end"
+    return "continue"
+
+# 构建循环图
+workflow = StateGraph(IterationState)
+workflow.add_node("generate", generate_content)
+workflow.add_node("review", review_content)
+
+workflow.set_entry_point("generate")
+workflow.add_edge("generate", "review")
+
+workflow.add_conditional_edges(
+    "review",
+    should_continue,
+    {
+        "continue": "generate",  # 循环回 generate
+        "end": END
+    }
+)
+
+app = workflow.compile()
+
+# 运行
+result = app.invoke({
+    "content": "",
+    "feedback": "",
+    "iteration": 0,
+    "approved": False,
+    "final_output": ""
+})
+
+print(f"最终输出：{result['final_output']}")
+print(f"迭代次数：{result['iteration']}")
+```
+
+#### 模式2：并行模式（Parallel Pattern）
+
+多个任务并行执行，然后聚合结果。
+
+```python
+from langgraph.graph import StateGraph, END
+from typing import TypedDict, List
+import asyncio
+
+class ParallelState(TypedDict):
+    topic: str
+    technical_analysis: str
+    market_analysis: str
+    user_analysis: str
+    final_report: str
+
+async def technical_analysis(state: ParallelState) -> ParallelState:
+    """技术分析"""
+    prompt = f"从技术角度分析：{state['topic']}"
+    # 模拟异步操作
+    await asyncio.sleep(1)
+    state["technical_analysis"] = llm.invoke(prompt).content
+    return state
+
+async def market_analysis(state: ParallelState) -> ParallelState:
+    """市场分析"""
+    prompt = f"从市场角度分析：{state['topic']}"
+    await asyncio.sleep(1)
+    state["market_analysis"] = llm.invoke(prompt).content
+    return state
+
+async def user_analysis(state: ParallelState) -> ParallelState:
+    """用户分析"""
+    prompt = f"从用户角度分析：{state['topic']}"
+    await asyncio.sleep(1)
+    state["user_analysis"] = llm.invoke(prompt).content
+    return state
+
+def synthesize(state: ParallelState) -> ParallelState:
+    """综合分析结果"""
+    prompt = f"""
+    综合以下三个分析角度，生成完整报告：
+
+    技术角度：{state['technical_analysis']}
+
+    市场角度：{state['market_analysis']}
+
+    用户角度：{state['user_analysis']}
+
+    请提供：
+    1. 综合评估
+    2. 机会与风险
+    3. 建议行动
+    """
+
+    state["final_report"] = llm.invoke(prompt).content
+    return state
+
+# 注意：LangGraph 本身是串行的，真正的并行需要在节点内实现
+# 或者使用 astream events 和异步调用
+
+def parallel_analysis_node(state: ParallelState) -> ParallelState:
+    """在节点内实现并行"""
+    async def _parallel():
+        results = await asyncio.gather(
+            technical_analysis(state.copy()),
+            market_analysis(state.copy()),
+            user_analysis(state.copy())
+        )
+        return results
+
+    # 运行并行任务
+    results = asyncio.run(_parallel())
+
+    state["technical_analysis"] = results[0]["technical_analysis"]
+    state["market_analysis"] = results[1]["market_analysis"]
+    state["user_analysis"] = results[2]["user_analysis"]
+
+    return state
+
+# 构建图
+workflow = StateGraph(ParallelState)
+workflow.add_node("parallel_analysis", parallel_analysis_node)
+workflow.add_node("synthesize", synthesize)
+
+workflow.set_entry_point("parallel_analysis")
+workflow.add_edge("parallel_analysis", "synthesize")
+workflow.add_edge("synthesize", END)
+
+app = workflow.compile()
+
+result = app.invoke({
+    "topic": "开发AI编程助手",
+    "technical_analysis": "",
+    "market_analysis": "",
+    "user_analysis": "",
+    "final_report": ""
+})
+
+print(result["final_report"])
+```
+
+#### 模式3：分支聚合模式（Fork-Join Pattern）
+
+先分支处理，再合并结果。
+
+```python
+from langgraph.graph import StateGraph, END
+from typing import TypedDict, Literal
+
+class ForkJoinState(TypedDict):
+    document: str
+    grammar_errors: list
+    style_issues: list
+    factual_errors: list
+    combined_feedback: str
+    revised_document: str
+
+def grammar_check(state: ForkJoinState) -> ForkJoinState:
+    """语法检查"""
+    prompt = f"检查语法错误：{state['document']}"
+    response = llm.invoke(prompt)
+    state["grammar_errors"] = ["语法错误1", "语法错误2"]  # 实际从 response 解析
+    return state
+
+def style_check(state: ForkJoinState) -> ForkJoinState:
+    """风格检查"""
+    prompt = f"检查风格问题：{state['document']}"
+    response = llm.invoke(prompt)
+    state["style_issues"] = ["风格问题1", "风格问题2"]
+    return state
+
+def fact_check(state: ForkJoinState) -> ForkJoinState:
+    """事实检查"""
+    prompt = f"检查事实错误：{state['document']}"
+    response = llm.invoke(prompt)
+    state["factual_errors"] = ["事实错误1"]
+    return state
+
+def aggregate_feedback(state: ForkJoinState) -> ForkJoinState:
+    """聚合所有反馈"""
+    all_issues = []
+    all_issues.extend(state["grammar_errors"])
+    all_issues.extend(state["style_issues"])
+    all_issues.extend(state["factual_errors"])
+
+    state["combined_feedback"] = "\n".join(all_issues)
+    return state
+
+def revise_document(state: ForkJoinState) -> ForkJoinState:
+    """根据反馈修订文档"""
+    prompt = f"""
+    原文档：
+    {state['document']}
+
+    反馈：
+    {state['combined_feedback']}
+
+    请根据反馈修订文档。
+    """
+
+    state["revised_document"] = llm.invoke(prompt).content
+    return state
+
+def check_quality(state: ForkJoinState) -> Literal["revise", "finish"]:
+    """检查修订后的质量"""
+    # 简化版：如果有错误就继续修订
+    if len(state["grammar_errors"]) > 0 or len(state["factual_errors"]) > 0:
+        return "revise"
+    return "finish"
+
+# 构建图
+workflow = StateGraph(ForkJoinState)
+
+# 添加分支节点
+workflow.add_node("grammar_check", grammar_check)
+workflow.add_node("style_check", style_check)
+workflow.add_node("fact_check", fact_check)
+
+# 添加聚合节点
+workflow.add_node("aggregate", aggregate_feedback)
+workflow.add_node("revise", revise_document)
+
+# 入口点（选择一个分支起点）
+workflow.set_entry_point("grammar_check")
+
+# 添加分支边（每个检查后都到聚合）
+workflow.add_edge("grammar_check", "aggregate")
+workflow.add_edge("style_check", "aggregate")
+workflow.add_edge("fact_check", "aggregate")
+
+# 注意：这个简化版本没有真正的并行
+# 实际需要使用 Send 额外触发其他分支
+
+workflow.add_edge("aggregate", "revise")
+
+workflow.add_conditional_edges(
+    "revise",
+    check_quality,
+    {
+        "revise": "grammar_check",  # 重新检查
+        "finish": END
+    }
+)
+
+app = workflow.compile()
+```
+
+#### 模式4：代理协调模式（Agent Coordination）
+
+多个 Agent 协作完成复杂任务。
+
+```python
+from langgraph.graph import StateGraph, END
+from typing import TypedDict, Literal
+
+class MultiAgentState(TypedDict):
+    task: str
+    researcher_output: str
+    writer_output: str
+    reviewer_output: str
+    final_output: str
+    current_agent: str
+
+def researcher_agent(state: MultiAgentState) -> MultiAgentState:
+    """研究 Agent：收集信息"""
+    prompt = f"研究任务：{state['task']}\n\n收集相关信息和数据。"
+    state["researcher_output"] = llm.invoke(prompt).content
+    state["current_agent"] = "researcher"
+    return state
+
+def writer_agent(state: MultiAgentState) -> MultiAgentState:
+    """写作 Agent：基于研究内容撰写"""
+    prompt = f"""
+    基于以下研究内容撰写文章：
+
+    研究内容：
+    {state['researcher_output']}
+
+    任务：{state['task']}
+    """
+    state["writer_output"] = llm.invoke(prompt).content
+    state["current_agent"] = "writer"
+    return state
+
+def reviewer_agent(state: MultiAgentState) -> MultiAgentState:
+    """评审 Agent：审核并给出反馈"""
+    prompt = f"""
+    评审以下文章：
+
+    {state['writer_output']}
+
+    给出评分（1-10）和改进建议。
+    如果低于8分，提供具体修改意见。
+    """
+    state["reviewer_output"] = llm.invoke(prompt).content
+    state["current_agent"] = "reviewer"
+    return state
+
+def should_revise(state: MultiAgentState) -> Literal["revise", "finish"]:
+    """决定是否需要修订"""
+    review = state["reviewer_output"]
+    # 简化判断
+    if "8" in review or "9" in review or "10" in review:
+        return "finish"
+    return "revise"
+
+def revise_agent(state: MultiAgentState) -> MultiAgentState:
+    """修订 Agent：根据评审意见修改"""
+    prompt = f"""
+    原文章：
+    {state['writer_output']}
+
+    评审意见：
+    {state['reviewer_output']}
+
+    请根据意见修改文章。
+    """
+
+    revised = llm.invoke(prompt).content
+    state["writer_output"] = revised
+    state["final_output"] = revised
+    return state
+
+# 构建多 Agent 工作流
+workflow = StateGraph(MultiAgentState)
+
+workflow.add_node("researcher", researcher_agent)
+workflow.add_node("writer", writer_agent)
+workflow.add_node("reviewer", reviewer_agent)
+workflow.add_node("revise", revise_agent)
+
+workflow.set_entry_point("researcher")
+
+# 顺序执行：researcher → writer → reviewer
+workflow.add_edge("researcher", "writer")
+workflow.add_edge("writer", "reviewer")
+
+# 条件分支：如果需要修订则回到 writer
+workflow.add_conditional_edges(
+    "reviewer",
+    should_revise,
+    {
+        "revise": "revise",
+        "finish": END
+    }
+)
+
+# 修订后重新评审
+workflow.add_edge("revise", "reviewer")
+
+app = workflow.compile()
+
+# 运行
+result = app.invoke({
+    "task": "写一篇关于AI未来的文章",
+    "researcher_output": "",
+    "writer_output": "",
+    "reviewer_output": "",
+    "final_output": "",
+    "current_agent": ""
+})
+
+print(result["final_output"])
+```
+
+### LangGraph vs Prompt Chaining 对比 {#langgraph-vs-prompt-chaining-对比}
+
+| 特性 | LangGraph | Prompt Chaining |
+|------|-----------|----------------|
+| **复杂度** | 高，支持复杂状态机 | 中，线性或简单分支 |
+| **灵活性** | 非常灵活，支持循环、条件分支 | 相对固定，主要是顺序执行 |
+| **状态管理** | 内置状态管理，在节点间传递 | 需要手动传递上下文 |
+| **可视化** | 支持生成流程图 | 无内置可视化 |
+| **调试** | 可以追踪每一步的状态变化 | 需要手动打印中间结果 |
+| **学习曲线** | 陡峭，需要理解图概念 | 平缓，容易上手 |
+| **适用场景** | 复杂 Agent 系统、多步决策 | 简单多步任务、内容生成流水线 |
+
+### LangGraph 最佳实践
+
+#### ✅ DO（推荐做法）
+
+1. **明确定义状态结构**
+```python
+from typing import TypedDict
+
+class AgentState(TypedDict):
+    # 明确每个字段的类型
+    query: str
+    search_results: List[str]
+    answer: str
+    confidence: float
+    iteration_count: int
+```
+
+2. **保持节点函数简单**
+```python
+# 好的做法：每个节点只做一件事
+def search_node(state: AgentState) -> AgentState:
+    """只负责搜索"""
+    state["search_results"] = search_api(state["query"])
+    return state
+
+def rank_node(state: AgentState) -> AgentState:
+    """只负责排序"""
+    state["search_results"] = rank_results(state["search_results"])
+    return state
+```
+
+3. **使用条件边实现复杂逻辑**
+```python
+def route_condition(state: AgentState) -> Literal["a", "b", "c"]:
+    """清晰的路由逻辑"""
+    score = state["confidence"]
+
+    if score > 0.9:
+        return "a"  # 高置信度直接输出
+    elif score > 0.5:
+        return "b"  # 中等置信度需要验证
+    else:
+        return "c"  # 低置信度重新搜索
+```
+
+4. **添加错误处理**
+```python
+def safe_node(state: AgentState) -> AgentState:
+    """带错误处理的节点"""
+    try:
+        result = risky_operation(state)
+        state["result"] = result
+        state["error"] = None
+    except Exception as e:
+        state["error"] = str(e)
+        state["retry_count"] = state.get("retry_count", 0) + 1
+
+    return state
+```
+
+5. **记录中间结果**
+```python
+from langgraph.checkpoint.memory import MemorySaver
+
+# 添加检查点，可以保存和恢复状态
+memory = MemorySaver()
+app = workflow.compile(checkpointer=memory)
+
+# 运行时可以指定 thread_id
+config = {"configurable": {"thread_id": "session-123"}}
+result = app.invoke(initial_state, config=config)
+
+# 可以查看历史状态
+for state in app.get_state_history(config):
+    print(state)
+```
+
+#### ❌ DON'T（避免做法）
+
+1. **不要在节点中执行长时间任务**
+```python
+# 不好的做法：在节点中下载大文件
+def download_node(state: AgentState) -> AgentState:
+    # 可能会阻塞很长时间
+    large_file = download_huge_file()
+    return state
+
+# 好的做法：返回任务ID，异步处理
+def initiate_download(state: AgentState) -> AgentState:
+    task_id = start_async_download(state["url"])
+    state["task_id"] = task_id
+    state["status"] = "downloading"
+    return state
+```
+
+2. **不要在节点中直接修改外部状态**
+```python
+# 不好的做法：直接写数据库
+def save_node(state: AgentState) -> AgentState:
+    database.save(state["data"])  # 副作用
+    return state
+
+# 好的做法：在专门的节点中处理
+def prepare_data_node(state: AgentState) -> AgentState:
+    state["prepared_data"] = prepare_for_db(state["data"])
+    return state
+
+def save_node(state: AgentState) -> AgentState:
+    # 这个节点唯一的作用就是保存
+    database.save(state["prepared_data"])
+    return state
+```
+
+3. **不要创建过大的状态对象**
+```python
+# 不好的做法：状态包含大量数据
+class AgentState(TypedDict):
+    entire_document: str  # 可能很长
+    all_search_results: List[str]  # 可能有几百条
+    complete_history: List[dict]  # 完整历史记录
+
+# 好的做法：只保存必要信息
+class AgentState(TypedDict):
+    document_id: str  # 用ID引用
+    top_k_results: List[str]  # 只保留前K个结果
+    current_step: int  # 当前步骤
+    summary: str  # 简要总结
+```
+
+### 实战项目：智能内容生成系统 {#实战项目智能内容生成系统}
+
+结合 LangGraph 和 Prompt Chaining 构建完整系统。
+
+```python
+from langgraph.graph import StateGraph, END
+from langchain_openai import ChatOpenAI
+from typing import TypedDict, Literal
+import operator
+from typing import Annotated
+
+# 1. 定义状态
+class ContentGenState(TypedDict):
+    topic: str
+    target_audience: str
+    content_type: str  # blog, tutorial, guide
+    research_data: str
+    outline: str
+    draft: str
+    feedback: str
+    final_content: str
+    quality_score: float
+    iteration: int
+
+# 2. 定义工具函数
+def web_search(query: str) -> str:
+    """模拟网络搜索"""
+    return f"关于'{query}'的搜索结果：..."
+
+def seo_analysis(content: str) -> dict:
+    """SEO 分析"""
+    return {
+        "score": 0.75,
+        "keywords": ["AI", "LangGraph", "Python"],
+        "suggestions": ["添加更多示例", "优化标题"]
+    }
+
+# 3. 定义节点
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7)
+
+def research(state: ContentGenState) -> ContentGenState:
+    """研究阶段：收集信息"""
+    # 使用 Prompt Chaining：分步研究
+    search_prompt = f"搜索关于'{state['topic']}'的最新信息"
+    search_results = web_search(search_prompt)
+
+    analyze_prompt = f"""
+    分析以下搜索结果，提取关键信息：
+    {search_results}
+
+    针对{state['target_audience']}受众。
+    """
+
+    analysis = llm.invoke(analyze_prompt).content
+    state["research_data"] = analysis
+    return state
+
+def outline(state: ContentGenState) -> ContentGenState:
+    """大纲阶段：创建结构"""
+    prompt = f"""
+    基于{state['content_type']}格式，创建大纲：
+
+    主题：{state['topic']}
+    研究数据：{state['research_data']}
+
+    大纲应包含：
+    - 引言
+    - 主要章节（3-5个）
+    - 每章节的关键点
+    - 结论
+    """
+
+    state["outline"] = llm.invoke(prompt).content
+    return state
+
+def draft_content(state: ContentGenState) -> ContentGenState:
+    """起草阶段：撰写内容"""
+    prompt = f"""
+    基于以下大纲撰写内容：
+
+    {state['outline']}
+
+    要求：
+    - 针对{state['target_audience']}
+    - 专业且易懂
+    - 包含代码示例（如适用）
+    - 1000-1500字
+    """
+
+    state["draft"] = llm.invoke(prompt).content
+    return state
+
+def quality_check(state: ContentGenState) -> ContentGenState:
+    """质量检查"""
+    # SEO 分析
+    seo_result = seo_analysis(state["draft"])
+    state["quality_score"] = seo_result["score"]
+
+    # AI 评审
+    review_prompt = f"""
+    评审以下内容质量：
+
+    {state['draft']}
+
+    从以下方面评分（1-10）：
+    1. 内容准确性
+    2. 结构完整性
+    3. 语言流畅性
+    4. SEO 优化
+    5. 受众适配度
+
+    给出总分和改进建议。
+    """
+
+    review = llm.invoke(review_prompt).content
+    state["feedback"] = review
+    return state
+
+def should_improve(state: ContentGenState) -> Literal["improve", "finish"]:
+    """决定是否需要改进"""
+    state["iteration"] += 1
+
+    if state["quality_score"] >= 0.8:
+        return "finish"
+    if state["iteration"] >= 2:  # 最多迭代2次
+        return "finish"
+    return "improve"
+
+def improve_content(state: ContentGenState) -> ContentGenState:
+    """改进内容"""
+    prompt = f"""
+    原内容：
+    {state['draft']}
+
+    反馈：
+    {state['feedback']}
+
+    请根据反馈改进内容。
+    """
+
+    improved = llm.invoke(prompt).content
+    state["draft"] = improved
+    return state
+
+def finalize(state: ContentGenState) -> ContentGenState:
+    """最终处理"""
+    state["final_content"] = state["draft"]
+    return state
+
+# 4. 构建图
+workflow = StateGraph(ContentGenState)
+
+workflow.add_node("research", research)
+workflow.add_node("outline", outline)
+workflow.add_node("draft", draft_content)
+workflow.add_node("quality_check", quality_check)
+workflow.add_node("improve", improve_content)
+workflow.add_node("finalize", finalize)
+
+workflow.set_entry_point("research")
+
+# 主流程
+workflow.add_edge("research", "outline")
+workflow.add_edge("outline", "draft")
+workflow.add_edge("draft", "quality_check")
+
+# 条件分支：质量检查后决定是否改进
+workflow.add_conditional_edges(
+    "quality_check",
+    should_improve,
+    {
+        "improve": "improve",
+        "finish": "finalize"
+    }
+)
+
+# 改进后重新检查
+workflow.add_edge("improve", "quality_check")
+workflow.add_edge("finalize", END)
+
+# 5. 编译并运行
+app = workflow.compile()
+
+result = app.invoke({
+    "topic": "使用 LangGraph 构建 AI Agent",
+    "target_audience": "Python 开发者",
+    "content_type": "tutorial",
+    "research_data": "",
+    "outline": "",
+    "draft": "",
+    "feedback": "",
+    "final_content": "",
+    "quality_score": 0.0,
+    "iteration": 0
+})
+
+print("=== 最终生成的内容 ===")
+print(result["final_content"])
+print(f"\n质量评分：{result['quality_score']}")
+print(f"迭代次数：{result['iteration']}")
+```
+
+### 小结
+
+**LangGraph 核心要点**：
+- 🎯 **图状思维**：将复杂流程建模为状态图
+- 🔄 **状态管理**：明确定义在节点间传递的数据结构
+- 🔀 **条件分支**：使用 conditional_edges 实现复杂逻辑
+- 📊 **可视化**：利用 graph.draw_mermaid_png() 可视化流程
+- 💾 **检查点**：使用 checkpointer 保存中间状态
+- 🛠️ **最佳实践**：保持节点简单、明确状态结构、处理错误
+
 ---
 
-## 7.6 AI应用评估和测试
+## AI应用评估和测试 {#ai应用评估和测试}
 
-### 7.6.1 评估维度
+### 评估维度
 
 ```
 AI应用评估框架：
@@ -1337,7 +5434,7 @@ AI应用评估框架：
    - 基础设施成本
 ```
 
-### 7.6.2 RAG评估框架
+### RAG评估框架
 
 **使用Ragas**：
 
@@ -1398,7 +5495,7 @@ df = result.to_pandas()
 print(df)
 ```
 
-### 7.6.3 自定义评估
+### 自定义评估
 
 ```python
 class RAGEvaluator:
@@ -1505,7 +5602,7 @@ print(results)
 # {'total_questions': 10, 'avg_accuracy': 0.85, 'avg_retrieval_relevance': 0.78}
 ```
 
-### 7.6.4 A/B测试
+### A/B测试
 
 ```python
 def ab_test(model_a, model_b, test_cases: list):
@@ -1536,7 +5633,7 @@ def ab_test(model_a, model_b, test_cases: list):
     }
 ```
 
-### 7.6.5 性能测试
+### 性能测试
 
 ```python
 import time
@@ -1576,9 +5673,9 @@ print(f"P95延迟：{perf_results['p95_latency']:.2f}秒")
 
 ---
 
-## 7.7 最佳实践总结
+## 最佳实践总结
 
-### 7.7.1 模型选择清单
+### 模型选择清单
 
 ```
 ✓ 明确需求
@@ -1598,7 +5695,7 @@ print(f"P95延迟：{perf_results['p95_latency']:.2f}秒")
   - 用户反馈
 ```
 
-### 7.7.2 优化技巧
+### 优化技巧
 
 ```python
 # 1. 提示词优化
@@ -1622,7 +5719,7 @@ print(f"P95延迟：{perf_results['p95_latency']:.2f}秒")
 - 连接池
 ```
 
-### 7.7.3 安全建议
+### 安全建议
 
 ```
 ✓ API密钥管理
@@ -1643,9 +5740,9 @@ print(f"P95延迟：{perf_results['p95_latency']:.2f}秒")
 
 ---
 
-## 7.8 本章小结
+## 本章小结
 
-### 7.8.1 核心内容
+### 核心内容
 
 ✅ **LLM模型选择**：
 - 主流模型对比
@@ -1677,7 +5774,7 @@ print(f"P95延迟：{perf_results['p95_latency']:.2f}秒")
 - 自定义评估
 - A/B测试
 
-### 7.8.2 进阶学习路径
+### 进阶学习路径
 
 ```
 当前阶段：AI应用开发 ✅
@@ -1692,7 +5789,7 @@ print(f"P95延迟：{perf_results['p95_latency']:.2f}秒")
 
 ---
 
-## 7.9 练习题
+## 练习题
 
 ### 练习1：模型对比
 
