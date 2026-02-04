@@ -1,13 +1,13 @@
-# 第37章：前端部署
-
+# 前端部署
+## # 4.13 前端部署
 ## 第37章 前端部署
 
 > **学习目标**：掌握前端项目部署与运维技术
 > **核心内容**：Nginx配置、CDN加速、Docker部署、CI/CD
 
-### 37.1 静态资源部署（Nginx）
+### 静态资源部署（Nginx）
 
-#### 37.1.1 Nginx 基础配置
+#### Nginx 基础配置
 
 ```nginx
 # /etc/nginx/sites-available/my-app
@@ -84,7 +84,7 @@ server {
 }
 ```
 
-#### 37.1.2 HTTPS 配置
+#### HTTPS 配置
 
 ```nginx
 # HTTP 重定向到 HTTPS
@@ -123,7 +123,7 @@ server {
 }
 ```
 
-#### 37.1.3 负载均衡配置
+#### 负载均衡配置
 
 ```nginx
 # 上游服务器组
@@ -164,9 +164,9 @@ server {
 }
 ```
 
-### 37.2 CDN 加速配置
+### CDN 加速配置
 
-#### 37.2.1 构建优化配置
+#### 构建优化配置
 
 ```typescript
 // vite.config.ts
@@ -211,7 +211,7 @@ export default defineConfig({
 })
 ```
 
-#### 37.2.2 静态资源 CDN 配置
+#### 静态资源 CDN 配置
 
 ```typescript
 // vite.config.ts
@@ -260,9 +260,9 @@ export default defineConfig({
 </html>
 ```
 
-### 37.3 Docker 容器化部署
+### Docker 容器化部署
 
-#### 37.3.1 Dockerfile 配置
+#### Dockerfile 配置
 
 ```dockerfile
 # Dockerfile
@@ -305,7 +305,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-#### 37.3.2 Nginx 配置文件
+#### Nginx 配置文件
 
 ```nginx
 # nginx.conf
@@ -339,7 +339,7 @@ server {
 }
 ```
 
-#### 37.3.3 Docker Compose 配置
+#### Docker Compose 配置
 
 ```yaml
 # docker-compose.yml
@@ -402,7 +402,7 @@ volumes:
   db-data:
 ```
 
-#### 37.3.4 部署命令
+#### 部署命令
 
 ```bash
 # 构建镜像
@@ -427,9 +427,9 @@ docker stop my-app
 docker rm my-app
 ```
 
-### 37.4 CI/CD 自动化部署
+### CI/CD 自动化部署
 
-#### 37.4.1 GitHub Actions 配置
+#### GitHub Actions 配置
 
 ```yaml
 # .github/workflows/deploy.yml
@@ -511,7 +511,7 @@ jobs:
             docker system prune -f
 ```
 
-#### 37.4.2 GitLab CI 配置
+#### GitLab CI 配置
 
 ```yaml
 # .gitlab-ci.yml
@@ -584,7 +584,7 @@ deploy:production:
     - ssh $DEPLOY_USER@$DEPLOY_HOST "cd /var/www/my-app && docker-compose pull && docker-compose up -d"
 ```
 
-#### 37.4.3 Jenkins 配置
+#### Jenkins 配置
 
 ```groovy
 // Jenkinsfile
@@ -663,9 +663,9 @@ pipeline {
 }
 ```
 
-### 37.5 多环境部署策略
+### 多环境部署策略
 
-#### 37.5.1 环境变量配置
+#### 环境变量配置
 
 ```bash
 # .env.development
@@ -691,7 +691,7 @@ VITE_SENTRY_DSN=https://xxx@sentry.io/xxx
 VITE_ANALYTICS_ID=UA-XXXXX-Z
 ```
 
-#### 37.5.2 构建脚本
+#### 构建脚本
 
 ```json
 // package.json
@@ -706,9 +706,9 @@ VITE_ANALYTICS_ID=UA-XXXXX-Z
 }
 ```
 
-### 37.6 零停机部署
+### 零停机部署
 
-#### 37.6.1 蓝绿部署
+#### 蓝绿部署
 
 ```bash
 #!/bin/bash
@@ -759,7 +759,7 @@ docker rm my-app-$CURRENT_PORT
 echo "Deployment complete!"
 ```
 
-#### 37.6.2 滚动更新
+#### 滚动更新
 
 ```yaml
 # docker-compose.yml (滚动更新配置)
@@ -784,7 +784,7 @@ services:
       - "80:80"
 ```
 
-### 37.7 本章小结
+### 本章小结
 
 | 部署方式 | 特点 | 适用场景 |
 |----------|------|----------|

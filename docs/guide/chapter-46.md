@@ -1,13 +1,12 @@
-# 第46章：性能分析与优化工具深度使用
+# 性能分析与优化工具深度使用
 
-## 第46章 性能分析与优化工具深度使用
-
+## 性能分析与优化工具深度使用
 > **学习目标**：掌握 Chrome Performance 和性能分析工具
 > **核心内容**：Performance 面板、Lighthouse、内存分析
 
-### 46.1 Chrome Performance 面板
+### Chrome Performance 面板
 
-#### 46.1.1 录制性能
+#### 录制性能
 
 ```
 步骤：
@@ -19,7 +18,7 @@
 6. 分析结果
 ```
 
-#### 46.1.2 性能标记 API
+#### 性能标记 API
 
 ```typescript
 // 添加性能标记
@@ -32,7 +31,7 @@ performance.mark('operation-end')
 performance.measure('operation', 'operation-start', 'operation-end')
 ```
 
-### 46.2 Web Vitals 监控
+### Web Vitals 监控
 
 ```typescript
 // LCP 监控
@@ -61,7 +60,7 @@ new PerformanceObserver((list) => {
 }).observe({ entryTypes: ['layout-shift'] })
 ```
 
-### 46.3 内存分析
+### 内存分析
 
 ```typescript
 // 监控内存使用
@@ -77,7 +76,7 @@ setInterval(() => {
 }, 10000)
 ```
 
-### 46.4 Lighthouse 自动化测试
+### Lighthouse 自动化测试
 
 ```javascript
 // lighthouse.config.js
@@ -90,7 +89,7 @@ module.exports = {
 }
 ```
 
-### 46.5 性能优化清单
+### 性能优化清单
 
 | 指标 | 目标值 | 优化方法 |
 |------|--------|----------|
@@ -99,7 +98,7 @@ module.exports = {
 | FID | <100ms | 减少长任务、优化 JS 执行 |
 | CLS | <0.1 | 避免布局偏移、预留图片空间 |
 
-### 46.6 本章小结
+### 本章小结
 
 | 内容 | 工具 |
 |------|------|

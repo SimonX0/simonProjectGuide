@@ -1,6 +1,6 @@
-# 第5章：Git实战技巧
+# Git实战技巧
 
-## 5.1 版本发布 - 打标签
+## 版本发布 - 打标签
 
 ### 什么是标签？
 
@@ -92,7 +92,7 @@ v2.0.0  → 第2个大版本
 
 ---
 
-## 5.2 自动关闭 Issue - 提交信息里的魔法词
+## 自动关闭 Issue - 提交信息里的魔法词
 
 ### 什么是 Issue？
 
@@ -167,7 +167,7 @@ closes #102"
 
 ---
 
-## 5.3 实用技巧集合
+## 实用技巧集合
 
 ### 技巧1：保存工作现场
 
@@ -245,7 +245,7 @@ git bisect reset  # 结束
 
 ---
 
-## 5.4 团队协作必备
+## 团队协作必备
 
 ### 发起 Pull Request (PR)
 
@@ -298,7 +298,7 @@ git rebase main
 
 ---
 
-## 5.5 常见问题快速解决
+## 常见问题快速解决
 
 ### 问题1：推送时提示"落后于远程"
 
@@ -369,7 +369,7 @@ git commit -m "chore: 移除敏感文件"
 
 ---
 
-## 5.6 效率提升配置
+## 效率提升配置
 
 ### 命令别名（偷懒神器）
 
@@ -398,7 +398,7 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 
 ---
 
-## 5.7 实战案例
+## 实战案例
 
 ### 案例1：发布新版本
 
@@ -497,7 +497,7 @@ git branch -d feature/user-avatar
 
 ---
 
-## 5.8 学习资源
+## 学习资源
 
 ### 互动学习
 
@@ -528,9 +528,9 @@ git branch -d feature/user-avatar
 
 ---
 
-## 5.9 高级功能 - Git 必备技能
+## 高级功能 - Git 必备技能
 
-### 5.9.1 暂存功能 - git stash 详解
+### 暂存功能 - git stash 详解
 
 **什么是 stash？**
 
@@ -669,7 +669,7 @@ git stash branch new-branch stash@{1}
 
 ---
 
-### 5.9.2 变基操作 - git rebase 详解
+### 变基操作 - git rebase 详解
 
 **什么是 rebase？**
 
@@ -847,7 +847,7 @@ git rebase -i HEAD~3  # 安全，只有你能看到
 
 ---
 
-### 5.9.3 查看差异 - git diff 详解
+### 查看差异 - git diff 详解
 
 **基本用法：**
 
@@ -926,7 +926,7 @@ git config --global difftool.vscode.cmd 'code --wait --diff $LOCAL $REMOTE'
 
 ---
 
-### 5.9.4 Git 钩子（Git Hooks）- 自动化你的工作流
+### Git 钩子（Git Hooks）- 自动化你的工作流
 
 **什么是 Git 钩子？**
 
@@ -1082,7 +1082,7 @@ fi
 
 ---
 
-### 5.9.5 Cherry-pick - 精准挑选提交
+### Cherry-pick - 精准挑选提交
 
 **什么是 cherry-pick？**
 
@@ -1168,7 +1168,7 @@ git cherry-pick --abort
 
 ---
 
-### 5.9.6 Git 配置和技巧
+### Git 配置和技巧
 
 ### 用户信息配置
 
@@ -1251,7 +1251,7 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 
 ---
 
-### 5.9.7 查找和分析
+### 查找和分析
 
 ### 搜索代码
 

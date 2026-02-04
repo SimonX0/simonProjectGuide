@@ -1,13 +1,13 @@
-# 第24章：Git版本控制与团队协作
-
+# Git版本控制与团队协作
+## Git版本控制与团队协作
 ## 第24章 Git版本控制与团队协作
 
 > **学习目标**：掌握Git版本控制和团队协作
 > **核心内容**：Git命令、分支管理、Hooks配置、提交规范
 
-### 24.1 Git基础命令
+### Git基础命令
 
-#### 24.1.1 初始化与配置
+#### 初始化与配置
 
 ```bash
 # 初始化仓库
@@ -24,7 +24,7 @@ git config --global user.email "xu@example.com"
 git config --list
 ```
 
-#### 24.1.2 基本操作
+#### 基本操作
 
 ```bash
 # 查看状态
@@ -53,7 +53,7 @@ git diff --staged          # 暂存区与上次提交差异
 git diff <commit>          # 工作区与指定提交差异
 ```
 
-#### 24.1.3 撤销与回退
+#### 撤销与回退
 
 ```bash
 # 撤销工作区修改
@@ -77,9 +77,9 @@ git reset --hard <commit-hash>
 git reflog
 ```
 
-### 24.2 Git分支管理
+### Git分支管理
 
-#### 24.2.1 分支基本操作
+#### 分支基本操作
 
 ```bash
 # 查看所有分支
@@ -109,7 +109,7 @@ git branch -m <old-name> <new-name>
 git merge-base <branch1> <branch2>
 ```
 
-#### 24.2.2 分支合并
+#### 分支合并
 
 ```bash
 # 合并分支（创建合并提交）
@@ -131,7 +131,7 @@ git merge --abort
 git rebase --abort
 ```
 
-#### 24.2.3 分支策略
+#### 分支策略
 
 **Git Flow 工作流：**
 
@@ -167,9 +167,9 @@ git merge feature/user-login
 git branch -d feature/user-login
 ```
 
-### 24.3 Git Hooks配置
+### Git Hooks配置
 
-#### 24.3.1 手动配置Git Hooks
+#### 手动配置Git Hooks
 
 **项目根目录创建 `.git/hooks` 配置文件：**
 
@@ -245,7 +245,7 @@ npm outdated
 echo "✅ 合并后操作完成"
 ```
 
-#### 24.3.2 使用 Husky 和 lint-staged 自动化Git Hooks（推荐）
+#### 使用 Husky 和 lint-staged 自动化Git Hooks（推荐）
 
 ```bash
 # 安装依赖
@@ -296,7 +296,7 @@ npx lint-staged
 npx commitlint --edit $1
 ```
 
-#### 24.3.3 Commitlint配置
+#### Commitlint配置
 
 ```bash
 # 安装依赖
@@ -347,9 +347,9 @@ module.exports = {
 }
 ```
 
-### 24.4 提交信息规范
+### 提交信息规范
 
-#### 24.4.1 提交信息格式
+#### 提交信息格式
 
 ```
 <type>(<scope>): <subject>
@@ -359,7 +359,7 @@ module.exports = {
 <footer>
 ```
 
-#### 24.4.2 Type类型说明
+#### Type类型说明
 
 | Type | 说明 |
 |------|------|
@@ -375,7 +375,7 @@ module.exports = {
 | `ci` | CI配置 |
 | `revert` | 回退提交 |
 
-#### 24.4.3 Scope作用域说明
+#### Scope作用域说明
 
 | Scope | 说明 |
 |-------|------|
@@ -389,7 +389,7 @@ module.exports = {
 | `types` | 类型定义 |
 | `config` | 配置相关 |
 
-#### 24.4.4 完整提交示例
+#### 完整提交示例
 
 ```bash
 # 简单提交
@@ -457,9 +457,9 @@ git commit -m "build: 升级Vite到最新版本
 注意：需要清除缓存重新构建"
 ```
 
-### 24.5 远程仓库协作
+### 远程仓库协作
 
-#### 24.5.1 远程仓库操作
+#### 远程仓库操作
 
 ```bash
 # 查看远程仓库
@@ -493,7 +493,7 @@ git push --tags
 git push origin --delete <branch>
 ```
 
-#### 24.5.2 团队协作工作流
+#### 团队协作工作流
 
 **Feature Branch 工作流：**
 
@@ -522,9 +522,9 @@ git branch -d feature/new-feature
 git push origin --delete feature/new-feature
 ```
 
-### 24.6 团队协作最佳实践
+### 团队协作最佳实践
 
-#### 24.6.1 代码审查规范
+#### 代码审查规范
 
 **Pull Request 检查清单：**
 - [ ] 代码符合项目编码规范
@@ -535,7 +535,7 @@ git push origin --delete feature/new-feature
 - [ ] 不包含调试代码
 - [ ] 不包含敏感信息
 
-#### 24.6.2 分支管理规范
+#### 分支管理规范
 
 ```bash
 # 开发流程
@@ -573,7 +573,7 @@ git push origin --delete feature/new-feature
    git branch -d release/v1.0.0
 ```
 
-#### 24.6.3 常用Git别名配置
+#### 常用Git别名配置
 
 ```bash
 # 设置常用别名
@@ -592,7 +592,7 @@ git br -a                   # 代替 git branch -a
 git ci -m "message"         # 代替 git commit -m "message"
 ```
 
-#### 24.6.4 .gitignore 配置
+#### .gitignore 配置
 
 ```bash
 # .gitignore - Vue3 项目推荐配置

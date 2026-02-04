@@ -1,8 +1,8 @@
-# 第2章：Vue3简介与环境搭建
+# Vue3简介与环境搭建
 
-## 第2章 Vue3简介与环境搭建
+## Vue3简介与环境搭建
 
-### 2.1 什么是Vue3？
+### 什么是Vue3？
 
 想象你在搭积木：
 - **HTML** 是积木块的形状（结构）
@@ -19,9 +19,9 @@
 - 更好的多根节点支持
 - Fragment支持
 
-### 2.2 开发环境搭建
+### 开发环境搭建
 
-#### 2.2.1 Node.js 版本管理（nvm）
+#### Node.js 版本管理（nvm）
 
 在开发 Vue3 项目时，不同项目可能需要不同版本的 Node.js。**nvm（Node Version Manager）** 是一款 Node.js 版本管理工具，可以轻松切换和管理多个 Node.js 版本。
 
@@ -86,7 +86,7 @@ nvm use 20
 nvm alias default 20
 ```
 
-#### 2.2.2 NPM 源管理（nrm）
+#### NPM 源管理（nrm）
 
 **nrm（NPM Registry Manager）** 是一款 npm 源管理工具，可以快速切换不同的 npm 镜像源，提高包下载速度。
 
@@ -160,7 +160,7 @@ npm config get registry
 npm config set registry https://registry.npmjs.org/
 ```
 
-#### 2.2.3 环境检查
+#### 环境检查
 
 在开始 Vue3 项目开发前，请确保以下环境已正确配置：
 
@@ -232,7 +232,7 @@ my-vue-app/
 └── tsconfig.json       # TS配置
 ```
 
-### 2.3 SFC单文件组件
+### SFC单文件组件
 
 Vue3使用 `.vue` 文件作为单文件组件（Single File Component）：
 

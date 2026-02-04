@@ -1,13 +1,13 @@
-# 第31章：前端测试
-
+# 前端测试
+## # 4.7 前端测试
 ## 第31章 前端测试
 
 > **学习目标**：掌握前端单元测试、组件测试、E2E测试
 > **核心内容**：Vitest、Vue Test Utils、Pinia测试、E2E测试
 
-### 31.1 Vitest 单元测试
+### Vitest 单元测试
 
-#### 31.1.1 安装 Vitest
+#### 安装 Vitest
 
 ```bash
 # 安装 Vitest
@@ -17,7 +17,7 @@ npm install -D vitest @vitest/ui
 npm install -D @vitest/coverage-v8
 ```
 
-#### 31.1.2 配置 Vitest
+#### 配置 Vitest
 
 ```typescript
 // vite.config.ts
@@ -50,7 +50,7 @@ export default defineConfig({
 })
 ```
 
-#### 31.1.3 添加测试脚本
+#### 添加测试脚本
 
 ```json
 // package.json
@@ -64,7 +64,7 @@ export default defineConfig({
 }
 ```
 
-#### 31.1.4 基础单元测试
+#### 基础单元测试
 
 ```typescript
 // utils/helpers.test.ts
@@ -114,7 +114,7 @@ describe('capitalize', () => {
 })
 ```
 
-#### 31.1.5 异步测试
+#### 异步测试
 
 ```typescript
 // api/user.test.ts
@@ -173,15 +173,15 @@ describe('User API', () => {
 
 ---
 
-### 31.2 Vue Test Utils 组件测试
+### Vue Test Utils 组件测试
 
-#### 31.2.1 安装依赖
+#### 安装依赖
 
 ```bash
 npm install -D @vue/test-utils jsdom
 ```
 
-#### 31.2.2 基础组件测试
+#### 基础组件测试
 
 ```vue
 <!-- components/Counter.vue -->
@@ -260,7 +260,7 @@ describe('Counter', () => {
 })
 ```
 
-#### 31.2.3 Props 测试
+#### Props 测试
 
 ```vue
 <!-- components/UserCard.vue -->
@@ -329,7 +329,7 @@ describe('UserCard', () => {
 })
 ```
 
-#### 31.2.4 Emit 事件测试
+#### Emit 事件测试
 
 ```vue
 <!-- components/LoginForm.vue -->
@@ -397,7 +397,7 @@ describe('LoginForm', () => {
 })
 ```
 
-#### 31.2.5 插槽测试
+#### 插槽测试
 
 ```vue
 <!-- components/Modal.vue -->
@@ -482,9 +482,9 @@ describe('Modal', () => {
 
 ---
 
-### 31.3 Pinia Store 测试
+### Pinia Store 测试
 
-#### 31.3.1 测试 Store 定义
+#### 测试 Store 定义
 
 ```typescript
 // stores/counter.ts
@@ -565,7 +565,7 @@ describe('Counter Store', () => {
 })
 ```
 
-#### 31.3.2 测试带 Actions 的 Store
+#### 测试带 Actions 的 Store
 
 ```typescript
 // stores/user.ts
@@ -672,7 +672,7 @@ describe('User Store', () => {
 
 ---
 
-### 31.4 Vue Router 测试
+### Vue Router 测试
 
 ```typescript
 // router/index.ts
@@ -762,9 +762,9 @@ describe('Vue Router', () => {
 
 ---
 
-### 31.5 E2E 测试（Playwright）
+### E2E 测试（Playwright）
 
-#### 31.5.1 安装 Playwright
+#### 安装 Playwright
 
 ```bash
 npm install -D @playwright/test
@@ -773,7 +773,7 @@ npm install -D @playwright/test
 npx playwright install
 ```
 
-#### 31.5.2 配置 Playwright
+#### 配置 Playwright
 
 ```typescript
 // playwright.config.ts
@@ -814,7 +814,7 @@ export default defineConfig({
 })
 ```
 
-#### 31.5.3 E2E 测试示例
+#### E2E 测试示例
 
 ```typescript
 // e2e/login.spec.ts
@@ -909,7 +909,7 @@ test.describe('购物车功能', () => {
 })
 ```
 
-#### 31.5.4 添加测试脚本
+#### 添加测试脚本
 
 ```json
 // package.json
@@ -925,15 +925,15 @@ test.describe('购物车功能', () => {
 
 ---
 
-### 31.6 测试覆盖率
+### 测试覆盖率
 
-#### 31.6.1 生成覆盖率报告
+#### 生成覆盖率报告
 
 ```bash
 npm run test:coverage
 ```
 
-#### 31.6.2 覆盖率配置
+#### 覆盖率配置
 
 ```typescript
 // vite.config.ts
@@ -965,9 +965,9 @@ export default defineConfig({
 
 ---
 
-### 31.7 测试最佳实践
+### 测试最佳实践
 
-#### 31.7.1 测试文件命名规范
+#### 测试文件命名规范
 
 ```
 src/
@@ -990,7 +990,7 @@ e2e/
 └── profile.spec.ts
 ```
 
-#### 31.7.2 测试编写原则
+#### 测试编写原则
 
 ```typescript
 // ❌ 不好的测试
@@ -1025,7 +1025,7 @@ describe('Button组件', () => {
 })
 ```
 
-#### 31.7.4 完整测试实战案例：TodoList应用
+#### 完整测试实战案例：TodoList应用
 
 > **场景说明**：下面是一个完整的TodoList应用的测试套件，涵盖了单元测试、组件测试、Store测试和E2E测试。
 
@@ -1785,7 +1785,7 @@ npm run test:e2e
 npm run test:e2e:ui
 ```
 
-#### 31.7.5 测试最佳实践总结
+#### 测试最佳实践总结
 
 | 最佳实践 | 说明 | 示例 |
 |----------|------|------|
@@ -1797,7 +1797,7 @@ npm run test:e2e:ui
 | **快速反馈** | 单元测试应该快速执行 | 避免在单元测试中做网络请求 |
 | **Mock外部依赖** | 隔离外部服务 | Mock API、数据库等 |
 
-#### 31.7.6 本章小结
+#### 本章小结
 
 | 测试类型 | 工具 | 测试内容 | 执行速度 |
 |----------|------|----------|----------|

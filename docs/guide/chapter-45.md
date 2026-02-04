@@ -1,13 +1,12 @@
-# 第45章：Vue3组件库开发完整指南
+# Vue3组件库开发完整指南
 
-## 第45章 Vue3组件库开发完整指南
-
+## Vue3组件库开发完整指南
 > **学习目标**：从零开始搭建企业级 Vue3 组件库
 > **核心内容**：组件库架构、开发规范、构建发布、文档生成
 
-### 45.1 组件库架构设计
+### 组件库架构设计
 
-#### 45.1.1 Monorepo 架构
+#### Monorepo 架构
 
 ```
 my-component-lib/
@@ -21,7 +20,7 @@ my-component-lib/
 └── tsconfig.json
 ```
 
-#### 45.1.2 项目初始化
+#### 项目初始化
 
 ```bash
 # 创建 Monorepo 项目
@@ -37,7 +36,7 @@ pnpm add -D -w typescript vite @vitejs/plugin-vue vue-tsc
 pnpm add -w vue
 ```
 
-### 45.2 核心组件开发
+### 核心组件开发
 
 ```vue
 <!-- packages/components/src/button/Button.vue -->
@@ -96,7 +95,7 @@ function handleClick(e: MouseEvent) {
 </style>
 ```
 
-### 45.3 组件库构建
+### 组件库构建
 
 ```typescript
 // packages/components/vite.config.ts
@@ -121,7 +120,7 @@ export default defineConfig({
 })
 ```
 
-### 45.4 文档生成
+### 文档生成
 
 ```bash
 # 安装 VitePress
@@ -132,7 +131,7 @@ cd packages/docs
 pnpm vitepress init
 ```
 
-### 45.5 本章小结
+### 本章小结
 
 | 内容 | 核心要点 |
 |------|----------|

@@ -1,11 +1,11 @@
-# 第19章：TypeScript + Vue3
-
+# TypeScript + Vue3
+## TypeScript + Vue3
 ## 第19章 TypeScript + Vue3
 
 > **学习目标**：掌握Vue3与TypeScript结合使用
 > **核心内容**：组件类型定义、Props类型声明、泛型使用
 
-### 19.1 组件类型定义
+### 组件类型定义
 
 ```vue
 <script setup lang="ts">
@@ -50,7 +50,7 @@ const state = reactive<State>({
 </script>
 ```
 
-### 19.2 组合式函数类型
+### 组合式函数类型
 
 ```typescript
 // composables/useUser.ts

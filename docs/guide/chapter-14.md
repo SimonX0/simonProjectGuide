@@ -1,11 +1,11 @@
-# 第14章：组合式API深入
+# 组合式API深入
 
-## 第14章 组合式API深入
+## 组合式API深入
 
 > **学习目标**：深入掌握组合式API的使用
 > **核心内容**：ref/reactive、computed/watch、组合式函数
 
-### 14.1 ref 和 reactive
+### ref 和 reactive
 
 ```vue
 <script setup lang="ts">
@@ -32,7 +32,7 @@ console.log(userRef.value.name)
 </script>
 ```
 
-### 14.2 computed 和 watch
+### computed 和 watch
 
 ```vue
 <script setup lang="ts">
@@ -73,9 +73,9 @@ watch(count, (newVal) => {
 </script>
 ```
 
-### 14.3 组合式函数（Composables）
+### 组合式函数（Composables）
 
-#### 14.3.1 基础组合式函数
+#### 基础组合式函数
 
 ```typescript
 // composables/useMouse.ts
@@ -124,7 +124,7 @@ export function useFetch<T>(url: string) {
 }
 ```
 
-#### 14.3.2 自定义钩子函数最佳实践
+#### 自定义钩子函数最佳实践
 
 ```typescript
 // composables/useDebounce.ts - 防抖钩子
@@ -363,7 +363,7 @@ export function useIntersectionObserver(target: Ref<HTMLElement | undefined>, op
 }
 ```
 
-#### 14.3.3 组合式函数组合使用
+#### 组合式函数组合使用
 
 ```typescript
 // composables/useInfiniteScroll.ts - 无限滚动组合钩子
@@ -406,7 +406,7 @@ export function useInfiniteScroll(url: string) {
 }
 ```
 
-#### 14.3.4 使用组合式函数
+#### 使用组合式函数
 
 ```vue
 <!-- 使用组合式函数 -->
@@ -463,7 +463,7 @@ const { text, copy } = useClipboard()
 </template>
 ```
 
-#### 14.3.5 组合式函数最佳实践
+#### 组合式函数最佳实践
 
 ```typescript
 // ✅ 好的组合式函数设计

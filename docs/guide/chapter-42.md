@@ -1,10 +1,9 @@
-# 第 42 章：使用 Mock.js 进行数据模拟
+# 使用 Mock.js 进行数据模拟
 
-## 第 42 章 使用 Mock.js 进行数据模拟
-
+## 使用 Mock.js 进行数据模拟
 在前后端分离的开发模式中，前端开发往往需要等待后端接口完成后才能进行联调。Mock.js 是一个强大的数据模拟库，可以让我们在前端开发过程中拦截请求并返回模拟数据，极大地提高开发效率。
 
-### 42.1 Mock.js 简介
+### Mock.js 简介
 
 **什么是 Mock.js？**
 
@@ -23,9 +22,9 @@ Mock.js 是一个模拟数据生成器，可以：
 | 拦截请求   | 无需修改业务代码即可拦截   |
 | 类型安全   | 支持 TypeScript 类型定义   |
 
-### 42.2 安装与配置
+### 安装与配置
 
-#### 42.2.1 安装 Mock.js
+#### 安装 Mock.js
 
 ```bash
 # 使用 npm
@@ -38,14 +37,14 @@ pnpm add mockjs -D
 yarn add mockjs -D
 ```
 
-#### 42.2.2 安装类型定义
+#### 安装类型定义
 
 ```bash
 # 安装类型定义
 npm install @types/mockjs -D
 ```
 
-#### 42.2.3 基本配置
+#### 基本配置
 
 ```typescript
 // src/mock/index.ts
@@ -59,9 +58,9 @@ Mock.setup({
 export default Mock;
 ```
 
-### 42.3 Mock.js 基础语法
+### Mock.js 基础语法
 
-#### 42.3.1 数据模板定义
+#### 数据模板定义
 
 ```typescript
 import Mock from "mockjs";
@@ -90,7 +89,7 @@ const data = Mock.mock({
 console.log(data);
 ```
 
-#### 42.3.2 占位符使用
+#### 占位符使用
 
 ```typescript
 import Mock from "mockjs";
@@ -142,9 +141,9 @@ const data = Mock.mock({
 console.log(data);
 ```
 
-### 42.4 在 Vite + Vue3 中使用
+### 在 Vite + Vue3 中使用
 
-#### 42.4.1 项目结构
+#### 项目结构
 
 ```
 src/
@@ -159,7 +158,7 @@ src/
 └── main.ts
 ```
 
-#### 42.4.2 环境判断配置
+#### 环境判断配置
 
 ```typescript
 // src/mock/index.ts
@@ -179,7 +178,7 @@ if (isDev) {
 }
 ```
 
-#### 42.4.3 在 main.ts 中引入
+#### 在 main.ts 中引入
 
 ```typescript
 // src/main.ts
@@ -194,9 +193,9 @@ if (import.meta.env.DEV) {
 createApp(App).mount("#app");
 ```
 
-### 42.5 实战示例
+### 实战示例
 
-#### 42.5.1 用户模块 Mock
+#### 用户模块 Mock
 
 ```typescript
 // src/mock/user.ts
@@ -352,7 +351,7 @@ Mock.mock(/\/api\/user\/delete\/\d+/, "delete", (options: any) => {
 });
 ```
 
-#### 42.5.2 文章模块 Mock
+#### 文章模块 Mock
 
 ```typescript
 // src/mock/article.ts
@@ -557,7 +556,7 @@ Mock.mock("/api/article/tags", "get", () => {
 });
 ```
 
-#### 42.5.3 评论模块 Mock
+#### 评论模块 Mock
 
 ```typescript
 // src/mock/comment.ts
@@ -700,9 +699,9 @@ Mock.mock(/\/api\/comment\/delete\/\d+/, "delete", (options: any) => {
 });
 ```
 
-### 42.6 封装 Mock 工具
+### 封装 Mock 工具
 
-#### 42.6.1 统一响应格式
+#### 统一响应格式
 
 ```typescript
 // src/mock/utils.ts
@@ -778,7 +777,7 @@ export function randomError(errorRate = 0.1) {
 }
 ```
 
-#### 42.6.2 模块化 Mock 管理
+#### 模块化 Mock 管理
 
 ```typescript
 // src/mock/index.ts
@@ -840,7 +839,7 @@ if (isDev) {
 }
 ```
 
-#### 42.6.3 模块化示例
+#### 模块化示例
 
 ```typescript
 // src/mock/modules/user.ts
@@ -910,7 +909,7 @@ export default {
 };
 ```
 
-### 42.7 使用 Pinia 管理 Mock 状态
+### 使用 Pinia 管理 Mock 状态
 
 ```typescript
 // src/stores/mock.ts
@@ -950,7 +949,7 @@ export const useMockStore = defineStore("mock", () => {
 });
 ```
 
-### 42.8 Mock 调试面板
+### Mock 调试面板
 
 ```vue
 <!-- src/components/MockDebugPanel.vue -->
@@ -1079,7 +1078,7 @@ input[type="range"] {
 </style>
 ```
 
-### 42.9 Mock.js 常用占位符速查
+### Mock.js 常用占位符速查
 
 | 类别         | 占位符            | 示例                                   |
 | ------------ | ----------------- | -------------------------------------- |
@@ -1116,9 +1115,9 @@ input[type="range"] {
 |              | @zip              | "510000"                               |
 | **其他**     | @pick([1,2,3])    | 从数组中随机选一个                     |
 
-### 42.10 最佳实践
+### 最佳实践
 
-#### 42.10.1 开发建议
+#### 开发建议
 
 1. **仅在开发环境使用**
 
@@ -1155,7 +1154,7 @@ input[type="range"] {
    });
    ```
 
-#### 42.10.2 与后端对接时的注意事项
+#### 与后端对接时的注意事项
 
 ```typescript
 // 检查是否启用 Mock 的环境变量
@@ -1167,7 +1166,7 @@ const api = axios.create({
 });
 ```
 
-#### 42.10.3 环境变量配置
+#### 环境变量配置
 
 ```bash
 # .env.development
@@ -1177,7 +1176,7 @@ VITE_USE_MOCK=true
 VITE_USE_MOCK=false
 ```
 
-### 42.11 本章小结
+### 本章小结
 
 | 内容           | 说明                          |
 | -------------- | ----------------------------- |

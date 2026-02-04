@@ -1,13 +1,13 @@
-# 第35章：前端可视化
-
+# 前端可视化
+## # 4.11 前端可视化
 ## 第35章 前端可视化
 
 > **学习目标**：掌握前端数据可视化技术
 > **核心内容**：ECharts、Canvas 2D、SVG、Three.js
 
-### 35.1 ECharts 完全指南
+### ECharts 完全指南
 
-#### 35.1.1 安装 ECharts
+#### 安装 ECharts
 
 ```bash
 # 安装完整版
@@ -17,7 +17,7 @@ npm install echarts
 npm install echarts-core
 ```
 
-#### 35.1.2 基础配置
+#### 基础配置
 
 ```vue
 <!-- components/Charts/LineChart.vue -->
@@ -95,7 +95,7 @@ defineExpose({
 </style>
 ```
 
-#### 35.1.3 折线图
+#### 折线图
 
 ```vue
 <!-- components/Charts/SalesLineChart.vue -->
@@ -219,7 +219,7 @@ const chartOption = computed<EChartsOption>(() => ({
 </script>
 ```
 
-#### 35.1.4 柱状图
+#### 柱状图
 
 ```vue
 <!-- components/Charts/BarChart.vue -->
@@ -308,7 +308,7 @@ const chartOption = computed<EChartsOption>(() => ({
 </script>
 ```
 
-#### 35.1.5 饼图
+#### 饼图
 
 ```vue
 <!-- components/Charts/PieChart.vue -->
@@ -379,7 +379,7 @@ const chartOption = computed<EChartsOption>(() => ({
 </script>
 ```
 
-#### 35.1.6 动态图表
+#### 动态图表
 
 ```vue
 <!-- components/Charts/DynamicChart.vue -->
@@ -540,7 +540,7 @@ onUnmounted(() => {
 
 ---
 
-#### 35.1.7 企业级数据可视化大屏实战案例
+#### 企业级数据可视化大屏实战案例
 
 在企业级应用中，数据可视化大屏（Dashboard）是常见的需求。以下是完整的企业数据大屏实现案例，包含多种图表类型、响应式布局、实时数据更新等功能。
 
@@ -1508,9 +1508,9 @@ export const dashboardApi = {
 
 ---
 
-### 35.2 Canvas 2D 绘图
+### Canvas 2D 绘图
 
-#### 35.2.1 基础 Canvas 组件
+#### 基础 Canvas 组件
 
 ```vue
 <!-- components/Canvas/BaseCanvas.vue -->
@@ -1604,7 +1604,7 @@ defineExpose({
 </script>
 ```
 
-#### 35.2.2 绘制图形
+#### 绘制图形
 
 ```typescript
 // utils/canvasShapes.ts
@@ -1804,7 +1804,7 @@ export function drawGradientBackground(
 }
 ```
 
-#### 35.2.3 交互式 Canvas 图表
+#### 交互式 Canvas 图表
 
 ```vue
 <!-- components/Canvas/InteractiveChart.vue -->
@@ -1995,9 +1995,9 @@ const drawDataPoints = (ctx: CanvasRenderingContext2D) => {
 </style>
 ```
 
-### 35.3 SVG 矢量图形
+### SVG 矢量图形
 
-#### 35.3.1 SVG 基础组件
+#### SVG 基础组件
 
 ```vue
 <!-- components/SVG/SVGIcon.vue -->
@@ -2053,7 +2053,7 @@ const classes = computed(() => ['svg-icon', `svg-icon--${props.name}`])
 </style>
 ```
 
-#### 35.3.2 SVG 图表组件
+#### SVG 图表组件
 
 ```vue
 <!-- components/SVG/PieChart.vue -->
@@ -2196,15 +2196,15 @@ const leaveSlice = () => {
 </style>
 ```
 
-### 35.4 Three.js 3D 入门
+### Three.js 3D 入门
 
-#### 35.4.1 安装 Three.js
+#### 安装 Three.js
 
 ```bash
 npm install three @types/three
 ```
 
-#### 35.4.2 基础 3D 场景
+#### 基础 3D 场景
 
 ```vue
 <!-- components/Three/BasicScene.vue -->
@@ -2321,7 +2321,7 @@ onUnmounted(() => {
 </style>
 ```
 
-### 35.5 本章小结
+### 本章小结
 
 | 可视化方案 | 特点 | 适用场景 |
 |------------|------|----------|

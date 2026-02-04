@@ -1,11 +1,11 @@
-# 第18章：Pinia 状态管理
-
+# Pinia 状态管理
+## Pinia 状态管理
 ## 第18章 Pinia 状态管理
 
 > **学习目标**：掌握Pinia状态管理
 > **核心内容**：Store定义、State/Getters/Actions、持久化
 
-### 18.1 安装和配置
+### 安装和配置
 
 ```bash
 npm install pinia
@@ -508,7 +508,7 @@ export { resetAllStores }
 3. **独立组件库**：使用作用域 Pinia 避免冲突
 4. **多用户会话**：每个会话创建独立实例
 
-### 18.2 定义 Store（组合式API）
+### 定义 Store（组合式API）
 
 ```typescript
 // stores/counter.ts
@@ -550,7 +550,7 @@ export const useCounterStore = defineStore('counter', () => {
 })
 ```
 
-### 18.3 在组件中使用
+### 在组件中使用
 
 ```vue
 <script setup lang="ts">
@@ -577,7 +577,7 @@ const { increment, reset } = counterStore
 </template>
 ```
 
-### 18.4 Pinia 持久化（完整版）
+### Pinia 持久化（完整版）
 
 #### 方式一：手动实现持久化
 

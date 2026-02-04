@@ -1,6 +1,6 @@
-# 第 7 章：代码规范
+# 代码规范
 
-## 第 7 章 代码规范
+## 代码规范
 
 > **为什么要重视代码规范？**
 >
@@ -10,9 +10,9 @@
 > - 降低代码审查成本
 > - 便于新人快速上手项目
 
-### 7.1 命名规范
+### 命名规范
 
-#### 7.1.1 文件命名规范
+#### 文件命名规范
 
 ```bash
 # ✅ 组件文件：PascalCase
@@ -39,7 +39,7 @@ constants/config.ts
 constants/enums.ts
 ```
 
-#### 7.1.2 变量命名规范
+#### 变量命名规范
 
 ```typescript
 // ✅ 组件名：PascalCase
@@ -83,7 +83,7 @@ type Ref<T> = { value: T };
 type ApiResult<T> = { data: T; code: number };
 ```
 
-#### 7.1.3 类命名规范
+#### 类命名规范
 
 ```typescript
 // ✅ 类名：PascalCase
@@ -108,9 +108,9 @@ class UserService {
 }
 ```
 
-### 7.2 Vue 组件结构规范
+### Vue 组件结构规范
 
-#### 7.2.1 SFC 组件标准结构
+#### SFC 组件标准结构
 
 ```vue
 <script setup lang="ts">
@@ -252,7 +252,7 @@ onMounted(() => {
 </style>
 ```
 
-#### 7.2.2 组件定义顺序
+#### 组件定义顺序
 
 ```vue
 <script setup lang="ts">
@@ -269,7 +269,7 @@ onMounted(() => {
 </script>
 ```
 
-### 7.3 导入顺序规范
+### 导入顺序规范
 
 ```typescript
 // ✅ 标准导入顺序
@@ -311,9 +311,9 @@ import logoImage from "@/assets/logo.png";
 import "@/styles/main.css";
 ```
 
-### 7.4 注释规范
+### 注释规范
 
-#### 7.4.1 文件头注释
+#### 文件头注释
 
 ```typescript
 /**
@@ -329,7 +329,7 @@ import "@/styles/main.css";
  */
 ```
 
-#### 7.4.2 函数注释（JSDoc）
+#### 函数注释（JSDoc）
 
 ````typescript
 /**
@@ -368,7 +368,7 @@ function formatDate(
 }
 ````
 
-#### 7.4.3 类型注释
+#### 类型注释
 
 ```typescript
 /**
@@ -407,7 +407,7 @@ type ApiResponse<T> = {
 };
 ```
 
-#### 7.4.4 行内注释规范
+#### 行内注释规范
 
 ```typescript
 // ✅ 好的注释：解释为什么这样做
@@ -428,7 +428,7 @@ const userName = "John";
 isLoading.value = true;
 ```
 
-#### 7.4.5 TODO 注释规范
+#### TODO 注释规范
 
 ```typescript
 // TODO: 添加用户头像上传功能
@@ -438,9 +438,9 @@ isLoading.value = true;
 // XXX: 这种方式有潜在的安全风险
 ```
 
-### 7.5 TypeScript 编码规范
+### TypeScript 编码规范
 
-#### 7.5.1 类型定义规范
+#### 类型定义规范
 
 ```typescript
 // ✅ 优先使用 interface 定义对象类型
@@ -474,7 +474,7 @@ const ROUTES = {
 type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
 ```
 
-#### 7.5.2 泛型使用规范
+#### 泛型使用规范
 
 ```typescript
 // ✅ 泛型命名使用 T、U、V 或描述性名称
@@ -497,9 +497,9 @@ function pair<T, U>(first: T, second: U): [T, U] {
 }
 ```
 
-### 7.6 CSS/SCSS 编码规范
+### CSS/SCSS 编码规范
 
-#### 7.6.1 BEM 命名规范
+#### BEM 命名规范
 
 ```scss
 // Block: .block{}
@@ -530,7 +530,7 @@ function pair<T, U>(first: T, second: U): [T, U] {
 }
 ```
 
-#### 7.6.2 样式书写规范
+#### 样式书写规范
 
 ```scss
 // ✅ 标准顺序
@@ -565,7 +565,7 @@ function pair<T, U>(first: T, second: U): [T, U] {
 }
 ```
 
-### 7.7 文件和目录结构规范
+### 文件和目录结构规范
 
 ```bash
 # ✅ 推荐的项目结构
@@ -611,7 +611,7 @@ src/
 └── main.ts              # 入口文件
 ```
 
-### 7.8 Prettier 代码格式化配置
+### Prettier 代码格式化配置
 
 ```javascript
 // .prettierrc.js
@@ -674,7 +674,7 @@ pnpm-lock.yaml
 yarn.lock
 ```
 
-### 7.9 Stylelint 样式检查配置
+### Stylelint 样式检查配置
 
 ```bash
 # 安装依赖
@@ -707,9 +707,9 @@ module.exports = {
 };
 ```
 
-### 7.10 VSCode 配置
+### VSCode 配置
 
-#### 7.10.1 工作区设置
+#### 工作区设置
 
 ```json
 // .vscode/settings.json
@@ -756,7 +756,7 @@ module.exports = {
 }
 ```
 
-#### 7.10.2 推荐扩展
+#### 推荐扩展
 
 ```json
 // .vscode/extensions.json
@@ -774,7 +774,7 @@ module.exports = {
 }
 ```
 
-### 7.11 EditorConfig 编辑器配置
+### EditorConfig 编辑器配置
 
 ```bash
 # .editorconfig

@@ -1,4 +1,4 @@
-# 第 40 章：Vue3.4+最新特性详解
+# Vue3.4+最新特性详解
 
 ## 第 40 章 Vue3.4+最新特性详解
 
@@ -19,7 +19,7 @@
 
 ---
 
-### 40.1 Vue3.4 更新概览
+### Vue3.4 更新概览
 
 Vue3.4（"Slam Dunk"）于 2026 年发布，是一个重要的版本更新。
 
@@ -37,11 +37,11 @@ Vue3.4（"Slam Dunk"）于 2026 年发布，是一个重要的版本更新。
 npm list vue
 ```
 
-### 40.2 defineModel - 简化 v-model
+### defineModel - 简化 v-model
 
 在 Vue3.4 之前，实现自定义组件的 v-model 需要繁琐的代码。现在 defineModel 让这一切变得简单。
 
-#### 40.2.1 旧方案 vs 新方案
+#### 旧方案 vs 新方案
 
 **旧方案（Vue3.4 之前）**：
 
@@ -91,7 +91,7 @@ const increment = () => {
 <Counter v-model="count" />
 ```
 
-#### 40.2.2 defineModel 进阶用法
+#### defineModel 进阶用法
 
 **多个 v-model**：
 
@@ -157,11 +157,11 @@ const modelValue = defineModel<number>({
 </script>
 ```
 
-### 40.3 props 解构 - 响应式 props 解构
+### props 解构 - 响应式 props 解构
 
 Vue3.4+终于支持了响应式的 props 解构！
 
-#### 40.3.1 基础用法
+#### 基础用法
 
 **旧方案的问题**：
 
@@ -203,7 +203,7 @@ watch(count, (newVal) => {
 </script>
 ```
 
-#### 40.3.2 带默认值的解构
+#### 带默认值的解构
 
 ```vue
 <script setup lang="ts">
@@ -222,7 +222,7 @@ const {
 </script>
 ```
 
-#### 40.3.3 解构与类型推导
+#### 解构与类型推导
 
 ```vue
 <script setup lang="ts">
@@ -242,11 +242,11 @@ console.log(user.value.name); // TypeScript类型正常工作
 </script>
 ```
 
-### 40.4 bindToProps - 更好的 props 传递
+### bindToProps - 更好的 props 传递
 
 Vue3.4 改进了 v-bind 的用法。
 
-#### 40.4.1 覆盖式 props 传递
+#### 覆盖式 props 传递
 
 ```vue
 <script setup lang="ts">
@@ -264,7 +264,7 @@ const buttonProps = {
 </template>
 ```
 
-### 40.5 v-bind shorthand improvements
+### v-bind shorthand improvements
 
 简写语法改进。
 
@@ -277,7 +277,7 @@ const buttonProps = {
 </template>
 ```
 
-### 40.6 性能改进
+### 性能改进
 
 Vue3.4 带来了显著的性能提升：
 
@@ -295,9 +295,9 @@ Vue3.4 带来了显著的性能提升：
    - computed 缓存优化
    - watch 性能提升
 
-### 40.7 开发体验提升
+### 开发体验提升
 
-#### 40.7.1 更好的错误信息
+#### 更好的错误信息
 
 ```javascript
 // 旧版本
@@ -310,7 +310,7 @@ Uncaught TypeError: Cannot read properties of undefined
   at <Root>
 ```
 
-#### 40.7.2 警告优化
+#### 警告优化
 
 ```vue
 <script setup>
@@ -327,15 +327,15 @@ const items = [{ id: 1 }, { id: 1 }];
 </template>
 ```
 
-### 40.8 如何升级到最新版
+### 如何升级到最新版
 
-#### 40.8.1 检查当前版本
+#### 检查当前版本
 
 ```bash
 npm list vue
 ```
 
-#### 40.8.2 升级步骤
+#### 升级步骤
 
 ```bash
 # 1. 备份代码
@@ -352,7 +352,7 @@ npm update
 npm run dev
 ```
 
-#### 40.8.3 破坏性变更
+#### 破坏性变更
 
 Vue3.4 几乎没有破坏性变更，但需要注意：
 
@@ -378,7 +378,7 @@ const app = createApp(/* ... */);
 app.use(/* ... */);
 ```
 
-#### 40.8.4 迁移检查清单
+#### 迁移检查清单
 
 - [ ] 升级 Vue 到最新版本
 - [ ] 更新 vite-plugin-vue
@@ -387,7 +387,7 @@ app.use(/* ... */);
 - [ ] 更新 TypeScript 类型
 - [ ] 测试构建生产版本
 
-### 40.9 新特性实战案例
+### 新特性实战案例
 
 #### 案例：使用 defineModel 重构表单组件
 
@@ -466,7 +466,7 @@ const emit = defineEmits<{
 
 ---
 
-### 40.10 本章小结
+### 本章小结
 
 #### Vue3.4+核心特性速查表
 

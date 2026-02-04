@@ -1,5 +1,5 @@
-# 第17章：VueUse组合式函数库完全指南
-
+# VueUse组合式函数库完全指南
+## VueUse组合式函数库完全指南
 ## 第17章 VueUse组合式函数库完全指南
 
 > **为什么要学VueUse？**
@@ -18,9 +18,9 @@
 
 ---
 
-### 17.1 VueUse简介与安装
+### VueUse简介与安装
 
-#### 17.1.1 什么是VueUse？
+#### 什么是VueUse？
 
 VueUse是一个基于Vue3 Composition API的组合式函数集合库，由Anthony Fu主导开发。
 
@@ -33,7 +33,7 @@ VueUse是一个基于Vue3 Composition API的组合式函数集合库，由Anthon
 - ✅ **高质量**：完整的测试覆盖
 - ✅ **文档完善**：详细的API文档和示例
 
-#### 17.1.2 安装VueUse
+#### 安装VueUse
 
 ```bash
 # NPM
@@ -46,7 +46,7 @@ yarn add @vueuse/core
 pnpm add @vueuse/core
 ```
 
-#### 17.1.3 按需引入（推荐）
+#### 按需引入（推荐）
 
 ```javascript
 // ✅ 推荐：按需引入
@@ -56,7 +56,7 @@ import { useLocalStorage, useMouse, useFetch } from '@vueuse/core'
 import VueUse from '@vueuse/core'
 ```
 
-#### 17.1.4 函数分类概览
+#### 函数分类概览
 
 VueUse的函数可以分为以下几类：
 
@@ -73,9 +73,9 @@ VueUse的函数可以分为以下几类：
 
 ---
 
-### 17.2 核心函数详解
+### 核心函数详解
 
-#### 17.2.1 useStorage - 本地存储
+#### useStorage - 本地存储
 
 响应式的localStorage/sessionStorage封装。
 
@@ -142,7 +142,7 @@ const data = useStorage('data', { foo: 'bar' }, undefined, {
 - 表单草稿保存
 - Token缓存
 
-#### 17.2.2 useMouse - 鼠标追踪
+#### useMouse - 鼠标追踪
 
 追踪鼠标位置。
 
@@ -190,7 +190,7 @@ const { x: elX, y: elY } = useMouse({ target })
 - 游戏开发
 - 绘图应用
 
-#### 17.2.3 useIntersectionObserver - 滚动监听
+#### useIntersectionObserver - 滚动监听
 
 检测元素是否进入视口。
 
@@ -269,7 +269,7 @@ const loadImages = () => {
 - 动画触发（滚动到视口时播放）
 - 广告曝光统计
 
-#### 17.2.4 useClipboard - 剪贴板操作
+#### useClipboard - 剪贴板操作
 
 响应式的剪贴板API。
 
@@ -329,7 +329,7 @@ const readClipboard = async () => {
 - 分享链接复制
 - 密码生成器
 
-#### 17.2.5 useDebounceFn / useThrottleFn - 防抖节流
+#### useDebounceFn / useThrottleFn - 防抖节流
 
 函数防抖和节流。
 
@@ -410,9 +410,9 @@ const performSearch = (query: string) => {
 
 ---
 
-### 17.3 浏览器API封装
+### 浏览器API封装
 
-#### 17.3.1 useLocalStorage
+#### useLocalStorage
 
 LocalStorage的响应式封装。
 
@@ -448,7 +448,7 @@ const toggleTheme = () => {
 </template>
 ```
 
-#### 17.3.2 useSessionStorage
+#### useSessionStorage
 
 SessionStorage的响应式封装（用法与useLocalStorage相同）。
 
@@ -456,7 +456,7 @@ SessionStorage的响应式封装（用法与useLocalStorage相同）。
 const data = useSessionStorage('session-data', { foo: 'bar' })
 ```
 
-#### 17.3.3 useCookie
+#### useCookie
 
 操作浏览器Cookie。
 
@@ -489,7 +489,7 @@ const readCookie = () => {
 </script>
 ```
 
-#### 17.3.4 usePreferredDark
+#### usePreferredDark
 
 检测系统主题偏好。
 
@@ -530,9 +530,9 @@ const isDarkMode = useDark({
 
 ---
 
-### 17.4 网络请求函数
+### 网络请求函数
 
-#### 17.4.1 useFetch
+#### useFetch
 
 响应式的fetch API封装。
 
@@ -605,9 +605,9 @@ const { data: pollData } = useFetch('https://api.example.com/status', {
 
 ---
 
-### 17.5 动画相关函数
+### 动画相关函数
 
-#### 17.5.1 useTransition
+#### useTransition
 
 数字过渡动画。
 
@@ -645,9 +645,9 @@ setInterval(() => {
 
 ---
 
-### 17.6 传感器API
+### 传感器API
 
-#### 17.6.1 useGeolocation
+#### useGeolocation
 
 地理位置信息。
 
@@ -686,9 +686,9 @@ const accuracy = computed(() => coords.value.accuracy)
 
 ---
 
-### 17.7 状态管理工具
+### 状态管理工具
 
-#### 17.7.1 useToggle
+#### useToggle
 
 布尔值切换。
 
@@ -721,7 +721,7 @@ const forceFalse = () => {
 </template>
 ```
 
-#### 17.7.2 useCycleList
+#### useCycleList
 
 循环切换列表值。
 
@@ -751,7 +751,7 @@ const { state, next, prev, index } = useCycleList(colors)
 
 ---
 
-### 17.8 VueUse源码学习
+### VueUse源码学习
 
 让我们学习VueUse的实现方式，以便编写自己的组合式函数。
 
@@ -826,7 +826,7 @@ export function useDebounceFn(fn: Function, delay: number = 200) {
 
 ---
 
-### 17.9 实战案例：用VueUse重构代码
+### 实战案例：用VueUse重构代码
 
 #### 案例：待办事项应用
 
@@ -1045,7 +1045,7 @@ const filteredTodos = computed(() => {
 
 ---
 
-### 17.10 本章小结
+### 本章小结
 
 #### VueUse核心函数速查表
 

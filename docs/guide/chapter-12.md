@@ -1,11 +1,11 @@
-# 第12章：组件基础与组件名称定义
+# 组件基础与组件名称定义
 
-## 第12章 组件基础与组件名称定义
+## 组件基础与组件名称定义
 
 > **学习目标**：掌握Vue3组件的创建和使用
 > **核心内容**：SFC组件结构、setup语法糖、组件注册
 
-### 12.1 创建组件（组合式API + setup语法糖）
+### 创建组件（组合式API + setup语法糖）
 
 ```vue
 <!-- components/UserCard.vue -->
@@ -43,7 +43,7 @@ const props = defineProps<Props>()
 </template>
 ```
 
-### 12.2 组件导出与导入
+### 组件导出与导入
 
 **方式一：默认导出（推荐）**
 
@@ -111,7 +111,7 @@ export const API_BASE_URL = '/api'
 import { formatDate, debounce, type User, API_BASE_URL } from '@/utils/helpers'
 ```
 
-### 12.3 全局组件注册
+### 全局组件注册
 
 ```typescript
 // main.ts

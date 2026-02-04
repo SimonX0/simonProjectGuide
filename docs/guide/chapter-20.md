@@ -1,11 +1,11 @@
-# 第20章：高级特性
-
+# 高级特性
+## 高级特性
 ## 第20章 高级特性
 
 > **学习目标**：掌握Vue3高级特性
 > **核心内容**：Teleport、Suspense、自定义指令、过渡动画
 
-### 20.1 Teleport 传送门
+### Teleport 传送门
 
 ```vue
 <!-- Modal.vue -->
@@ -94,7 +94,7 @@ function confirm() {
 </style>
 ```
 
-### 20.2 自定义指令
+### 自定义指令
 
 ```typescript
 // directives/focus.ts

@@ -1,11 +1,11 @@
-# 第6章：CSS预处理器 - SCSS
+# CSS预处理器 - SCSS
 
-## 第6章 CSS预处理器 - SCSS
+## CSS预处理器 - SCSS
 
 > **学习目标**：掌握SCSS预处理器的高级特性
 > **核心内容**：SCSS安装配置、变量、嵌套、Mixin、函数、条件循环、模块化
 
-### 6.1 什么是SCSS？
+### 什么是SCSS？
 
 SCSS（Sassy CSS）是Sass的第三代，是CSS的预处理器，语法更接近CSS。
 
@@ -526,7 +526,7 @@ $card-padding: 16px;
 
 ---
 
-### 6.4 SCSS函数与条件循环实战案例
+### SCSS函数与条件循环实战案例
 
 > **实战场景**：构建一个完整的主题系统和响应式网格布局
 
@@ -751,7 +751,7 @@ $grid-gutter: 20px;
 
 ---
 
-### 6.5 SCSS继承与模块化实战案例
+### SCSS继承与模块化实战案例
 
 > **实战场景**：企业级UI组件库样式系统
 
@@ -1247,7 +1247,7 @@ $font-sizes: (
 
 ---
 
-### 6.6 Vue3项目完整SCSS架构实战
+### Vue3项目完整SCSS架构实战
 
 > **项目场景**：中大型Vue3应用的完整样式架构
 
@@ -1699,7 +1699,7 @@ export default defineConfig({
 
 ---
 
-### 6.7 SCSS最佳实践总结
+### SCSS最佳实践总结
 
 | 实践 | 说明 | 示例 |
 |------|------|------|
@@ -1713,7 +1713,7 @@ export default defineConfig({
 
 ---
 
-### 6.2 CSS/Less/SCSS 对比总结
+### CSS/Less/SCSS 对比总结
 
 | 特性 | CSS | Less | SCSS |
 |------|-----|------|------|
@@ -1750,7 +1750,7 @@ export default defineConfig({
 
 ---
 
-### 6.3 Vue3中配置CSS预处理器
+### Vue3中配置CSS预处理器
 
 #### Vite配置
 

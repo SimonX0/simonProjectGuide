@@ -1,4 +1,4 @@
-# 第4章：RAG检索增强生成
+# RAG检索增强
 
 ## 本章导读
 
@@ -14,9 +14,9 @@
 
 ---
 
-## 4.1 什么是RAG？
+## 什么是RAG？
 
-### 4.1.1 RAG的定义
+### RAG的定义
 
 **RAG（检索增强生成）** 是一种技术框架，通过先从知识库中检索相关文档，然后将检索到的内容作为上下文提供给LLM，从而生成更准确的回答。
 
@@ -44,7 +44,7 @@
 └─────────────────────────────────────────────────┘
 ```
 
-### 4.1.2 为什么需要RAG？
+### 为什么需要RAG？
 
 | 问题 | 纯LLM的局限 | RAG的解决方案 |
 |------|-------------|--------------|
@@ -54,7 +54,7 @@
 | **可追溯性** | 无法验证答案来源 | 提供引用来源 |
 | **专业性** | 通用知识，不够专业 | 领域专用知识库 |
 
-### 4.1.3 RAG vs 微调（Fine-tuning）
+### RAG vs 微调（Fine-tuning）
 
 ```
 RAG vs Fine-tuning 对比：
@@ -76,7 +76,7 @@ Fine-tuning：
 💡 最佳实践：RAG + Fine-tuning 结合使用
 ```
 
-### 4.1.4 RAG的应用场景
+### RAG的应用场景
 
 **1. 企业知识库问答**
 ```python
@@ -124,9 +124,9 @@ A: "根据项目文档：
 
 ---
 
-## 4.2 RAG系统架构
+## RAG系统架构
 
-### 4.2.1 完整的RAG流程
+### 完整的RAG流程
 
 ```
 ┌────────────────────────────────────────────────────┐
@@ -164,7 +164,7 @@ A: "根据项目文档：
 └────────────────────────────────────────────────────┘
 ```
 
-### 4.2.2 核心组件说明
+### 核心组件说明
 
 ```python
 # 1. Document Loaders - 文档加载器
@@ -204,9 +204,9 @@ from langchain.vectorstores import (
 
 ---
 
-## 4.3 文档加载（Document Loading）
+## 文档加载（Document Loading）
 
-### 4.3.1 支持的文档类型
+### 支持的文档类型
 
 LangChain支持100+种文档格式！
 
@@ -221,7 +221,7 @@ LangChain支持100+种文档格式！
 | JSON | `JSONLoader` | JSON数据 |
 | 代码 | `PythonLoader` | 源代码 |
 
-### 4.3.2 加载单个文档
+### 加载单个文档
 
 ```python
 from langchain.document_loaders import PyPDFLoader
@@ -241,7 +241,7 @@ txt_loader = TextLoader("docs/guide.txt", encoding='utf-8')
 txt_docs = txt_loader.load()
 ```
 
-### 4.3.3 加载目录
+### 加载目录
 
 ```python
 from langchain.document_loaders import DirectoryLoader
@@ -259,7 +259,7 @@ docs = loader.load()
 print(f"总共加载了 {len(docs)} 个文档块")
 ```
 
-### 4.3.4 加载网页
+### 加载网页
 
 ```python
 from langchain.document_loaders import WebBaseLoader
@@ -277,7 +277,7 @@ docs = loader.load()
 print(docs[0].page_content[:500])
 ```
 
-### 4.3.5 自定义Loader
+### 自定义Loader
 
 ```python
 from langchain.document_loaders.base import BaseLoader
@@ -307,9 +307,9 @@ docs = loader.load()
 
 ---
 
-## 4.4 文本分割（Text Splitting）
+## 文本分割（Text Splitting）
 
-### 4.4.1 为什么需要分割？
+### 为什么需要分割？
 
 ```
 问题：LLM有上下文长度限制
@@ -330,7 +330,7 @@ docs = loader.load()
   ✅ 降低Token消耗
 ```
 
-### 4.4.2 分割策略
+### 分割策略
 
 ```python
 from langchain.text_splitter import (
@@ -379,7 +379,7 @@ token_splitter = TokenTextSplitter(
 splits = token_splitter.split_documents(docs)
 ```
 
-### 4.4.3 不同文档类型的分割
+### 不同文档类型的分割
 
 ```python
 # Markdown文档
@@ -414,7 +414,7 @@ js_splitter = RecursiveCharacterTextSplitter.from_language(
 )
 ```
 
-### 4.4.4 分割效果评估
+### 分割效果评估
 
 ```python
 def evaluate_splits(splits):
@@ -439,9 +439,9 @@ evaluate_splits(splits)
 
 ---
 
-## 4.5 Embeddings和向量数据库
+## Embeddings和向量数据库
 
-### 4.5.1 什么是Embeddings？
+### 什么是Embeddings？
 
 **Embeddings（嵌入）** 是将文本转换为高维向量（数字数组）的技术，相似的文本会有相似的向量。
 
@@ -486,7 +486,7 @@ similarities = cosine_similarity(vectors)
 #  [0.45, 0.43, 0.19, 1.00]]
 ```
 
-### 4.5.2 主流Embedding模型
+### 主流Embedding模型
 
 | 模型 | 维度 | 特点 | 价格 |
 |------|------|------|------|
@@ -521,7 +521,7 @@ embeddings = HuggingFaceEmbeddings(
 )
 ```
 
-### 4.5.3 向量数据库选择
+### 向量数据库选择
 
 ```
 向量数据库对比：
@@ -554,7 +554,7 @@ Weaviate:
   💡 推荐用于复杂场景
 ```
 
-### 4.5.4 使用Chroma向量数据库
+### 使用Chroma向量数据库
 
 ```python
 from langchain.vectorstores import Chroma
@@ -611,7 +611,7 @@ for doc, score in results_with_scores:
     print(f"内容：{doc.page_content[:200]}...")
 ```
 
-### 4.5.5 使用FAISS
+### 使用FAISS
 
 ```python
 from langchain.vectorstores import FAISS
@@ -645,9 +645,9 @@ results = faiss_index.max_marginal_relevance_search(
 
 ---
 
-## 4.6 构建完整的RAG系统
+## 构建完整的RAG系统
 
-### 4.6.1 基础RAG链
+### 基础RAG链
 
 ```python
 from langchain_openai import ChatOpenAI
@@ -713,7 +713,7 @@ answer = rag_chain.invoke(query)
 print(answer)
 ```
 
-### 4.6.2 带来源引用的RAG
+### 带来源引用的RAG
 
 ```python
 from langchain_core.prompts import PromptTemplate
@@ -759,7 +759,7 @@ rag_chain = (
 )
 ```
 
-### 4.6.3 流式输出RAG
+### 流式输出RAG
 
 ```python
 # 流式输出
@@ -767,7 +767,7 @@ for chunk in rag_chain.stream("解释Python的GIL"):
     print(chunk, end="", flush=True)
 ```
 
-### 4.6.4 完整的RAG应用
+### 完整的RAG应用
 
 ```python
 class RAGSystem:
@@ -881,9 +881,9 @@ if __name__ == "__main__":
 
 ---
 
-## 4.7 RAG优化技巧
+## RAG优化技巧
 
-### 4.7.1 检索优化
+### 检索优化
 
 ```python
 # 1. 调整检索数量
@@ -921,7 +921,7 @@ compression_retriever = ContextualCompressionRetriever(
 )
 ```
 
-### 4.7.2 混合搜索
+### 混合搜索
 
 ```python
 # 结合关键词搜索和语义搜索
@@ -942,7 +942,7 @@ ensemble_retriever = EnsembleRetriever(
 )
 ```
 
-### 4.7.3 重排序（Reranking）
+### 重排序（Reranking）
 
 ```python
 from langchain.retrievers import ContextualCompressionRetriever
@@ -963,9 +963,9 @@ compression_retriever = ContextualCompressionRetriever(
 
 ---
 
-## 4.8 本章小结
+## 本章小结
 
-### 4.8.1 核心概念
+### 核心概念
 
 ✅ **RAG流程**：
 1. 文档加载和分割
@@ -988,7 +988,7 @@ compression_retriever = ContextualCompressionRetriever(
 
 ---
 
-## 4.9 练习题
+## 练习题
 
 ### 练习1：构建文档问答系统
 

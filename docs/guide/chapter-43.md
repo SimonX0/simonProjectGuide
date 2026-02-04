@@ -1,13 +1,12 @@
-# 第43章：服务端渲染(SSR)与Nuxt.js完全指南
+# 服务端渲染(SSR)与Nuxt.js完全指南
 
-## 第43章 服务端渲染(SSR)与Nuxt.js完全指南
-
+## 服务端渲染(SSR)与Nuxt.js完全指南
 > **学习目标**：掌握Vue3服务端渲染技术和Nuxt.js框架
 > **核心内容**：SSR原理、Nuxt.js基础、SEO优化、服务端渲染实战
 
-### 43.1 服务端渲染(SSR)基础
+### 服务端渲染(SSR)基础
 
-#### 43.1.1 什么是服务端渲染
+#### 什么是服务端渲染
 
 **服务端渲染 (Server-Side Rendering, SSR)** 是指在服务器端生成完整的HTML页面，然后发送给客户端进行展示。
 
@@ -47,7 +46,7 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-#### 43.1.2 SSR vs CSR 对比
+#### SSR vs CSR 对比
 
 | 特性 | SPA (CSR) | SSR | 说明 |
 |------|-----------|-----|------|
@@ -59,7 +58,7 @@
 | **开发复杂度** | 低 | 高 | SSR需要考虑服务器环境 |
 | ** hydration** | 不需要 | 需要 | 客户端激活静态HTML |
 
-#### 43.1.3 SSR 的优缺点
+#### SSR 的优缺点
 
 **优点：**
 1. **更好的 SEO** - 搜索引擎可以直接抓取页面内容
@@ -73,7 +72,7 @@
 3. **生命周期限制** - 某些浏览器API在服务器不可用
 4. **调试困难** - 错误可能来自服务器或客户端
 
-#### 43.1.4 SSR 适用场景
+#### SSR 适用场景
 
 ✅ **推荐使用 SSR：**
 - 需要 SEO 的内容网站（博客、新闻、电商）
@@ -89,9 +88,9 @@
 
 ---
 
-### 43.2 Nuxt.js 框架简介
+### Nuxt.js 框架简介
 
-#### 43.2.1 什么是 Nuxt.js
+#### 什么是 Nuxt.js
 
 **Nuxt.js** 是基于 Vue.js 的通用应用框架，它预设了利用 Vue.js 开发服务端渲染的应用所需要的各种配置。
 
@@ -126,7 +125,7 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-#### 43.2.2 Nuxt.js 核心特性
+#### Nuxt.js 核心特性
 
 | 特性 | 说明 |
 |------|------|
@@ -139,7 +138,7 @@
 | **SEO 优化** | Meta 标签管理、sitemap 生成 |
 | **模块生态** | 丰富的官方和社区模块 |
 
-#### 43.2.3 Nuxt.js 版本选择
+#### Nuxt.js 版本选择
 
 - **Nuxt 2** - 基于 Vue 2，维护模式
 - **Nuxt 3** - 基于 Vue 3，推荐使用 ✅
@@ -151,9 +150,9 @@ npx nuxi@latest init my-nuxt-app
 
 ---
 
-### 43.3 创建 Nuxt.js 项目
+### 创建 Nuxt.js 项目
 
-#### 43.3.1 环境要求
+#### 环境要求
 
 ```bash
 # Node.js 版本要求
@@ -163,7 +162,7 @@ Node.js >= 16.x
 Node.js >= 18.x
 ```
 
-#### 43.3.2 创建项目
+#### 创建项目
 
 **方式一：使用 npx（推荐）**
 
@@ -189,7 +188,7 @@ Ctrl/Cmd + Shift + P
 > Nuxt: New Project from Starter
 ```
 
-#### 43.3.3 项目结构
+#### 项目结构
 
 ```
 my-nuxt-app/
@@ -221,7 +220,7 @@ my-nuxt-app/
 └── README.md
 ```
 
-#### 43.3.4 配置文件
+#### 配置文件
 
 ```typescript
 // nuxt.config.ts
@@ -281,9 +280,9 @@ export default defineNuxtConfig({
 
 ---
 
-### 43.4 页面和路由
+### 页面和路由
 
-#### 43.4.1 文件路由系统
+#### 文件路由系统
 
 Nuxt 3 基于文件系统自动生成路由，无需手动配置路由表。
 
@@ -302,7 +301,7 @@ pages/
     └── [...slug].vue      # /posts/* (通配符路由)
 ```
 
-#### 43.4.2 基础页面
+#### 基础页面
 
 ```vue
 <!-- pages/index.vue -->
@@ -326,7 +325,7 @@ h1 {
 </style>
 ```
 
-#### 43.4.3 动态路由
+#### 动态路由
 
 ```vue
 <!-- pages/users/[id].vue -->
@@ -359,7 +358,7 @@ useHead({
 </script>
 ```
 
-#### 43.4.4 嵌套路由
+#### 嵌套路由
 
 ```
 pages/
@@ -393,9 +392,9 @@ pages/
 
 ---
 
-### 43.5 数据获取
+### 数据获取
 
-#### 43.5.1 useFetch 组合式函数
+#### useFetch 组合式函数
 
 `useFetch` 是 Nuxt 3 中最常用的数据获取方式，它会在服务端渲染时获取数据，并在客户端进行水合。
 
@@ -445,7 +444,7 @@ function refreshPost() {
 </script>
 ```
 
-#### 43.5.2 useAsyncData
+#### useAsyncData
 
 `useAsyncData` 提供了更底层的数据获取控制。
 
@@ -477,7 +476,7 @@ const { data: posts } = await useAsyncData(
 </script>
 ```
 
-#### 43.5.3 useLazyFetch
+#### useLazyFetch
 
 `useLazyFetch` 不会阻塞导航，适合非关键数据。
 
@@ -504,7 +503,7 @@ const { data: posts } = await useLazyFetch('/api/posts')
 </script>
 ```
 
-#### 43.5.4 数据缓存控制
+#### 数据缓存控制
 
 ```vue
 <script setup lang="ts">
@@ -531,9 +530,9 @@ function clearCache() {
 
 ---
 
-### 43.6 组件系统
+### 组件系统
 
-#### 43.6.1 组件自动导入
+#### 组件自动导入
 
 Nuxt 3 会自动导入 `components/` 目录下的组件，无需手动 import。
 
@@ -560,7 +559,7 @@ components/
 </template>
 ```
 
-#### 43.6.2 创建组件
+#### 创建组件
 
 ```vue
 <!-- components/UserCard.vue -->
@@ -625,7 +624,7 @@ function handleClick() {
 </template>
 ```
 
-#### 43.6.3 组合式函数 (Composables)
+#### 组合式函数 (Composables)
 
 ```typescript
 // composables/usePosts.ts
@@ -697,9 +696,9 @@ onMounted(() => {
 
 ---
 
-### 43.7 布局系统
+### 布局系统
 
-#### 43.7.1 默认布局
+#### 默认布局
 
 ```vue
 <!-- layouts/default.vue -->
@@ -726,7 +725,7 @@ useHead({
 </script>
 ```
 
-#### 43.7.2 自定义布局
+#### 自定义布局
 
 ```vue
 <!-- layouts/admin.vue -->
@@ -761,7 +760,7 @@ useHead({
 </style>
 ```
 
-#### 43.7.3 在页面中使用布局
+#### 在页面中使用布局
 
 ```vue
 <!-- pages/admin/dashboard.vue -->
@@ -780,7 +779,7 @@ definePageMeta({
 </script>
 ```
 
-#### 43.7.4 动态布局
+#### 动态布局
 
 ```vue
 <script setup lang="ts">
@@ -812,9 +811,9 @@ definePageMeta({
 
 ---
 
-### 43.8 SEO 优化
+### SEO 优化
 
-#### 43.8.1 设置页面 Meta 信息
+#### 设置页面 Meta 信息
 
 ```vue
 <!-- pages/blog/[slug].vue -->
@@ -860,7 +859,7 @@ useHead({
 </script>
 ```
 
-#### 43.8.2 使用 useSeoMeta 组合式函数
+#### 使用 useSeoMeta 组合式函数
 
 ```vue
 <script setup lang="ts">
@@ -880,7 +879,7 @@ useSeoMeta({
 </script>
 ```
 
-#### 43.8.3 全局 SEO 配置
+#### 全局 SEO 配置
 
 ```typescript
 // nuxt.config.ts
@@ -909,7 +908,7 @@ export default defineNuxtConfig({
 })
 ```
 
-#### 43.8.4 生成 Sitemap
+#### 生成 Sitemap
 
 ```bash
 # 安装 @nuxtjs/sitemap 模块
@@ -939,9 +938,9 @@ export default defineNuxtConfig({
 
 ---
 
-### 43.9 Nuxt.js 实战案例
+### Nuxt.js 实战案例
 
-#### 43.9.1 博客系统完整实现
+#### 博客系统完整实现
 
 **项目结构：**
 
@@ -1449,9 +1448,9 @@ function formatDate(date: string) {
 
 ---
 
-### 43.10 部署 Nuxt.js 应用
+### 部署 Nuxt.js 应用
 
-#### 43.10.1 构建 SSR 应用
+#### 构建 SSR 应用
 
 ```bash
 # 构建生产版本
@@ -1461,7 +1460,7 @@ npm run build
 node .output/server/index.ts
 ```
 
-#### 43.10.2 生成静态站点
+#### 生成静态站点
 
 ```typescript
 // nuxt.config.ts
@@ -1481,7 +1480,7 @@ npm run generate
 # 输出到 .output/public 目录
 ```
 
-#### 43.10.3 部署到 Vercel
+#### 部署到 Vercel
 
 ```bash
 # 安装 Vercel CLI
@@ -1503,7 +1502,7 @@ vercel
 }
 ```
 
-#### 43.10.4 部署到 Node.js 服务器
+#### 部署到 Node.js 服务器
 
 ```bash
 # 1. 构建应用
@@ -1535,7 +1534,7 @@ module.exports = {
 
 ---
 
-### 43.11 本章小结
+### 本章小结
 
 | 内容 | 关键点 |
 |------|--------|

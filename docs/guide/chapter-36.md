@@ -1,13 +1,13 @@
-# 第36章：前端监控与埋点
-
+# 前端监控与埋点
+## # 4.12 前端监控与埋点
 ## 第36章 前端监控与埋点
 
 > **学习目标**：掌握前端性能监控、错误监控、用户行为埋点技术
 > **核心内容**：Performance API、Sentry集成、PV/UV统计、A/B测试
 
-### 36.1 性能监控（Performance API）
+### 性能监控（Performance API）
 
-#### 36.1.1 基础性能指标
+#### 基础性能指标
 
 ```typescript
 // utils/performance.ts
@@ -213,7 +213,7 @@ export function observeCLS(callback: (value: number) => void) {
 }
 ```
 
-#### 36.1.2 Web Vitals 监控组件
+#### Web Vitals 监控组件
 
 ```vue
 <!-- components/Performance/PerformanceMonitor.vue -->
@@ -410,7 +410,7 @@ onUnmounted(() => {
 
 ---
 
-#### 36.1.3 企业级前端监控系统完整方案
+#### 企业级前端监控系统完整方案
 
 在企业级应用中，需要一套完整的前端监控系统来收集性能数据、错误信息和用户行为。以下是完整的监控系统实现案例。
 
@@ -1109,15 +1109,15 @@ function handleClick() {
 
 ---
 
-### 36.2 错误监控（Sentry集成）
+### 错误监控（Sentry集成）
 
-#### 36.2.1 安装 Sentry
+#### 安装 Sentry
 
 ```bash
 npm install @sentry/vue
 ```
 
-#### 36.2.2 配置 Sentry
+#### 配置 Sentry
 
 ```typescript
 // main.ts
@@ -1181,7 +1181,7 @@ if (import.meta.env.PROD) {
 app.mount('#app')
 ```
 
-#### 36.2.3 手动错误上报
+#### 手动错误上报
 
 ```typescript
 // utils/sentry.ts
@@ -1239,7 +1239,7 @@ export function startTransaction(name: string, op: string) {
 }
 ```
 
-#### 36.2.4 错误边界组件
+#### 错误边界组件
 
 ```vue
 <!-- components/ErrorBoundary.vue -->
@@ -1392,9 +1392,9 @@ const goHome = () => {
 </style>
 ```
 
-### 36.3 用户行为埋点
+### 用户行为埋点
 
-#### 36.3.1 埋点基础实现
+#### 埋点基础实现
 
 ```typescript
 // utils/analytics.ts
@@ -1496,7 +1496,7 @@ export function setUserId(userId: string) {
 }
 ```
 
-#### 36.3.2 埋点指令
+#### 埋点指令
 
 ```typescript
 // directives/track.ts
@@ -1542,7 +1542,7 @@ const app = createApp(App)
 app.directive('track', track)
 ```
 
-#### 36.3.3 埋点组合式函数
+#### 埋点组合式函数
 
 ```typescript
 // composables/useAnalytics.ts
@@ -1655,7 +1655,7 @@ const handleSubmit = () => {
 </script>
 ```
 
-### 36.4 PV/UV 统计
+### PV/UV 统计
 
 ```typescript
 // utils/pageStats.ts
@@ -1758,7 +1758,7 @@ async function sendStats(data: any) {
 }
 ```
 
-### 36.5 A/B 测试实现
+### A/B 测试实现
 
 ```typescript
 // utils/abTest.ts
@@ -1874,7 +1874,7 @@ const handleConversion = () => {
 </script>
 ```
 
-### 36.6 本章小结
+### 本章小结
 
 | 监控类型 | 实现方式 | 关键指标 |
 |----------|----------|----------|

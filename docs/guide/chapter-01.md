@@ -1,6 +1,6 @@
-# 第 1 章：JavaScript 核心基础回顾（Vue3 前置知识）
+# JavaScript 核心基础
 
-## 第 1 章 JavaScript 核心基础回顾（Vue3 前置知识）
+## JavaScript 核心基础回顾（Vue3 前置知识）
 
 > **为什么要学这一章？**
 >
@@ -16,11 +16,11 @@
 
 ---
 
-### 1.1 数组方法完全指南
+### 数组方法完全指南
 
 数组是前端开发中最常用的数据结构之一。Vue3 中处理列表渲染、数据过滤、数据转换等操作都离不开数组方法。
 
-#### 1.1.1 遍历方法
+#### 遍历方法
 
 ##### **forEach()** - 遍历数组
 
@@ -135,7 +135,7 @@ const useAdvancedFilter = (products, filters) => {
 };
 ```
 
-#### 1.1.2 查找方法
+#### 查找方法
 
 ##### **find()** - 查找单个元素
 
@@ -245,7 +245,7 @@ const isFormValid = (fields) => {
 };
 ```
 
-#### 1.1.3 累加方法
+#### 累加方法
 
 ##### **reduce()** - 归约累加
 
@@ -332,7 +332,7 @@ console.log(arrayToObject(users, "id"));
 // }
 ```
 
-#### 1.1.4 修改方法
+#### 修改方法
 
 ##### **push() / pop()** - 尾部添加/删除
 
@@ -464,7 +464,7 @@ const page1 = usePagination(allUsers, 1, 10);
 console.log(page1.data.length); // 10 - 第1页10条数据
 ```
 
-#### 1.1.5 排序与反转
+#### 排序与反转
 
 ##### **sort()** - 排序
 
@@ -535,7 +535,7 @@ const useMessageList = (messages) => {
 };
 ```
 
-#### 1.1.6 数组方法实战案例
+#### 数组方法实战案例
 
 ```javascript
 // Vue3 完整案例：商品列表功能
@@ -613,11 +613,11 @@ console.log(getStats()); // 统计数据
 
 ---
 
-### 1.2 JSON 与 XML 数据解析
+### JSON 与 XML 数据解析
 
 前后端数据交互离不开数据格式的处理。JSON 和 XML 是两种最常用的数据格式。
 
-#### 1.2.1 JSON 解析
+#### JSON 解析
 
 ##### **JSON.parse()** - JSON 字符串转对象
 
@@ -837,7 +837,7 @@ const useApiData = async (url) => {
 };
 ```
 
-#### 1.2.2 处理 API 响应数据
+#### 处理 API 响应数据
 
 ```javascript
 // Vue3 Composable: 封装API请求
@@ -894,7 +894,7 @@ console.log(loading.value); // true
 console.log(data.value); // 解析后的数据
 ```
 
-#### 1.2.3 XML 解析基础
+#### XML 解析基础
 
 虽然 JSON 更流行，但有些老系统或特定场景（如 RSS、SVG）仍然使用 XML。
 
@@ -953,7 +953,7 @@ const articles = await useRssFeed("https://example.com/rss");
 console.log(articles); // 文章列表
 ```
 
-#### 1.2.4 数据格式转换实战
+#### 数据格式转换实战
 
 ```javascript
 // Vue3 Composable: 数据转换工具集
@@ -1048,11 +1048,11 @@ console.log(users);
 
 ---
 
-### 1.3 解构赋值完全指南
+### 解构赋值完全指南
 
 解构赋值是 ES6 最常用的特性之一，可以从数组或对象中快速提取值。
 
-#### 1.3.1 对象解构
+#### 对象解构
 
 ##### **基础解构**
 
@@ -1165,7 +1165,7 @@ const {
 } = state;
 ```
 
-#### 1.3.2 数组解构
+#### 数组解构
 
 ##### **基础解构**
 
@@ -1219,7 +1219,7 @@ console.log(b); // 2  // 默认值
 console.log(c); // 3  // 默认值
 ```
 
-#### 1.3.3 函数参数解构
+#### 函数参数解构
 
 ```javascript
 // 对象参数解构
@@ -1277,7 +1277,7 @@ const useState = (initialValue) => {
 const [count, setCount] = useState(0);
 ```
 
-#### 1.3.4 解构实际应用场景
+#### 解构实际应用场景
 
 ```javascript
 // 场景1：解构API响应
@@ -1341,11 +1341,11 @@ const date = parse(dateStr, "yyyy-MM-dd", new Date());
 
 ---
 
-### 1.4 扩展运算符与剩余参数
+### 扩展运算符与剩余参数
 
 扩展运算符（`...`）是 ES6 最强大的特性之一，可以在多种场景中使用。
 
-#### 1.4.1 对象展开运算符
+#### 对象展开运算符
 
 ##### **对象合并**
 
@@ -1442,7 +1442,7 @@ const buttonClass = computed(() => {
 });
 ```
 
-#### 1.4.2 数组展开运算符
+#### 数组展开运算符
 
 ##### **数组合并**
 
@@ -1510,7 +1510,7 @@ const updateMultiple = (ids, ...values) => {
 updateMultiple([1, 2, 3], 4, 5, 6);
 ```
 
-#### 1.4.3 剩余参数（Rest Parameters）
+#### 剩余参数（Rest Parameters）
 
 收集多个参数到一个数组中。
 
@@ -1544,7 +1544,7 @@ console.log(createUser(1, "张三", 25, { city: "北京" }));
 // { id: 1, details: { name: '张三', age: 25, city: '北京' } }
 ```
 
-#### 1.4.4 实际应用场景
+#### 实际应用场景
 
 ```javascript
 // 场景1：状态更新（Immutable模式）
@@ -1635,9 +1635,9 @@ const Input = ({ modelValue, ...restProps }) => {
 
 ---
 
-### 1.5 现代 JS 语法特性
+### 现代 JS 语法特性
 
-#### 1.5.1 可选链（Optional Chaining `?.`）
+#### 可选链（Optional Chaining `?.`）
 
 可选链运算符 `?.` 可以安全地访问嵌套对象属性，避免 `Cannot read property` 错误。
 
@@ -1691,7 +1691,7 @@ const admin = {
 admin.permissions?.canEdit?.();
 ```
 
-#### 1.5.2 空值合并（Nullish Coalescing `??`）
+#### 空值合并（Nullish Coalescing `??`）
 
 空值合并运算符 `??` 只有当左侧是 `null` 或 `undefined` 时才返回右侧值。
 
@@ -1768,7 +1768,7 @@ const useApiData = (response) => {
 };
 ```
 
-#### 1.5.3 模板字符串
+#### 模板字符串
 
 模板字符串使用反引号 `` ` ``，可以包含表达式和多行文本。
 
@@ -1835,7 +1835,7 @@ const highlighted = highlight`你好，${name2}！`;
 console.log(highlighted); // '你好，<strong>张三</strong>！'
 ```
 
-#### 1.5.4 箭头函数
+#### 箭头函数
 
 箭头函数提供更简洁的函数语法，并且不绑定自己的 `this`。
 
@@ -1925,9 +1925,9 @@ const Component = {
 
 ---
 
-### 1.6 本章小结与最佳实践
+### 本章小结与最佳实践
 
-#### 1.6.1 数组方法选择指南
+#### 数组方法选择指南
 
 ```javascript
 // 根据需求选择合适的数组方法
@@ -1955,7 +1955,7 @@ const allPositive = data.every((item) => item > 0);
 const sum = data.reduce((acc, item) => acc + item, 0);
 ```
 
-#### 1.6.2 性能优化建议
+#### 性能优化建议
 
 ```javascript
 // 1. 避免在循环中修改数组长度
@@ -1998,7 +1998,7 @@ const result = arr.reduce((acc, x) => {
 }, []);
 ```
 
-#### 1.6.3 Vue3 开发最佳实践
+#### Vue3 开发最佳实践
 
 ```javascript
 // 1. 使用扩展运算符保持响应式
@@ -2023,7 +2023,7 @@ const url = `/api/users?page=${page}&size=${size}`;
 items.filter((item) => item.active);
 ```
 
-#### 1.6.4 常见错误与解决方案
+#### 常见错误与解决方案
 
 | 错误                                      | 原因                        | 解决方案                           |
 | ----------------------------------------- | --------------------------- | ---------------------------------- |

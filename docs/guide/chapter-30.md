@@ -1,13 +1,13 @@
-# 第30章：前端安全防护
-
+# 前端安全防护
+## # 4.6 前端安全防护
 ## 第30章 前端安全防护
 
 > **学习目标**：掌握前端常见安全漏洞及防护措施
 > **核心内容**：XSS、CSRF、CSP、数据加密、安全HTTP头
 
-### 30.1 XSS 攻击与防护
+### XSS 攻击与防护
 
-#### 30.1.1 什么是 XSS 攻击？
+#### 什么是 XSS 攻击？
 
 **XSS（Cross-Site Scripting，跨站脚本攻击）** 是一种代码注入攻击，攻击者在网页中注入恶意脚本代码。
 
@@ -18,7 +18,7 @@
 - 重定向到恶意网站
 - 记录用户键盘输入
 
-#### 30.1.2 XSS 攻击类型
+#### XSS 攻击类型
 
 **1. 存储型 XSS（持久化）**
 
@@ -88,7 +88,7 @@ onMounted(() => {
 // http://example.com/#<img src=x onerror=alert(1)>
 ```
 
-#### 30.1.3 XSS 防护措施
+#### XSS 防护措施
 
 **1. 避免使用 v-html**
 
@@ -287,9 +287,9 @@ const { safeHtml, isDirty, checkDirty } = useSafeHtml(inputHtml)
 
 ---
 
-### 30.2 CSRF 攻击与防护
+### CSRF 攻击与防护
 
-#### 30.2.1 什么是 CSRF 攻击？
+#### 什么是 CSRF 攻击？
 
 **CSRF（Cross-Site Request Forgery，跨站请求伪造）** 是一种挟持用户在当前已登录的Web应用程序上执行非本意的操作的攻击方法。
 
@@ -302,7 +302,7 @@ const { safeHtml, isDirty, checkDirty } = useSafeHtml(inputHtml)
 5. 银行服务器验证 Cookie 有效，执行转账操作
 ```
 
-#### 30.2.2 CSRF 防护措施
+#### CSRF 防护措施
 
 **1. CSRF Token**
 
@@ -461,9 +461,9 @@ const confirmAction = async () => {
 
 ---
 
-### 30.3 内容安全策略（CSP）
+### 内容安全策略（CSP）
 
-#### 30.3.1 CSP 基础配置
+#### CSP 基础配置
 
 ```typescript
 // vite.config.ts
@@ -489,7 +489,7 @@ export default defineConfig({
 })
 ```
 
-#### 30.3.2 CSP 指令详解
+#### CSP 指令详解
 
 | 指令 | 说明 | 示例值 |
 |------|------|--------|
@@ -508,7 +508,7 @@ export default defineConfig({
 | `upgrade-insecure-requests` | 升级HTTP到HTTPS | - |
 | `report-uri` | 违规报告地址 | `/csp-report` |
 
-#### 30.3.3 CSP 报告收集
+#### CSP 报告收集
 
 ```typescript
 // api/cspReport.ts
@@ -550,7 +550,7 @@ if (typeof window !== 'undefined' && window.addEventListener) {
 }
 ```
 
-#### 30.3.4 Vue3 CSP 配置插件
+#### Vue3 CSP 配置插件
 
 ```typescript
 // plugins/viteCsp.ts
@@ -626,16 +626,16 @@ export default defineConfig({
 
 ---
 
-### 30.4 敏感数据加密
+### 敏感数据加密
 
-#### 30.4.1 前端加密库（crypto-js）
+#### 前端加密库（crypto-js）
 
 ```bash
 npm install crypto-js
 npm install -D @types/crypto-js
 ```
 
-#### 30.4.2 对称加密（AES）
+#### 对称加密（AES）
 
 ```typescript
 // utils/crypto.ts
@@ -711,7 +711,7 @@ const decrypt = () => {
 </script>
 ```
 
-#### 30.4.3 哈希函数（MD5、SHA256）
+#### 哈希函数（MD5、SHA256）
 
 ```typescript
 // utils/hash.ts
@@ -759,7 +759,7 @@ export function verifyPassword(password: string, hash: string, salt: string): bo
 }
 ```
 
-#### 30.4.4 Base64 编解码
+#### Base64 编解码
 
 ```typescript
 // utils/base64.ts
@@ -803,7 +803,7 @@ export function base64UrlDecode(data: string): string {
 }
 ```
 
-#### 30.4.5 Pinia 持久化加密
+#### Pinia 持久化加密
 
 ```typescript
 // stores/utils.ts
@@ -871,9 +871,9 @@ export const useUserStore = defineStore('user', () => {
 
 ---
 
-### 30.5 安全 HTTP 头设置
+### 安全 HTTP 头设置
 
-#### 30.5.1 常见安全响应头
+#### 常见安全响应头
 
 | 响应头 | 作用 | 推荐值 |
 |--------|------|--------|
@@ -887,7 +887,7 @@ export const useUserStore = defineStore('user', () => {
 | `Cross-Origin-Resource-Policy` | 跨域资源策略 | `same-origin` |
 | `Cross-Origin-Embedder-Policy` | 跨域嵌入策略 | `require-corp` |
 
-#### 30.5.2 Vite 安全头配置
+#### Vite 安全头配置
 
 ```typescript
 // vite.config.ts
@@ -934,7 +934,7 @@ export default defineConfig({
 })
 ```
 
-#### 30.5.3 Nginx 安全头配置
+#### Nginx 安全头配置
 
 ```nginx
 # nginx.conf
@@ -969,7 +969,7 @@ server {
 }
 ```
 
-#### 30.5.4 Vue3 安全头组合式函数
+#### Vue3 安全头组合式函数
 
 ```typescript
 // composables/useSecurityHeaders.ts
@@ -1058,9 +1058,9 @@ useSecurityHeaders({
 
 ---
 
-### 30.6 安全最佳实践总结
+### 安全最佳实践总结
 
-#### 30.6.1 开发安全检查清单
+#### 开发安全检查清单
 
 ```typescript
 // checklist/security.ts
@@ -1106,7 +1106,7 @@ export const securityChecklist = {
 }
 ```
 
-#### 30.6.2 安全检测工具
+#### 安全检测工具
 
 ```bash
 # npm 漏洞扫描
@@ -1120,7 +1120,7 @@ snyk test
 # 下载: https://www.zaproxy.org/
 ```
 
-#### 30.6.3 本章小结
+#### 本章小结
 
 | 安全威胁 | 防护措施 | 优先级 |
 |----------|----------|--------|

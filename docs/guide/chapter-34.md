@@ -1,20 +1,20 @@
-# 第34章：国际化（I18n）
-
+# 国际化（I18n）
+## # 4.10 国际化（I18n）
 ## 第34章 国际化（I18n）
 
 > **学习目标**：掌握Vue3应用国际化开发技术
 > **核心内容**：Vue I18n、语言切换、日期数字格式化、RTL支持
 
-### 34.1 Vue I18n 安装与配置
+### Vue I18n 安装与配置
 
-#### 34.1.1 安装 Vue I18n
+#### 安装 Vue I18n
 
 ```bash
 # Vue I18n 9.x 适用于 Vue3
 npm install vue-i18n@9
 ```
 
-#### 34.1.2 基础配置
+#### 基础配置
 
 ```typescript
 // src/i18n/index.ts
@@ -132,9 +132,9 @@ app.use(i18n)
 app.mount('#app')
 ```
 
-### 34.2 语言包组织
+### 语言包组织
 
-#### 34.2.1 语言包结构
+#### 语言包结构
 
 ```
 src/i18n/
@@ -154,7 +154,7 @@ src/i18n/
     └── plural.ts
 ```
 
-#### 34.2.2 中文语言包
+#### 中文语言包
 
 ```json
 // src/i18n/locales/zh-CN.json
@@ -233,7 +233,7 @@ src/i18n/
 }
 ```
 
-#### 34.2.3 英文语言包
+#### 英文语言包
 
 ```json
 // src/i18n/locales/en-US.json
@@ -314,7 +314,7 @@ src/i18n/
 
 ---
 
-#### 34.2.4 企业级语言包管理最佳实践
+#### 企业级语言包管理最佳实践
 
 在企业级应用中，语言包管理需要考虑模块化、维护性、自动化翻译等。以下是完整的最佳实践方案。
 
@@ -856,9 +856,9 @@ function handleExport() {
 | **版本管理** | 语言包纳入版本控制 | 与代码同步更新 |
 | **自动化翻译** | 使用 AI 辅助翻译，人工校对 | ChatGPT + 人工审核 |
 
-### 34.3 使用 Vue I18n
+### 使用 Vue I18n
 
-#### 34.1.1 在模板中使用
+#### 在模板中使用
 
 ```vue
 <template>
@@ -907,7 +907,7 @@ const percentage = ref(0.75)
 </script>
 ```
 
-#### 34.3.2 在 Script 中使用
+#### 在 Script 中使用
 
 ```typescript
 import { useI18n } from 'vue-i18n'
@@ -941,7 +941,7 @@ export function useUserForm() {
 }
 ```
 
-#### 34.3.3 组合式函数封装
+#### 组合式函数封装
 
 ```typescript
 // composables/useI18nUtils.ts
@@ -1028,7 +1028,7 @@ export function useI18nUtils() {
 }
 ```
 
-### 34.4 语言切换器组件
+### 语言切换器组件
 
 ```vue
 <!-- components/LanguageSwitcher.vue -->
@@ -1138,9 +1138,9 @@ const handleLanguageChange = (locale: string) => {
 </style>
 ```
 
-### 34.5 日期和数字格式化
+### 日期和数字格式化
 
-#### 34.5.1 日期格式化
+#### 日期格式化
 
 ```typescript
 // utils/dateFormatter.ts
@@ -1210,7 +1210,7 @@ export function useDateFormatter() {
 }
 ```
 
-#### 34.5.2 数字格式化
+#### 数字格式化
 
 ```typescript
 // utils/numberFormatter.ts
@@ -1274,7 +1274,7 @@ export function useNumberFormatter() {
 }
 ```
 
-### 34.6 复数处理
+### 复数处理
 
 ```typescript
 // utils/plural.ts
@@ -1359,7 +1359,7 @@ const { pluralize, formatItemWithCount } = usePlural()
 </script>
 ```
 
-### 34.7 RTL（从右到左）支持
+### RTL（从右到左）支持
 
 ```typescript
 // composables/useRTL.ts
@@ -1450,7 +1450,7 @@ const content = '这是一个支持RTL布局的示例'
 </style>
 ```
 
-### 34.8 翻译文件按需加载
+### 翻译文件按需加载
 
 ```typescript
 // i18n/lazy.ts
@@ -1494,7 +1494,7 @@ const changeLanguage = async (locale: string) => {
 }
 ```
 
-### 34.9 本章小结
+### 本章小结
 
 | 功能 | 实现方式 | 用途 |
 |------|----------|------|

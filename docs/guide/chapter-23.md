@@ -1,11 +1,11 @@
-# 第23章：性能优化
-
+# 性能优化
+## 性能优化
 ## 第23章 性能优化
 
 > **学习目标**：掌握Vue3性能优化技巧
 > **核心内容**：组件优化、列表优化、路由懒加载、keep-alive
 
-### 23.1 组件级优化
+### 组件级优化
 
 ```vue
 <script setup lang="ts">
@@ -528,7 +528,7 @@ const loadMore = async () => {
 
 ---
 
-### 23.2 列表优化
+### 列表优化
 
 ```vue
 <script setup lang="ts">
@@ -557,7 +557,7 @@ const largeList = ref(Array.from({ length: 10000 }, (_, i) => ({
 </template>
 ```
 
-### 23.3 路由懒加载
+### 路由懒加载
 
 ```typescript
 // router/index.ts
@@ -578,7 +578,7 @@ const routes: RouteRecordRaw[] = [
 ]
 ```
 
-### 23.4 keep-alive 组件缓存
+### keep-alive 组件缓存
 
 > **什么是 keep-alive？**
 > keep-alive 是 Vue3 内置组件，可以缓存动态组件或路由组件，避免重复渲染，提升性能。
@@ -784,7 +784,7 @@ function clearCache() {
 
 ---
 
-### 23.5 虚拟滚动完全指南
+### 虚拟滚动完全指南
 
 > **什么是虚拟滚动？**
 > 虚拟滚动是一种优化大列表渲染性能的技术，只渲染可见区域的列表项，大幅减少 DOM 节点数量。
@@ -1177,9 +1177,9 @@ function handleUpdate({ startIndex, endIndex, visibleItems }) {
 
 ---
 
-### 23.6 高级性能优化
+### 高级性能优化
 
-#### 23.6.1 防抖与节流
+#### 防抖与节流
 
 ```typescript
 // src/utils/performance.ts
@@ -1259,7 +1259,7 @@ onUnmounted(() => {
 </script>
 ```
 
-#### 23.6.2 请求合并与批量更新
+#### 请求合并与批量更新
 
 ```typescript
 // src/utils/batchUpdate.ts
@@ -1331,7 +1331,7 @@ updateBatch.add({ id: 2, action: 'delete' })
 // 500ms后或达到50条时批量发送
 ```
 
-#### 23.6.3 使用v-memo优化列表
+#### 使用v-memo优化列表
 
 ```vue
 <!-- v-memo缓存子树，只有依赖变化时才重新渲染 -->
@@ -1368,7 +1368,7 @@ const filterCategory = ref('ALL')
 </template>
 ```
 
-#### 23.6.4 代码分割与动态导入
+#### 代码分割与动态导入
 
 ```typescript
 // 路由级代码分割
@@ -1395,7 +1395,7 @@ const prefetchRoute = (routePath: string) => {
 }
 ```
 
-#### 23.6.5 使用ShallowRef和ShallowReactive
+#### 使用ShallowRef和ShallowReactive
 
 ```vue
 <script setup lang="ts">
@@ -1426,7 +1426,7 @@ function updateArray() {
 </script>
 ```
 
-#### 23.6.6 使用markRaw跳过响应式转换
+#### 使用markRaw跳过响应式转换
 
 ```vue
 <script setup lang="ts">
@@ -1456,7 +1456,7 @@ const config = reactive({
 </script>
 ```
 
-#### 23.6.7 Web Worker处理计算密集型任务
+#### Web Worker处理计算密集型任务
 
 ```typescript
 // src/workers/heavyCalculation.worker.ts
@@ -1512,9 +1512,9 @@ calculateWithWorker(data)
 </script>
 ```
 
-### 23.7 打包优化
+### 打包优化
 
-#### 23.7.1 Vite构建优化配置
+#### Vite构建优化配置
 
 ```typescript
 // vite.config.ts
@@ -1565,7 +1565,7 @@ export default defineConfig({
 })
 ```
 
-#### 23.7.2 CDN加速
+#### CDN加速
 
 ```html
 <!-- index.html -->
@@ -1602,7 +1602,7 @@ export default defineConfig({
 })
 ```
 
-#### 23.7.3 Gzip压缩
+#### Gzip压缩
 
 ```typescript
 // vite.config.ts
@@ -1630,7 +1630,7 @@ export default defineConfig({
 })
 ```
 
-### 23.8 运行时性能监控
+### 运行时性能监控
 
 ```vue
 <!-- src/components/PerformanceMonitor.vue -->
@@ -1710,7 +1710,7 @@ onUnmounted(() => {
 </style>
 ```
 
-### 23.9 本章小结
+### 本章小结
 
 | 优化项 | 说明 | 效果 |
 |--------|------|------|

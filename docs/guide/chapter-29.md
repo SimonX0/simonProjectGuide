@@ -1,5 +1,5 @@
-# 第29章：微前端架构（qiankun 集成）
-
+# 微前端架构（qiankun 集成）
+## # 4.5 微前端架构（qiankun 集成）
 ## 第29章 微前端架构（qiankun 集成）
 
 > **学习目标**：掌握微前端架构设计和 qiankun 集成
@@ -12,7 +12,7 @@
 > - 降低代码耦合度
 > - 提升项目可维护性
 
-### 29.1 微前端概念与架构
+### 微前端概念与架构
 
 #### 什么是微前端？
 
@@ -73,9 +73,9 @@
 
 ---
 
-### 29.2 qiankun 基础配置
+### qiankun 基础配置
 
-#### 29.2.1 安装 qiankun
+#### 安装 qiankun
 
 ```bash
 # 主应用安装 qiankun
@@ -88,7 +88,7 @@ yarn add qiankun
 pnpm add qiankun
 ```
 
-#### 29.2.2 qiankun 核心概念
+#### qiankun 核心概念
 
 ```typescript
 // qiankun 三大核心 API
@@ -113,9 +113,9 @@ const actions = initGlobalState(state)
 
 ---
 
-### 29.3 主应用配置
+### 主应用配置
 
-#### 29.3.1 创建主应用项目
+#### 创建主应用项目
 
 ```bash
 # 使用 Vite 创建主应用
@@ -128,7 +128,7 @@ npm install
 npm install qiankun
 ```
 
-#### 29.3.2 主应用入口配置
+#### 主应用入口配置
 
 ```typescript
 // main.ts
@@ -249,7 +249,7 @@ start({
 console.log('[主应用] qiankun 已启动')
 ```
 
-#### 29.3.3 主应用路由配置
+#### 主应用路由配置
 
 ```typescript
 // router/index.ts
@@ -301,7 +301,7 @@ const router = createRouter({
 export default router
 ```
 
-#### 29.3.4 主应用布局组件
+#### 主应用布局组件
 
 ```vue
 <!-- App.vue -->
@@ -413,7 +413,7 @@ function logout() {
 </style>
 ```
 
-#### 29.3.5 微应用容器组件
+#### 微应用容器组件
 
 ```vue
 <!-- views/MicroAppContainer.vue -->
@@ -454,7 +454,7 @@ onBeforeUnmount(() => {
 </style>
 ```
 
-#### 29.3.6 主应用首页
+#### 主应用首页
 
 ```vue
 <!-- views/Home.vue -->
@@ -587,9 +587,9 @@ onBeforeUnmount(() => {
 
 ---
 
-### 29.4 子应用配置
+### 子应用配置
 
-#### 29.4.1 创建 Vue3 子应用
+#### 创建 Vue3 子应用
 
 ```bash
 # 创建 Vue3 子应用
@@ -602,7 +602,7 @@ npm install
 npm install qiankun
 ```
 
-#### 29.4.2 子应用入口配置
+#### 子应用入口配置
 
 ```typescript
 // src/main.ts
@@ -676,7 +676,7 @@ export async function update(props: any) {
 }
 ```
 
-#### 29.4.3 子应用路由配置
+#### 子应用路由配置
 
 ```typescript
 // src/router/index.ts
@@ -708,7 +708,7 @@ const routes: RouteRecordRaw[] = [
 export default routes
 ```
 
-#### 29.4.4 子应用根组件
+#### 子应用根组件
 
 ```vue
 <!-- src/App.vue -->
@@ -766,7 +766,7 @@ onMounted(() => {
 </style>
 ```
 
-#### 29.4.5 子应用 Vite 配置
+#### 子应用 Vite 配置
 
 ```typescript
 // vite.config.ts
@@ -797,7 +797,7 @@ export default defineConfig({
 })
 ```
 
-#### 29.4.6 子应用 HTML 模板
+#### 子应用 HTML 模板
 
 ```html
 <!DOCTYPE html>
@@ -814,7 +814,7 @@ export default defineConfig({
 </html>
 ```
 
-#### 29.4.7 子应用页面示例
+#### 子应用页面示例
 
 ```vue
 <!-- src/views/UserList.vue -->
@@ -916,7 +916,7 @@ function goToDetail() {
 </style>
 ```
 
-#### 29.4.8 配置子应用开发服务器
+#### 配置子应用开发服务器
 
 ```json
 // package.json
@@ -943,9 +943,9 @@ function goToDetail() {
 
 ---
 
-### 29.5 应用间通信
+### 应用间通信
 
-#### 29.5.1 全局状态管理
+#### 全局状态管理
 
 ```typescript
 // 主应用 - main.ts
@@ -1003,7 +1003,7 @@ export async function mount(props: any) {
 }
 ```
 
-#### 29.5.2 事件总线通信
+#### 事件总线通信
 
 ```typescript
 // utils/eventBus.ts
@@ -1058,7 +1058,7 @@ eventBus.on('refresh-data', () => {
 })
 ```
 
-#### 29.5.3 localStorage 通信
+#### localStorage 通信
 
 ```typescript
 // 主应用
@@ -1082,7 +1082,7 @@ const user = JSON.parse(localStorage.getItem('app-user') || '{}')
 localStorage.setItem('subapp-data', JSON.stringify({ status: 'ready' }))
 ```
 
-#### 29.5.4 URL 参数通信
+#### URL 参数通信
 
 ```typescript
 // 主应用跳转传递参数
@@ -1104,9 +1104,9 @@ const from = route.query.from
 
 ---
 
-### 29.6 样式隔离
+### 样式隔离
 
-#### 29.6.1 严格样式隔离
+#### 严格样式隔离
 
 ```typescript
 // 主应用 - main.ts
@@ -1119,7 +1119,7 @@ start({
 
 **注意：** 严格模式会给子应用包裹 Shadow DOM，可能导致某些样式失效。
 
-#### 29.6.2 实验性样式隔离（推荐）
+#### 实验性样式隔离（推荐）
 
 ```typescript
 // 主应用 - main.ts
@@ -1132,7 +1132,7 @@ start({
 
 **原理：** 给子应用添加特定前缀，实现样式作用域。
 
-#### 29.6.3 CSS Modules 方案
+#### CSS Modules 方案
 
 ```vue
 <!-- 子应用使用 CSS Modules -->
@@ -1153,7 +1153,7 @@ start({
 </style>
 ```
 
-#### 29.6.4 命名空间方案
+#### 命名空间方案
 
 ```vue
 <!-- 子应用添加统一前缀 -->
@@ -1181,7 +1181,7 @@ start({
 </style>
 ```
 
-#### 29.6.5 生成全局唯一类名
+#### 生成全局唯一类名
 
 ```typescript
 // vite.config.ts
@@ -1198,9 +1198,9 @@ export default defineConfig({
 
 ---
 
-### 29.7 预加载策略
+### 预加载策略
 
-#### 29.7.1 自动预加载
+#### 自动预加载
 
 ```typescript
 // 主应用 - main.ts
@@ -1209,7 +1209,7 @@ start({
 })
 ```
 
-#### 29.7.2 智能预加载
+#### 智能预加载
 
 ```typescript
 // 主应用 - main.ts
@@ -1218,7 +1218,7 @@ start({
 })
 ```
 
-#### 29.7.3 自定义预加载时机
+#### 自定义预加载时机
 
 ```typescript
 // 主应用 - App.vue
@@ -1241,7 +1241,7 @@ onMounted(() => {
 </script>
 ```
 
-#### 29.7.4 禁用预加载
+#### 禁用预加载
 
 ```typescript
 // 主应用 - main.ts
@@ -1252,9 +1252,9 @@ start({
 
 ---
 
-### 29.8 生产环境部署
+### 生产环境部署
 
-#### 29.8.1 主应用构建配置
+#### 主应用构建配置
 
 ```typescript
 // vite.config.ts
@@ -1289,7 +1289,7 @@ export default defineConfig({
 })
 ```
 
-#### 29.8.2 子应用构建配置
+#### 子应用构建配置
 
 ```typescript
 // vite.config.ts
@@ -1317,7 +1317,7 @@ export default defineConfig({
 })
 ```
 
-#### 29.8.3 Nginx 配置
+#### Nginx 配置
 
 ```nginx
 # 主应用配置
@@ -1359,7 +1359,7 @@ server {
 }
 ```
 
-#### 29.8.4 Docker 部署
+#### Docker 部署
 
 ```dockerfile
 # 主应用 Dockerfile
@@ -1408,7 +1408,7 @@ networks:
     driver: bridge
 ```
 
-#### 29.8.5 CI/CD 配置
+#### CI/CD 配置
 
 ```yaml
 # .github/workflows/deploy.yml
@@ -1452,9 +1452,9 @@ jobs:
 
 ---
 
-### 29.9 最佳实践与注意事项
+### 最佳实践与注意事项
 
-#### 29.9.1 性能优化
+#### 性能优化
 
 ```typescript
 // 1. 路由懒加载
@@ -1471,7 +1471,7 @@ const HeavyComponent = defineAsyncComponent(() =>
 <link rel="preload" href="/user-center/main.js" as="script">
 ```
 
-#### 29.9.2 错误处理
+#### 错误处理
 
 ```typescript
 // 主应用 - 错误边界
@@ -1484,7 +1484,7 @@ registerMicroApps([...], {
 })
 ```
 
-#### 29.9.3 开发调试
+#### 开发调试
 
 ```typescript
 // 开发环境配置
@@ -1501,7 +1501,7 @@ if (!window.__POWERED_BY_QIANKUN__) {
 }
 ```
 
-#### 29.9.4 安全建议
+#### 安全建议
 
 ```typescript
 // 1. 内容安全策略
@@ -1527,7 +1527,7 @@ function validateGlobalState(state: any) {
 
 ---
 
-### 29.10 常见问题解决
+### 常见问题解决
 
 #### 问题1：子应用样式丢失
 
@@ -1591,11 +1591,11 @@ const microApps = [
 
 ---
 
-### 29.11 其他微前端方案
+### 其他微前端方案
 
 虽然 qiankun 是目前最流行的微前端框架，但还有其他优秀的方案可供选择：
 
-#### 29.11.1 micro-app（京东出品）
+#### micro-app（京东出品）
 
 **micro-app** 是京东推出的一款微前端框架，相比 qiankun 更加简单易用。
 
@@ -1789,7 +1789,7 @@ micro-app 默认使用 **ShadowDOM** 进行样式隔离：
 <micro-app name="child" url="http://localhost:8081" shadowDOM />
 ```
 
-#### 29.11.2 主应用完整示例
+#### 主应用完整示例
 
 ```typescript
 // src/main.ts
@@ -1894,7 +1894,7 @@ const handleDataChange = (e: CustomEvent) => {
 </script>
 ```
 
-#### 29.11.3 子应用完整示例
+#### 子应用完整示例
 
 ```javascript
 // 子应用 main.ts
@@ -1968,7 +1968,7 @@ const sendToMain = () => {
 </script>
 ```
 
-#### 29.11.4 常见问题
+#### 常见问题
 
 ##### 问题1：跨域
 
@@ -2004,7 +2004,7 @@ onUnmounted(() => {
 })
 ```
 
-#### 29.11.5 方案对比总结
+#### 方案对比总结
 
 | 特性 | micro-app | qiankun |
 |------|-----------|---------|
@@ -2016,7 +2016,7 @@ onUnmounted(() => {
 | 推出方 | 京东 | 阿里 |
 | 成熟度 | 较新 | 成熟 |
 
-#### 29.11.6 选择建议
+#### 选择建议
 
 | 场景 | 推荐方案 | 原因 |
 |------|----------|------|
@@ -2026,7 +2026,7 @@ onUnmounted(() => {
 | 生产环境 | **qiankun** | 经过大量验证 |
 | 技术栈混合 | **两者皆可** | 都支持多框架混合 |
 
-#### 29.11.7 官方资源
+#### 官方资源
 
 **micro-app**
 - GitHub: https://github.com/micro-zoe/micro-app

@@ -1,13 +1,13 @@
-# 第38章：Vite 插件开发
-
+# Vite 插件开发
+## # 4.14 Vite 插件开发
 ## 第38章 Vite 插件开发
 
 > **学习目标**：掌握Vite插件开发技术，扩展构建功能
 > **核心内容**：插件钩子、转换器、自定义构建流程
 
-### 38.1 Vite 插件基础
+### Vite 插件基础
 
-#### 38.1.1 插件基本结构
+#### 插件基本结构
 
 ```typescript
 // my-vite-plugin/src/index.ts
@@ -142,7 +142,7 @@ export function myVitePlugin(options: MyPluginOptions = {}): Plugin {
 }
 ```
 
-#### 38.1.2 插件使用
+#### 插件使用
 
 ```typescript
 // vite.config.ts
@@ -163,9 +163,9 @@ export default defineConfig({
 })
 ```
 
-### 38.2 常用钩子函数
+### 常用钩子函数
 
-#### 38.2.1 配置阶段钩子
+#### 配置阶段钩子
 
 ```typescript
 export function configHooksPlugin(): Plugin {
@@ -207,7 +207,7 @@ export function configHooksPlugin(): Plugin {
 }
 ```
 
-#### 38.2.2 服务器钩子
+#### 服务器钩子
 
 ```typescript
 export function serverHooksPlugin(): Plugin {
@@ -274,7 +274,7 @@ export function serverHooksPlugin(): Plugin {
 }
 ```
 
-#### 38.2.3 转换钩子
+#### 转换钩子
 
 ```typescript
 export function transformHooksPlugin(): Plugin {
@@ -324,7 +324,7 @@ export function transformHooksPlugin(): Plugin {
 }
 ```
 
-#### 38.2.4 模块解析钩子
+#### 模块解析钩子
 
 ```typescript
 export function resolveHooksPlugin(): Plugin {
@@ -374,9 +374,9 @@ export function resolveHooksPlugin(): Plugin {
 }
 ```
 
-### 38.3 实用插件示例
+### 实用插件示例
 
-#### 38.3.1 SVG 组件化插件
+#### SVG 组件化插件
 
 ```typescript
 // plugins/vite-svg-components.ts
@@ -455,7 +455,7 @@ export function svgComponentsPlugin(options: SvgComponentsOptions = {}): Plugin 
 }
 ```
 
-#### 38.3.2 图片压缩插件
+#### 图片压缩插件
 
 ```typescript
 // plugins/vite-image-optimizer.ts
@@ -546,7 +546,7 @@ export function imageOptimizerPlugin(options: ImageOptimizerOptions = {}): Plugi
 }
 ```
 
-#### 38.3.3 环境变量注入插件
+#### 环境变量注入插件
 
 ```typescript
 // plugins/vite-env-injector.ts
@@ -637,7 +637,7 @@ export function envInjectorPlugin(options: EnvInjectorOptions = {}): Plugin {
 
 ---
 
-#### 38.3.4 文件预处理插件（自动处理 Markdown）
+#### 文件预处理插件（自动处理 Markdown）
 
 在开发文档类应用时，经常需要预处理 Markdown 文件。以下是完整的 Markdown 预处理插件示例：
 
@@ -790,7 +790,7 @@ import { createApp } from 'my-lib'
 
 ---
 
-#### 38.3.5 自动生成组件文档插件
+#### 自动生成组件文档插件
 
 在企业级组件库开发中，自动生成组件文档可以大大提高效率。以下是基于组件 props 自动生成文档表格的插件：
 
@@ -1008,7 +1008,7 @@ export default defineConfig({
 
 ---
 
-#### 38.3.6 Mock API 插件（开发环境数据模拟）
+#### Mock API 插件（开发环境数据模拟）
 
 在开发环境中，经常需要模拟后端 API 接口。以下是完整的 Mock API 插件实现：
 
@@ -1264,9 +1264,9 @@ export default defineConfig({
 
 ---
 
-### 38.4 插件调试
+### 插件调试
 
-#### 38.4.1 调试工具
+#### 调试工具
 
 ```typescript
 // plugins/debug-plugin.ts
@@ -1303,7 +1303,7 @@ export function debugPlugin(): Plugin {
 }
 ```
 
-#### 38.4.2 性能分析插件
+#### 性能分析插件
 
 ```typescript
 // plugins/performance-plugin.ts
@@ -1363,9 +1363,9 @@ export function performancePlugin(): Plugin {
 }
 ```
 
-### 38.5 插件发布
+### 插件发布
 
-#### 38.5.1 项目结构
+#### 项目结构
 
 ```
 my-vite-plugin/
@@ -1380,7 +1380,7 @@ my-vite-plugin/
 └── README.md
 ```
 
-#### 38.5.2 package.json 配置
+#### package.json 配置
 
 ```json
 {
@@ -1421,7 +1421,7 @@ my-vite-plugin/
 }
 ```
 
-### 38.6 本章小结
+### 本章小结
 
 | 钩子类型 | 阶段 | 常用钩子 |
 |----------|------|----------|

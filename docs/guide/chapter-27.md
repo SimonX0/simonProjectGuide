@@ -1,5 +1,5 @@
-# 第27章：内存管理与溢出处理
-
+# 内存管理与溢出处理
+## # 4.3 内存管理与溢出处理
 ## 第27章 内存管理与溢出处理
 
 > **学习目标**：掌握Vue3应用的内存管理和溢出处理技巧
@@ -13,9 +13,9 @@
 > 3. **资源浪费** - 未释放的资源占用大量内存
 > 4. **用户体验差** - 长时间使用后性能下降
 
-### 27.1 Vue3中的内存泄漏
+### Vue3中的内存泄漏
 
-#### 27.1.1 常见内存泄漏场景
+#### 常见内存泄漏场景
 
 **1. 全局变量未清理**
 
@@ -205,7 +205,7 @@ onUnmounted(() => {
 </script>
 ```
 
-#### 27.1.2 使用组合式函数避免内存泄漏
+#### 使用组合式函数避免内存泄漏
 
 ```typescript
 // src/composables/useEventListener.ts
@@ -328,9 +328,9 @@ export function useWebSocket(url: string) {
 // const { data, connected, send } = useWebSocket('ws://localhost:8080')
 ```
 
-### 27.2 内存溢出处理
+### 内存溢出处理
 
-#### 27.2.1 大数据处理
+#### 大数据处理
 
 ```typescript
 // 虚拟滚动处理大量数据
@@ -448,7 +448,7 @@ const { visibleItems, totalHeight, offsetY, onScroll } = useVirtualScroll(
 </style>
 ```
 
-#### 27.2.2 大文件上传分片
+#### 大文件上传分片
 
 ```typescript
 // src/utils/fileUpload.ts
@@ -522,7 +522,7 @@ export async function uploadInChunks(options: UploadChunkOptions) {
 }
 ```
 
-#### 27.2.3 图片懒加载
+#### 图片懒加载
 
 ```vue
 <!-- src/components/LazyImage.vue -->
@@ -604,9 +604,9 @@ const loadImage = () => {
 </style>
 ```
 
-### 27.3 内存监控
+### 内存监控
 
-#### 27.3.1 内存使用监控
+#### 内存使用监控
 
 ```typescript
 // src/utils/memoryMonitor.ts
@@ -696,7 +696,7 @@ export class MemoryMonitor {
 export const memoryMonitor = new MemoryMonitor()
 ```
 
-#### 27.3.2 性能监控组件
+#### 性能监控组件
 
 ```vue
 <!-- src/components/PerformanceMonitor.vue -->
@@ -805,9 +805,9 @@ window.addEventListener('keydown', (e) => {
 </style>
 ```
 
-### 27.4 内存优化最佳实践
+### 内存优化最佳实践
 
-#### 27.4.1 对象池模式
+#### 对象池模式
 
 ```typescript
 // src/utils/objectPool.ts
@@ -857,7 +857,7 @@ const elementPool = new ObjectPool(
 )
 ```
 
-#### 27.4.2 清理策略
+#### 清理策略
 
 ```typescript
 // src/utils/cleanup.ts
@@ -918,7 +918,7 @@ export class LRUCache<K, V> {
 }
 ```
 
-### 27.5 本章小结
+### 本章小结
 
 | 内容 | 说明 |
 |------|------|

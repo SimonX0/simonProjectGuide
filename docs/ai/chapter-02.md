@@ -1,4 +1,4 @@
-# 第2章：LangChain框架入门
+# LangChain框架
 
 ## 本章导读
 
@@ -16,9 +16,9 @@
 
 ---
 
-## 2.1 什么是LangChain？
+## 什么是LangChain？
 
-### 2.1.1 LangChain简介
+### LangChain简介
 
 **LangChain** 是一个开源框架，专门用于开发基于大语言模型的应用。它提供了一系列模块化的组件，让你可以轻松构建复杂的AI应用。
 
@@ -40,7 +40,7 @@ LangChain的解决方案：
   ✅ 丰富的生态系统
 ```
 
-### 2.1.2 LangChain的六大核心模块
+### LangChain的六大核心模块
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -79,7 +79,7 @@ LangChain的解决方案：
 └─────────────────────────────────────────────┘
 ```
 
-### 2.1.3 安装LangChain
+### 安装LangChain
 
 ```bash
 # 核心包
@@ -99,14 +99,14 @@ pip install langchain langchain-openai langchain-community chromadb
 
 ---
 
-## 2.2 Model I/O：模型输入输出
+## Model I/O：模型输入输出
 
 Model I/O是LangChain最基础的模块，包含三个核心组件：
 - **Models**：与大语言模型交互
 - **Prompts**：管理提示词
 - **Output Parsers**：解析模型输出
 
-### 2.2.1 Models：模型接口
+### Models：模型接口
 
 LangChain提供了统一的模型接口，支持多种模型：
 
@@ -155,7 +155,7 @@ response = chat.invoke(messages)
 print(response.content)
 ```
 
-### 2.2.2 Prompts：提示词模板
+### Prompts：提示词模板
 
 #### 基础提示词模板
 
@@ -235,7 +235,7 @@ role_prompt = ChatPromptTemplate.from_messages([
 ])
 ```
 
-### 2.2.3 Output Parsers：输出解析器
+### Output Parsers：输出解析器
 
 输出解析器让LLM的输出更结构化。
 
@@ -332,11 +332,11 @@ print(result)
 
 ---
 
-## 2.3 Chains：链式调用
+## Chains：链式调用
 
 Chains允许你将多个组件串联起来，构建复杂的工作流。
 
-### 2.3.1 LLMChain：最基本的链
+### LLMChain：最基本的链
 
 ```python
 from langchain.chains import LLMChain
@@ -363,7 +363,7 @@ result = chain.invoke({"product": "智能手表"})
 print(result['text'])
 ```
 
-### 2.3.2 Sequential Chain：顺序链
+### Sequential Chain：顺序链
 
 按顺序执行多个链。
 
@@ -417,7 +417,7 @@ print(f"第一章：\n{result['chapter']}\n")
 print(f"标题：{result['title']}")
 ```
 
-### 2.3.3 使用LCEL（LangChain Expression Language）
+### 使用LCEL（LangChain Expression Language）
 
 LCEL是LangChain推荐的新语法，更简洁优雅。
 
@@ -477,7 +477,7 @@ result = chain.invoke({
 })
 ```
 
-### 2.3.4 Router Chain：路由链
+### Router Chain：路由链
 
 根据输入内容动态选择不同的处理链。
 
@@ -554,11 +554,11 @@ result = chain.run("如何在Python中实现快速排序？")
 
 ---
 
-## 2.4 Memory：记忆管理
+## Memory：记忆管理
 
 Memory组件让AI能够记住对话历史，实现多轮对话。
 
-### 2.4.1 ConversationBufferMemory：缓冲记忆
+### ConversationBufferMemory：缓冲记忆
 
 ```python
 from langchain.memory import ConversationBufferMemory
@@ -589,7 +589,7 @@ print(memory.load_memory_variables({}))
 # {'history': 'Human: 我叫小明\nAI: 你好小明！...'}
 ```
 
-### 2.4.2 ConversationBufferWindowMemory：窗口记忆
+### ConversationBufferWindowMemory：窗口记忆
 
 只保存最近N轮对话，节省Token。
 
@@ -612,7 +612,7 @@ conversation.predict(input="我喜欢什么语言？")
 # AI记得最近3轮的对话，但不记得更早的内容
 ```
 
-### 2.4.3 ConversationSummaryMemory：摘要记忆
+### ConversationSummaryMemory：摘要记忆
 
 对长对话进行摘要，节省Token。
 
@@ -638,7 +638,7 @@ print(memory.load_memory_variables({}))
 # 类似：'summary': 'The human introduces themselves as Xiao Ming...'
 ```
 
-### 2.4.4 在LCEL中使用Memory
+### 在LCEL中使用Memory
 
 ```python
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -672,7 +672,7 @@ response = chain.invoke(inputs)
 # AI可以引用之前的对话
 ```
 
-### 2.4.5 实用的记忆管理技巧
+### 实用的记忆管理技巧
 
 ```python
 # 1. 保存和加载记忆
@@ -706,7 +706,7 @@ with get_openai_callback() as cb:
 
 ---
 
-## 2.5 综合实战：智能问答系统
+## 综合实战：智能问答系统
 
 让我们将所学知识整合起来，构建一个智能问答系统。
 
@@ -796,9 +796,9 @@ if __name__ == "__main__":
 
 ---
 
-## 2.6 最佳实践
+## 最佳实践
 
-### 2.6.1 提示词模板管理
+### 提示词模板管理
 
 ```python
 # 创建templates.py
@@ -825,7 +825,7 @@ from templates import PROMPTS
 chain = PROMPTS["code_assistant"] | chat | StrOutputParser()
 ```
 
-### 2.6.2 错误处理和重试
+### 错误处理和重试
 
 ```python
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -847,7 +847,7 @@ def safe_chain_invoke(chain, inputs):
         raise
 ```
 
-### 2.6.3 成本优化
+### 成本优化
 
 ```python
 # 1. 使用更便宜的模型
@@ -879,9 +879,9 @@ for chunk in chain.stream("讲个故事"):
 
 ---
 
-## 2.7 本章小结
+## 本章小结
 
-### 2.7.1 核心概念回顾
+### 核心概念回顾
 
 ✅ **LangChain六大模块**：
 - Model I/O、Chains、Memory
@@ -903,7 +903,7 @@ for chunk in chain.stream("讲个故事"):
 - WindowMemory：窗口记忆
 - SummaryMemory：摘要记忆
 
-### 2.7.2 你已经学会
+### 你已经学会
 
 - ✅ 使用LangChain统一接口调用LLM
 - ✅ 创建和管理提示词模板
@@ -912,7 +912,7 @@ for chunk in chain.stream("讲个故事"):
 - ✅ 实现对话记忆管理
 - ✅ 构建完整的问答系统
 
-### 2.7.3 下一步
+### 下一步
 
 恭喜完成第2章！你已经掌握了LangChain的核心用法。
 
@@ -926,9 +926,9 @@ for chunk in chain.stream("讲个故事"):
 
 ---
 
-## 2.8 练习题
+## 练习题
 
-### 2.8.1 基础练习
+### 基础练习
 
 **练习1**：使用LCEL创建一个链，实现：
 - 接收用户输入的文本
@@ -946,7 +946,7 @@ for chunk in chain.stream("讲个故事"):
 - 创意问题 → 使用创意写手角色
 - 其他 → 使用通用助手角色
 
-### 2.8.2 进阶练习
+### 进阶练习
 
 **挑战1**：构建"学习助手"系统
 功能：

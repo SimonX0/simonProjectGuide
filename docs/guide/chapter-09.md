@@ -1,11 +1,11 @@
-# 第9章：计算属性与侦听器
+# 计算属性与侦听器
 
 ## 第9章 计算属性与侦听器
 
 > **学习目标**：掌握计算属性和侦听器的使用
 > **核心内容**：computed计算属性、watch侦听器、最佳实践
 
-### 9.1 计算属性 computed
+### 计算属性 computed
 
 **计算属性就像是数学公式**，你定义好规则，数据会自动计算。
 
@@ -27,7 +27,7 @@ const fullName = computed(() => firstName.value + lastName.value)
 </template>
 ```
 
-### 9.2 侦听器 watch
+### 侦听器 watch
 
 ```vue
 <script setup lang="ts">
@@ -50,7 +50,7 @@ watch([firstName, lastName], ([newFirst, newLast]) => {
 </script>
 ```
 
-### 9.3 实战案例：智能购物车
+### 实战案例：智能购物车
 
 下面是一个完整的购物车功能，综合运用计算属性和侦听器：
 

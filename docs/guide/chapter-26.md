@@ -1,5 +1,5 @@
-# 第26章：API请求拦截
-
+# API请求拦截
+## # 4.2 API请求拦截
 ## 第26章 API请求拦截
 
 > **学习目标**：掌握Axios请求拦截器与响应拦截器的使用
@@ -14,9 +14,9 @@
 > 4. **请求重试** - 失败自动重试
 > 5. **请求缓存** - 减少不必要的网络请求
 
-### 26.1 Axios基础配置
+### Axios基础配置
 
-#### 26.1.1 安装与基础配置
+#### 安装与基础配置
 
 ```bash
 npm install axios
@@ -42,7 +42,7 @@ const service: AxiosInstance = axios.create({
 export default service
 ```
 
-#### 26.1.2 类型定义
+#### 类型定义
 
 ```typescript
 // src/types/api.ts
@@ -79,7 +79,7 @@ export interface RequestConfig extends AxiosRequestConfig {
 }
 ```
 
-### 26.2 请求拦截器
+### 请求拦截器
 
 ```typescript
 // src/utils/request.ts
@@ -144,7 +144,7 @@ function getDeviceId(): string {
 }
 ```
 
-### 26.3 响应拦截器
+### 响应拦截器
 
 ```typescript
 // src/utils/request.ts
@@ -287,9 +287,9 @@ function getErrorMessage(status: number): string {
 }
 ```
 
-### 26.4 请求取消
+### 请求取消
 
-#### 26.4.1 防止重复请求
+#### 防止重复请求
 
 ```typescript
 // src/utils/request.ts
@@ -350,7 +350,7 @@ service.interceptors.response.use(
 )
 ```
 
-#### 26.4.2 页面切换取消请求
+#### 页面切换取消请求
 
 ```typescript
 // src/utils/requestCancel.ts
@@ -399,7 +399,7 @@ export function useRequestCancel() {
 // }
 ```
 
-### 26.5 请求重试
+### 请求重试
 
 ```typescript
 // src/utils/requestRetry.ts
@@ -471,7 +471,7 @@ service.interceptors.request.use(
 )
 ```
 
-### 26.6 请求缓存
+### 请求缓存
 
 ```typescript
 // src/utils/requestCache.ts
@@ -554,7 +554,7 @@ service.interceptors.response.use((response) => {
 })
 ```
 
-### 26.7 完整封装
+### 完整封装
 
 ```typescript
 // src/utils/request.ts
@@ -720,11 +720,11 @@ const createUser = async (user: User) => {
 }
 ```
 
-### 26.8 完整API调用实战案例
+### 完整API调用实战案例
 
 > **场景说明**：下面是一个完整的用户管理模块，包含了各种API调用的实际场景。
 
-#### 26.8.1 用户管理API封装
+#### 用户管理API封装
 
 ```typescript
 // src/api/user.ts
@@ -856,7 +856,7 @@ export const userApi = {
 }
 ```
 
-#### 26.8.2 在组件中使用API
+#### 在组件中使用API
 
 ```vue
 <!-- views/UserManagement.vue -->
@@ -1308,7 +1308,7 @@ onMounted(() => {
 </style>
 ```
 
-#### 26.8.3 API调用最佳实践总结
+#### API调用最佳实践总结
 
 | 场景 | 实践方式 | 代码示例 |
 |------|---------|---------|
@@ -1323,7 +1323,7 @@ onMounted(() => {
 
 ---
 
-### 26.9 本章小结
+### 本章小结
 
 | 功能 | 说明 |
 |------|------|

@@ -1,4 +1,4 @@
-# 第5章：AI Agent智能体开发
+# AI Agent
 
 ## 本章导读
 
@@ -16,9 +16,9 @@
 
 ---
 
-## 5.1 什么是AI Agent？
+## 什么是AI Agent？
 
-### 5.1.1 从Chatbot到Agent
+### 从Chatbot到Agent
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -41,7 +41,7 @@
 └─────────────────────────────────────────────────┘
 ```
 
-### 5.1.2 Agent的核心能力
+### Agent的核心能力
 
 ```python
 # Agent工作流程示例
@@ -66,7 +66,7 @@ A: "今天北京有中雨，温度15-20度。
     建议您今天出门携带雨具。"
 ```
 
-### 5.1.3 Agent的架构
+### Agent的架构
 
 ```
 ┌──────────────────────────────────────────────┐
@@ -97,7 +97,7 @@ A: "今天北京有中雨，温度15-20度。
 └──────────────────────────────────────────────┘
 ```
 
-### 5.1.4 Agent的应用场景
+### Agent的应用场景
 
 **1. 个人助理**
 ```python
@@ -141,9 +141,9 @@ Agent: "我将为您搜集相关论文..."
 
 ---
 
-## 5.2 Agent的核心组件
+## Agent的核心组件
 
-### 5.2.1 Tools（工具）
+### Tools（工具）
 
 工具是Agent与外部世界交互的接口。
 
@@ -200,7 +200,7 @@ from langchain_community.tools import (
 )
 ```
 
-### 5.2.2 创建实用工具
+### 创建实用工具
 
 ```python
 # 1. 天气查询工具
@@ -261,7 +261,7 @@ email_tool = Tool(
 )
 ```
 
-### 5.2.3 工具描述的重要性
+### 工具描述的重要性
 
 工具描述决定了Agent何时使用该工具：
 
@@ -288,9 +288,9 @@ good_tool = Tool(
 
 ---
 
-## 5.3 ReAct Agent
+## ReAct Agent
 
-### 5.3.1 ReAct模式
+### ReAct模式
 
 **ReAct** = **Reas**oning + **Act**ing（推理 + 行动）
 
@@ -315,7 +315,7 @@ Thought N: [确定答案]
 Answer: [最终答案]
 ```
 
-### 5.3.2 创建ReAct Agent
+### 创建ReAct Agent
 
 ```python
 from langchain.agents import AgentExecutor, create_react_agent
@@ -359,7 +359,7 @@ result = agent_executor.invoke({
 print(result['output'])
 ```
 
-### 5.3.3 ReAct执行示例
+### ReAct执行示例
 
 ```python
 # 输入："小米的创始人是谁？他今年多大年龄？"
@@ -391,7 +391,7 @@ print(result['output'])
 # 小米的创始人是雷军，他出生于1969年，今年55岁。
 ```
 
-### 5.3.4 自定义ReAct提示词
+### 自定义ReAct提示词
 
 ```python
 from langchain.prompts import PromptTemplate
@@ -421,9 +421,9 @@ agent = create_react_agent(llm, tools, prompt)
 
 ---
 
-## 5.4 OpenAI Functions Agent
+## OpenAI Functions Agent
 
-### 5.4.1 Functions Agent简介
+### Functions Agent简介
 
 OpenAI提供了Function Calling功能，更适合构建Agent。
 
@@ -464,7 +464,7 @@ result = agent_executor.invoke({
 })
 ```
 
-### 5.4.2 结构化工具输出
+### 结构化工具输出
 
 ```python
 from langchain.tools import StructuredTool
@@ -502,9 +502,9 @@ weather_tool = StructuredTool.from_function(
 
 ---
 
-## 5.5 实用Agent案例
+## 实用Agent案例
 
-### 5.5.1 智能代码助手
+### 智能代码助手
 
 ```python
 from langchain.agents import create_openai_functions_agent, AgentExecutor
@@ -582,7 +582,7 @@ result = agent_executor.invoke({
 print(result['output'])
 ```
 
-### 5.5.2 数据分析Agent
+### 数据分析Agent
 
 ```python
 import pandas as pd
@@ -693,7 +693,7 @@ agent = DataAnalysisAgent("sales_data.csv")
 print(agent.analyze("分析销售额的分布情况，找出异常值"))
 ```
 
-### 5.5.3 研究助手Agent
+### 研究助手Agent
 
 ```python
 from langchain_community.tools import (
@@ -772,9 +772,9 @@ print(result['output'])
 
 ---
 
-## 5.6 多Agent协作
+## 多Agent协作
 
-### 5.6.1 Agent团队
+### Agent团队
 
 ```python
 # 创建专门的Agent团队
@@ -847,9 +847,9 @@ def collaborative_workflow(topic: str):
 
 ---
 
-## 5.7 Agent优化技巧
+## Agent优化技巧
 
-### 5.7.1 提示词优化
+### 提示词优化
 
 ```python
 # 优化的Agent提示词
@@ -881,7 +881,7 @@ Action Input: [工具输入]
 """)
 ```
 
-### 5.7.2 记忆管理
+### 记忆管理
 
 ```python
 from langchain.memory import ConversationBufferMemory
@@ -902,7 +902,7 @@ agent_executor = AgentExecutor(
 # Agent会记住之前的对话
 ```
 
-### 5.7.3 错误处理
+### 错误处理
 
 ```python
 agent_executor = AgentExecutor(
@@ -918,9 +918,9 @@ agent_executor = AgentExecutor(
 
 ---
 
-## 5.8 本章小结
+## 本章小结
 
-### 5.8.1 核心概念
+### 核心概念
 
 ✅ **Agent能力**：
 - 思考（Reasoning）
@@ -940,7 +940,7 @@ agent_executor = AgentExecutor(
 
 ---
 
-## 5.9 练习题
+## 练习题
 
 ### 练习1：创建文件管理Agent
 

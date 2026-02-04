@@ -1,11 +1,11 @@
-# 第 21 章：ElementPlus 组件库完全指南
-
+# ElementPlus组件库完全指南
+## ElementPlus组件库完全指南
 ## 第 21 章 ElementPlus 组件库完全指南
 
 > **学习目标**：掌握 ElementPlus 组件库的使用
 > **核心内容**：全局引入、局部引入、自动按需引入、主题定制、常用组件实战
 
-### 21.1 什么是 ElementPlus？
+### 什么是 ElementPlus？
 
 **Element Plus** 是一套基于 Vue 3 的组件库，专为开发企业级中后台产品而设计。它提供了丰富的 UI 组件，帮助开发者快速构建美观、功能完善的 Web 应用。
 
@@ -19,7 +19,7 @@
 - 国际化支持
 - 无障碍访问支持
 
-### 21.2 安装与配置
+### 安装与配置
 
 #### 通过 npm 安装
 
@@ -45,7 +45,7 @@ yarn add element-plus
 npm install @element-plus/icons-vue
 ```
 
-### 21.3 全局引入 ElementPlus
+### 全局引入 ElementPlus
 
 **适用场景**：小型项目、快速原型开发、使用大部分组件
 
@@ -312,7 +312,7 @@ const goToRegister = () => {
 </style>
 ```
 
-### 21.4 局部引入 ElementPlus
+### 局部引入 ElementPlus
 
 **适用场景**：大型项目、追求性能优化、使用少量组件
 
@@ -689,7 +689,7 @@ onMounted(() => {
 </style>
 ```
 
-### 21.5 自动按需引入
+### 自动按需引入
 
 **适用场景**：推荐所有项目使用，自动按需引入，无需手动导入
 
@@ -834,7 +834,7 @@ declare global {
 }
 ```
 
-### 21.6 主题定制
+### 主题定制
 
 #### 方式一：CSS 变量覆盖
 
@@ -1049,7 +1049,7 @@ const applyTheme = (theme: string) => {
 </style>
 ```
 
-### 21.7 常用组件实战
+### 常用组件实战
 
 #### 按钮组件
 
@@ -1497,7 +1497,7 @@ const handleCurrentChange = (val: number) => {
 </style>
 ```
 
-### 21.8 ElementPlus 最佳实践
+### ElementPlus 最佳实践
 
 #### 推荐配置总结
 

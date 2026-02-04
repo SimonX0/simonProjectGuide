@@ -1,13 +1,13 @@
-# 第32章：表单验证与数据校验
-
+# 表单验证与数据校验
+## # 4.8 表单验证与数据校验
 ## 第32章 表单验证与数据校验
 
 > **学习目标**：掌握前端表单验证与数据校验技术
 > **核心内容**：VeeValidate、Zod、自定义验证规则、表单状态管理
 
-### 32.1 VeeValidate 完全指南
+### VeeValidate 完全指南
 
-#### 32.1.1 安装 VeeValidate
+#### 安装 VeeValidate
 
 ```bash
 # 安装 VeeValidate
@@ -20,7 +20,7 @@ npm install @vee-validate/rules
 npm install yup
 ```
 
-#### 32.1.2 基础配置
+#### 基础配置
 
 ```typescript
 // main.ts
@@ -55,7 +55,7 @@ app.component('VErrorMessage', ErrorMessage)
 app.mount('#app')
 ```
 
-#### 32.1.3 基础表单验证
+#### 基础表单验证
 
 ```vue
 <template>
@@ -111,7 +111,7 @@ const onSubmit = (values: any) => {
 </script>
 ```
 
-#### 32.1.4 自定义验证规则
+#### 自定义验证规则
 
 ```typescript
 // validators/customRules.ts
@@ -222,7 +222,7 @@ const onSubmit = (values: any) => {
 </script>
 ```
 
-#### 32.1.5 使用 Yup Schema
+#### 使用 Yup Schema
 
 ```typescript
 // schemas/userSchema.ts
@@ -357,7 +357,7 @@ const onSubmit = async (values: any) => {
 </script>
 ```
 
-#### 32.1.6 表单状态管理
+#### 表单状态管理
 
 ```vue
 <template>
@@ -438,7 +438,7 @@ const onSubmit = async (values: any, actions: any) => {
 </script>
 ```
 
-#### 32.1.7 动态表单验证
+#### 动态表单验证
 
 ```vue
 <template>
@@ -488,15 +488,15 @@ const onSubmit = (values: any) => {
 
 ---
 
-### 32.2 Zod 数据验证库
+### Zod 数据验证库
 
-#### 32.2.1 安装 Zod
+#### 安装 Zod
 
 ```bash
 npm install zod
 ```
 
-#### 32.2.2 Zod 基础用法
+#### Zod 基础用法
 
 ```typescript
 // schemas/user.ts
@@ -607,7 +607,7 @@ if (result.success) {
 }
 ```
 
-#### 32.2.3 Zod 高级用法
+#### Zod 高级用法
 
 ```typescript
 // schemas/advanced.ts
@@ -738,7 +738,7 @@ export const uniqueEmailSchema = z.object({
 )
 ```
 
-#### 32.2.4 Zod + Vue3 组合式函数
+#### Zod + Vue3 组合式函数
 
 ```typescript
 // composables/useZodForm.ts
@@ -943,9 +943,9 @@ const {
 
 ---
 
-### 32.3 表单状态管理
+### 表单状态管理
 
-#### 32.3.1 基础表单状态
+#### 基础表单状态
 
 ```typescript
 // composables/useFormState.ts
@@ -1037,7 +1037,7 @@ export function useFormState<T extends Record<string, any>>(
 }
 ```
 
-#### 32.3.2 复杂表单状态
+#### 复杂表单状态
 
 ```typescript
 // composables/useFormBuilder.ts
@@ -1214,9 +1214,9 @@ export function useFormBuilder(fields: FormField[]) {
 
 ---
 
-### 32.4 复杂表单验证案例
+### 复杂表单验证案例
 
-#### 32.4.1 多步骤表单
+#### 多步骤表单
 
 ```vue
 <!-- components/MultiStepForm.vue -->
@@ -1400,7 +1400,7 @@ const handleSubmit = () => {
 </style>
 ```
 
-#### 32.4.2 动态表单字段
+#### 动态表单字段
 
 ```vue
 <!-- components/DynamicForm.vue -->
@@ -1511,7 +1511,7 @@ const handleSubmit = (values: any) => {
 
 ---
 
-### 32.5 本章小结
+### 本章小结
 
 | 验证库 | 特点 | 适用场景 |
 |--------|------|----------|

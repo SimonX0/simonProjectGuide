@@ -1,4 +1,4 @@
-# 第25章：全局异常捕获
+# 全局异常捕获
 
 ## 第25章 全局异常捕获
 
@@ -19,9 +19,9 @@
 > 3. **数据监控** - 统计错误率，评估应用质量
 > 4. **自动恢复** - 某些场景下自动恢复功能
 
-### 25.1 Vue3全局错误处理器
+### Vue3全局错误处理器
 
-#### 25.1.1 app.config.errorHandler
+#### app.config.errorHandler
 
 Vue3提供了全局错误处理器，可以捕获组件渲染、生命周期、事件处理器中的错误。
 
@@ -79,7 +79,7 @@ function handleError(err: unknown, instance: any, info: string) {
 app.mount('#app')
 ```
 
-#### 25.1.2 完整的错误处理系统
+#### 完整的错误处理系统
 
 ```typescript
 // src/utils/errorHandler.ts
@@ -221,9 +221,9 @@ setupGlobalErrorHandler(app)
 app.mount('#app')
 ```
 
-### 25.2 JavaScript全局错误处理
+### JavaScript全局错误处理
 
-#### 25.2.1 全局错误事件监听
+#### 全局错误事件监听
 
 ```typescript
 // src/utils/errorHandler.ts
@@ -268,7 +268,7 @@ window.addEventListener('error', (event) => {
 }, true) // 使用捕获阶段
 ```
 
-#### 25.2.2 完整的错误监听系统
+#### 完整的错误监听系统
 
 ```typescript
 // src/utils/errorHandler.ts
@@ -369,7 +369,7 @@ export class ErrorMonitor {
 export const errorMonitor = new ErrorMonitor()
 ```
 
-### 25.3 错误边界组件
+### 错误边界组件
 
 虽然Vue3没有像React那样的Error Boundary，但我们可以实现类似的功能：
 
@@ -489,9 +489,9 @@ const handleRetry = () => {
 </script>
 ```
 
-### 25.4 错误上报与监控
+### 错误上报与监控
 
-#### 25.4.1 上报到服务器
+#### 上报到服务器
 
 ```typescript
 // src/utils/errorReporter.ts
@@ -560,7 +560,7 @@ class ErrorReporter {
 export const errorReporter = new ErrorReporter()
 ```
 
-#### 25.4.2 集成第三方监控服务
+#### 集成第三方监控服务
 
 **集成Sentry：**
 
@@ -623,9 +623,9 @@ export function logError(error: Error, context?: any) {
 }
 ```
 
-### 25.5 实战案例
+### 实战案例
 
-#### 25.5.1 完整的错误处理系统
+#### 完整的错误处理系统
 
 ```typescript
 // src/utils/errorHandler/index.ts
@@ -650,7 +650,7 @@ setupGlobalErrorHandler(app)
 app.mount('#app')
 ```
 
-#### 25.5.2 错误处理最佳实践
+#### 错误处理最佳实践
 
 **1. 分层处理**
 
@@ -705,7 +705,7 @@ const retryWithBackoff = async (fn: () => Promise<any>, maxRetries = 3) => {
 }
 ```
 
-### 25.6 本章小结
+### 本章小结
 
 | 内容 | 说明 |
 |------|------|

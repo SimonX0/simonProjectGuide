@@ -1,6 +1,6 @@
-# 第3章：ESLint代码检查
+# ESLint代码检查
 
-## 第3章 ESLint代码检查
+## ESLint代码检查
 
 > **ESLint 是什么？**
 > ESLint 是一个插件化的 JavaScript/TypeScript 代码检查工具，可以：
@@ -10,9 +10,9 @@
 > - 自定义规则配置
 > - 与代码编辑器集成，实时提示
 
-### 3.1 安装 ESLint
+### 安装 ESLint
 
-#### 3.1.1 基础安装
+#### 基础安装
 
 ```bash
 # 安装 ESLint
@@ -22,7 +22,7 @@ npm install -D eslint
 npx eslint --init
 ```
 
-#### 3.1.2 Vue3 项目完整安装
+#### Vue3 项目完整安装
 
 ```bash
 # 安装 ESLint 及 Vue3 相关插件
@@ -33,9 +33,9 @@ npm install -D eslint \
   eslint-config-prettier
 ```
 
-### 3.2 ESLint 配置文件
+### ESLint 配置文件
 
-#### 3.2.1 ESLint 9+ 扁平化配置
+#### ESLint 9+ 扁平化配置
 
 ```javascript
 // eslint.config.js (ESLint 9+ 新格式)
@@ -110,7 +110,7 @@ export default [
 ]
 ```
 
-#### 3.2.2 ESLint 8 及以下配置格式
+#### ESLint 8 及以下配置格式
 
 ```javascript
 // .eslintrc.cjs (ESLint 8 及以下)
@@ -146,9 +146,9 @@ module.exports = {
 }
 ```
 
-### 3.3 ESLint 常用规则说明
+### ESLint 常用规则说明
 
-#### 3.3.1 Vue 相关规则
+#### Vue 相关规则
 
 | 规则 | 说明 | 推荐值 |
 |------|------|--------|
@@ -161,7 +161,7 @@ module.exports = {
 | `vue/require-default-prop` | props 必须有默认值 | `off` |
 | `vue/html-self-closing` | 自闭合标签规范 | `'always'` |
 
-#### 3.3.2 TypeScript 相关规则
+#### TypeScript 相关规则
 
 | 规则 | 说明 | 推荐值 |
 |------|------|--------|
@@ -171,7 +171,7 @@ module.exports = {
 | `@typescript-eslint/no-non-null-assertion` | 禁止使用 ! | `warn` |
 | `@typescript-eslint/consistent-type-imports` | 类型导入一致性 | `error` |
 
-#### 3.3.3 JavaScript 基础规则
+#### JavaScript 基础规则
 
 | 规则 | 说明 | 推荐值 |
 |------|------|--------|
@@ -181,9 +181,9 @@ module.exports = {
 | `no-debugger` | 禁止使用 debugger | `'error'` (生产环境) |
 | `no-unused-vars` | 禁止未使用的变量 | `error` |
 
-### 3.4 ESLint 忽略配置
+### ESLint 忽略配置
 
-#### 3.4.1 使用 ignores 配置（ESLint 9+）
+#### 使用 ignores 配置（ESLint 9+）
 
 ```javascript
 // eslint.config.js
@@ -202,7 +202,7 @@ export default [
 ]
 ```
 
-#### 3.4.2 使用 .eslintignore 文件
+#### 使用 .eslintignore 文件
 
 ```bash
 # .eslintignore
@@ -215,7 +215,7 @@ coverage/
 public/
 ```
 
-### 3.5 NPM 脚本配置
+### NPM 脚本配置
 
 ```json
 // package.json
@@ -228,7 +228,7 @@ public/
 }
 ```
 
-### 3.6 ESLint 与 Husky 集成（自动检查）
+### ESLint 与 Husky 集成（自动检查）
 
 ```bash
 # 安装依赖

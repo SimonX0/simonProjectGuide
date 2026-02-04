@@ -1,13 +1,13 @@
-# 第39章：前端工程化进阶
-
+# 前端工程化进阶
+## # 4.15 前端工程化进阶
 ## 第39章 前端工程化进阶
 
 > **学习目标**：掌握高级前端工程化技术
 > **核心内容**：Monorepo、组件库开发、自动化工具、版本管理
 
-### 39.1 Monorepo 架构（pnpm workspace）
+### Monorepo 架构（pnpm workspace）
 
-#### 39.1.1 pnpm workspace 配置
+#### pnpm workspace 配置
 
 ```yaml
 # pnpm-workspace.yaml
@@ -45,7 +45,7 @@ packages:
 }
 ```
 
-#### 39.1.2 Turbo 配置
+#### Turbo 配置
 
 ```json
 // turbo.json
@@ -75,7 +75,7 @@ packages:
 }
 ```
 
-#### 39.1.3 项目结构
+#### 项目结构
 
 ```
 my-monorepo/
@@ -108,7 +108,7 @@ my-monorepo/
 └── tsconfig.json
 ```
 
-#### 39.1.4 包之间引用
+#### 包之间引用
 
 ```json
 // packages/ui/package.json
@@ -146,9 +146,9 @@ my-monorepo/
 }
 ```
 
-### 39.2 组件库开发与发布
+### 组件库开发与发布
 
-#### 39.2.1 组件库项目结构
+#### 组件库项目结构
 
 ```
 my-component-library/
@@ -177,7 +177,7 @@ my-component-library/
 └── package.json
 ```
 
-#### 39.2.2 组件库配置
+#### 组件库配置
 
 ```typescript
 // vite.config.ts
@@ -217,7 +217,7 @@ export default defineConfig({
 })
 ```
 
-#### 39.2.3 TypeScript 配置
+#### TypeScript 配置
 
 ```json
 // tsconfig.json
@@ -242,9 +242,9 @@ export default defineConfig({
 }
 ```
 
-### 39.3 代码规范自动化
+### 代码规范自动化
 
-#### 39.3.1 Commitizen 配置
+#### Commitizen 配置
 
 ```bash
 npm install -D commitizen cz-conventional-changelog
@@ -264,7 +264,7 @@ npm install -D commitizen cz-conventional-changelog
 }
 ```
 
-#### 39.3.2 Lint-staged 配置
+#### Lint-staged 配置
 
 ```bash
 npm install -D lint-staged
@@ -289,7 +289,7 @@ npm install -D lint-staged
 }
 ```
 
-#### 39.3.3 Husky Hooks 配置
+#### Husky Hooks 配置
 
 ```bash
 npx husky-init
@@ -313,9 +313,9 @@ pnpm run type-check
 npx commitlint --edit $1
 ```
 
-### 39.4 自动化生成工具
+### 自动化生成工具
 
-#### 39.4.1 使用 Hygen
+#### 使用 Hygen
 
 ```bash
 npm install -D hygen
@@ -378,7 +378,7 @@ const props = defineProps<Props>()
 </style>
 ```
 
-#### 39.4.2 自定义生成脚本
+#### 自定义生成脚本
 
 ```typescript
 // scripts/generate-component.ts
@@ -476,9 +476,9 @@ export interface ${name}Emits {
 }
 ```
 
-### 39.5 版本管理（Changesets）
+### 版本管理（Changesets）
 
-#### 39.5.1 Changesets 配置
+#### Changesets 配置
 
 ```bash
 npm install -D @changesets/cli
@@ -498,7 +498,7 @@ npm install -D @changesets/cli
 }
 ```
 
-#### 39.5.2 使用 Changesets
+#### 使用 Changesets
 
 ```bash
 # 创建 changeset
@@ -514,9 +514,9 @@ pnpm changeset publish
 pnpm changeset gen
 ```
 
-### 39.6 文档站点（VitePress）
+### 文档站点（VitePress）
 
-#### 39.6.1 VitePress 配置
+#### VitePress 配置
 
 ```bash
 npm install -D vitepress
@@ -569,7 +569,7 @@ export default defineConfig({
 })
 ```
 
-#### 39.6.2 组件演示插件
+#### 组件演示插件
 
 ```typescript
 // docs/.vitepress/plugins/component-demo.ts
@@ -593,9 +593,9 @@ export function componentDemo(): Plugin {
 }
 ```
 
-### 39.7 性能优化与监控
+### 性能优化与监控
 
-#### 39.7.1 构建分析
+#### 构建分析
 
 ```typescript
 // vite-plugin-analyzer.ts
@@ -612,7 +612,7 @@ export function analyzerPlugin(): Plugin {
 }
 ```
 
-#### 39.7.2 Bundle 监控
+#### Bundle 监控
 
 ```typescript
 // vite-plugin-bundle-monitor.ts
@@ -642,9 +642,9 @@ export function bundleMonitorPlugin(options = {}): Plugin {
 }
 ```
 
-### 39.8 工程化最佳实践
+### 工程化最佳实践
 
-#### 39.8.1 项目初始化检查清单
+#### 项目初始化检查清单
 
 ```typescript
 // scripts/check-project.ts
@@ -717,7 +717,7 @@ export function checkProject(): CheckResult[] {
 }
 ```
 
-### 39.9 本章小结
+### 本章小结
 
 | 工程化领域 | 推荐工具 | 核心价值 |
 |----------|----------|----------|

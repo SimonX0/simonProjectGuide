@@ -1,13 +1,12 @@
-# 第44章：移动端开发与响应式设计完全指南
+# 移动端开发与响应式设计完全指南
 
-## 第44章 移动端开发与响应式设计完全指南
-
+## 移动端开发与响应式设计完全指南
 > **学习目标**：掌握Vue3移动端开发和响应式设计技术
 > **核心内容**：移动端适配方案、响应式布局、触摸事件、移动端优化
 
-### 44.1 移动端开发基础
+### 移动端开发基础
 
-#### 44.1.1 视口(Viewport)配置
+#### 视口(Viewport)配置
 
 ```html
 <!-- index.html -->
@@ -46,7 +45,7 @@
 | `user-scalable` | 用户缩放 | `no`（应用类）|
 | `viewport-fit=cover` | 适配刘海屏 | iPhone X+ 必须 |
 
-#### 44.1.2 移动端适配方案对比
+#### 移动端适配方案对比
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -86,9 +85,9 @@
 
 ---
 
-### 44.2 Rem 适配方案
+### Rem 适配方案
 
-#### 44.2.1 Rem 原理
+#### Rem 原理
 
 ```css
 /* Rem 适配原理 */
@@ -108,7 +107,7 @@ html {
 /* 计算: 375 / 750 * 100 = 50rem */
 ```
 
-#### 44.2.2 自动计算根元素字体大小
+#### 自动计算根元素字体大小
 
 ```javascript
 // src/utils/rem.ts
@@ -151,7 +150,7 @@ export function initRem(designWidth = 750) {
 }
 ```
 
-#### 44.2.3 PostCSS 自动转换 px 为 rem
+#### PostCSS 自动转换 px 为 rem
 
 ```bash
 # 安装插件
@@ -202,9 +201,9 @@ module.exports = {
 
 ---
 
-### 44.3 响应式设计最佳实践
+### 响应式设计最佳实践
 
-#### 44.3.1 媒体查询断点设计
+#### 媒体查询断点设计
 
 ```scss
 // src/styles/variables.scss
@@ -254,7 +253,7 @@ $breakpoints: (
 }
 ```
 
-#### 44.3.2 响应式网格布局
+#### 响应式网格布局
 
 ```vue
 <!-- components/ResponsiveGrid.vue -->
@@ -314,7 +313,7 @@ const props = withDefaults(defineProps<Props>(), {
 </style>
 ```
 
-#### 44.3.3 响应式容器
+#### 响应式容器
 
 ```vue
 <!-- components/ResponsiveContainer.vue -->
@@ -355,7 +354,7 @@ const props = withDefaults(defineProps<Props>(), {
 </style>
 ```
 
-#### 44.3.4 响应式图片
+#### 响应式图片
 
 ```vue
 <!-- components/ResponsiveImage.vue -->
@@ -410,9 +409,9 @@ function handleError(event: Event) {
 
 ---
 
-### 44.4 触摸事件与手势
+### 触摸事件与手势
 
-#### 44.4.1 基础触摸事件
+#### 基础触摸事件
 
 ```vue
 <!-- components/TouchButton.vue -->
@@ -509,7 +508,7 @@ const emit = defineEmits<{
 </style>
 ```
 
-#### 44.4.2 手势识别（滑动、长按、双击）
+#### 手势识别（滑动、长按、双击）
 
 ```typescript
 // src/composables/useGesture.ts
@@ -612,7 +611,7 @@ export function useGesture(options: GestureOptions = {}) {
 }
 ```
 
-#### 44.4.3 使用手势组件
+#### 使用手势组件
 
 ```vue
 <!-- components/SwipeContainer.vue -->
@@ -672,9 +671,9 @@ const gestureHandlers = useGesture({
 
 ---
 
-### 44.5 移动端性能优化
+### 移动端性能优化
 
-#### 44.5.1 图片懒加载
+#### 图片懒加载
 
 ```vue
 <!-- components/LazyImage.vue -->
@@ -778,7 +777,7 @@ function handleError() {
 </style>
 ```
 
-#### 44.5.2 虚拟滚动（长列表优化）
+#### 虚拟滚动（长列表优化）
 
 ```vue
 <!-- components/VirtualList.vue -->
@@ -872,7 +871,7 @@ function handleScroll(e: Event) {
 </style>
 ```
 
-#### 44.5.3 防抖节流优化
+#### 防抖节流优化
 
 ```typescript
 // src/utils/performance.ts
@@ -943,9 +942,9 @@ export function rafThrottle<T extends (...args: any[]) => any>(
 
 ---
 
-### 44.6 移动端实战案例
+### 移动端实战案例
 
-#### 44.6.1 移动端首页
+#### 移动端首页
 
 ```vue
 <!-- pages/mobile/Home.vue -->
@@ -1099,7 +1098,7 @@ const products = ref(Array.from({ length: 100 }, (_, i) => ({
 </style>
 ```
 
-#### 44.6.2 移动端商品详情页
+#### 移动端商品详情页
 
 ```vue
 <!-- pages/mobile/ProductDetail.vue -->
@@ -1415,7 +1414,7 @@ function getDistance(touch1: Touch, touch2: Touch) {
 
 ---
 
-### 44.7 本章小结
+### 本章小结
 
 | 内容 | 核心技术 |
 |------|----------|
