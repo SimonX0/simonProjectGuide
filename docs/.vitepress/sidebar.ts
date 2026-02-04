@@ -1,4 +1,19 @@
 export const sidebar = {
+  '/git/': [
+    {
+      text: 'Git 完全指南',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '学习路线', link: '/git/' },
+        { text: '第1章：Git基础入门', link: '/git/chapter-01' },
+        { text: '第2章：Git常用命令', link: '/git/chapter-02' },
+        { text: '第3章：Git分支管理', link: '/git/chapter-03' },
+        { text: '第4章：Git工作流程', link: '/git/workflow' },
+        { text: '第5章：Git实战技巧', link: '/git/chapter-05' },
+      ]
+    }
+  ],
   '/guide/': [
     {
       text: '准备篇',

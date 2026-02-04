@@ -13,4 +13,15 @@ export const nav = [
       { text: "附录资料", link: "/guide/appendix-projects" },
     ],
   },
+  {
+    text: "Git 教程",
+    items: [
+      { text: "学习路线", link: "/git/" },
+      { text: "基础入门", link: "/git/chapter-01" },
+      { text: "常用命令", link: "/git/chapter-02" },
+      { text: "分支管理", link: "/git/chapter-03" },
+      { text: "工作流程", link: "/git/workflow" },
+      { text: "实战技巧", link: "/git/chapter-05" },
+    ],
+  },
 ];
