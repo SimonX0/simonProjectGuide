@@ -7,7 +7,7 @@ export default defineConfig({
   title: "小徐的技术充电站",
   description: "小徐技术充电站 - 从零到企业级项目实战",
   lang: "zh-CN",
-  base: "/simonProjectGuide/",
+  base: "/",
   head: [
     ["link", { rel: "icon", href: "/favicon.ico" }],
     ["meta", { name: "theme-color", content: "#42b883" }],
@@ -68,6 +68,12 @@ export default defineConfig({
 
     // 侧边栏菜单标签
     sidebarMenuLabel: "菜单",
+
+    // 启用前进后退导航
+    docFooter: {
+      prev: '上一章',
+      next: '下一章'
+    },
   },
 
   // Markdown配置

@@ -1,43 +1,39 @@
 ---
 layout: home
 
-hero:
-  name: "小徐的技术充电站"
-  text: "持续充电 · 不断进步"
-
 features:
   - title: 🔧 Git版本控制
     details: Git基础, 分支管理, 团队协作与版本控制最佳实践
     link: /git/
-    linkText: 从零开始 →
+    linkText: 开始充电 →
   - title: 📚 前端开发
     details: Vue3, React, TypeScript, 现代前端工程化体系
     link: /guide/
-    linkText: 开始学习 →
+    linkText: 开始充电 →
   - title: ☕ Java开发
     details: SpringBoot, MyBatis, 微服务架构与分布式系统
-    link: /java/
-    linkText: 规划中 →
+    link: /guide/
+    linkText: 敬请期待 →
   - title: 🐍 Python开发
     details: FastAPI, Django, 数据分析与自动化脚本
-    link: /python/
-    linkText: 规划中 →
+    link: /ai/
+    linkText: 敬请期待 →
   - title: 🤖 AI应用
     details: LangChain, LLM, 大模型应用开发与RAG实践
     link: /ai/
-    linkText: 规划中 →
+    linkText: 开始充电 →
   - title: 🗄️ 数据库
     details: MySQL, Redis, MongoDB, 数据库设计与优化
-    link: /database/
-    linkText: 规划中 →
+    link: /guide/
+    linkText: 敬请期待 →
   - title: 🔧 DevOps
     details: Docker, Kubernetes, CI/CD, 云原生技术栈
-    link: /devops/
-    linkText: 规划中 →
+    link: /guide/
+    linkText: 敬请期待 →
   - title: 🐧 Linux
     details: Shell脚本, 系统运维, 服务器管理与性能优化
-    link: /linux/
-    linkText: 规划中 →
+    link: /guide/
+    linkText: 敬请期待 →
 ---
 
 <div class="hero-layout">
@@ -254,29 +250,32 @@ onMounted(() => {
 
   function moveCustomLayout() {
     const customLayout = document.querySelector('.hero-layout')
-    const hero = document.querySelector('.VPHero')
+    const features = document.querySelector('.VPFeatures')
 
-    if (customLayout && hero) {
-      const container = hero.parentNode
-      if (hero.nextSibling) {
-        container.insertBefore(customLayout, hero.nextSibling)
-      } else {
-        container.appendChild(customLayout)
+    if (customLayout && features) {
+      // 找到 features 的父容器
+      const featuresContainer = features.parentNode
+
+      if (featuresContainer) {
+        // 直接将 hero-layout 移动到 features 之前
+        // 无论 hero-layout 当前在哪里，都移动它
+        featuresContainer.insertBefore(customLayout, features)
+        console.log('Hero layout moved successfully')
+        return true
       }
-      return true
     }
     return false
   }
 
   let attempts = 0
-  const maxAttempts = 10
+  const maxAttempts = 20
 
   function tryMove() {
     if (moveCustomLayout() || attempts >= maxAttempts) {
       return
     }
     attempts++
-    setTimeout(tryMove, 100)
+    setTimeout(tryMove, 50)
   }
 
   if (document.readyState === 'loading') {

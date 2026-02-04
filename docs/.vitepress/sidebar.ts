@@ -14,6 +14,72 @@ export const sidebar = {
       ]
     }
   ],
+  '/ai/': [
+    {
+      text: 'AI应用开发完全指南',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '学习路线', link: '/ai/' },
+        {
+          text: '第1章：AI应用基础入门',
+          link: '/ai/chapter-01',
+          headers: {
+            level: 2,
+            deep: 2
+          }
+        },
+        {
+          text: '第2章：LangChain框架入门',
+          link: '/ai/chapter-02',
+          headers: {
+            level: 2,
+            deep: 2
+          }
+        },
+        {
+          text: '第3章：Prompt Engineering',
+          link: '/ai/chapter-03',
+          headers: {
+            level: 2,
+            deep: 2
+          }
+        },
+        {
+          text: '第4章：RAG检索增强生成',
+          link: '/ai/chapter-04',
+          headers: {
+            level: 2,
+            deep: 2
+          }
+        },
+        {
+          text: '第5章：AI Agent智能体',
+          link: '/ai/chapter-05',
+          headers: {
+            level: 2,
+            deep: 2
+          }
+        },
+        {
+          text: '第6章：实战项目',
+          link: '/ai/chapter-06',
+          headers: {
+            level: 2,
+            deep: 2
+          }
+        },
+        {
+          text: '第7章：AI应用进阶',
+          link: '/ai/chapter-07',
+          headers: {
+            level: 2,
+            deep: 2
+          }
+        },
+      ]
+    }
+  ],
   '/guide/': [
     {
       text: '准备篇',
