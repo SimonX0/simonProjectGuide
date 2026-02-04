@@ -88,6 +88,25 @@ export default defineConfig({
     },
   },
 
+  // Vite配置
+  vite: {
+    // 优化热重载
+    server: {
+      watch: {
+        // 忽略 node_modules 避免过度监听
+        ignored: ['**/node_modules/**', '**/.git/**']
+      }
+    },
+    // 构建优化
+    build: {
+      // 减少内存使用
+      chunkSizeWarningLimit: 1000
+    }
+  },
+
   // 忽略死链接检查
   ignoreDeadLinks: true,
+
+  // 开发服务器优化
+  srcExclude: ['**/README.md'],
 });
