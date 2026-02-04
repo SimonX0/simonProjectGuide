@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "Vue.volar",
+    "Vue.vscode-typescript-vue-plugin",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    "streetsidesoftware.code-spell-checker",
+    "usernamehw.errorlens",
+    "yzhang.markdown-all-in-one"
+  ]
+}

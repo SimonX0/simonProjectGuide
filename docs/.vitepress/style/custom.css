@@ -1,0 +1,528 @@
+/* 自定义样式 - 小徐的技术充电站 */
+
+/* ==================== 页面加载进度条 ==================== */
+
+/* 创建进度条容器 */
+.VPDoc::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(90deg, #42b883, #3a8ee6, #42b883);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+  z-index: 9999;
+  transition: width 0.4s ease;
+}
+
+/* 页面加载时显示进度条 */
+.VPDoc.loading::before {
+  width: 30%;
+}
+
+.VPDoc.loading-50::before {
+  width: 50%;
+}
+
+.VPDoc.loading-80::before {
+  width: 80%;
+}
+
+/* 页面加载完成隐藏进度条 */
+.VPDoc.loaded::before {
+  width: 100%;
+  opacity: 0;
+  transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+/* 进度条光效动画 */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 页面切换时的遮罩层效果 */
+body.vp-loading::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--vp-c-bg);
+  opacity: 0;
+  z-index: 9998;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* ==================== 全局样式 ==================== */
+
+/* 自定义字体 */
+:root {
+  /* 品牌色 - 可以根据喜好修改 */
+  --vp-c-brand: #42b883;
+  --vp-c-brand-light: #42b983;
+  --vp-c-brand-dark: #33a06f;
+  --vp-c-brand-lighter: #66c69a;
+
+  /* 背景色渐变 */
+  --vp-home-hero-image-background-image: linear-gradient(
+    -45deg,
+    #42b883 25%,
+    #3a8ee6 25%,
+    #3a8ee6 50%,
+    #42b883 50%,
+    #42b883 75%,
+    #3a8ee6 75%
+  );
+  --vp-home-hero-image-filter: blur(80px);
+}
+
+/* ==================== Hero 区域样式 ==================== */
+
+/* 隐藏默认的 hero 区域 */
+.VPHero {
+  display: none !important;
+  padding-top: 100px !important;
+  padding-bottom: 20px !important;
+  text-align: center !important;
+}
+
+.VPHero .container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 主标题样式 */
+.VPHero .name {
+  font-size: 56px !important;
+  font-weight: 800 !important;
+  background: linear-gradient(120deg, #42b883 0%, #3a8ee6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px !important;
+  text-align: center !important;
+  align-self: center !important;
+}
+
+/* 副标题样式 */
+.VPHero .text {
+  font-size: 24px !important;
+  font-weight: 500;
+  color: var(--vp-c-text-1);
+  max-width: 600px;
+  margin: 0 auto 16px;
+  line-height: 1.6;
+  text-align: center !important;
+  align-self: center !important;
+}
+
+/* 标语样式 */
+.VPHero .tagline {
+  font-size: 18px;
+  color: var(--vp-c-text-1);
+  max-width: 700px;
+  margin: 0 auto 48px;
+  line-height: 1.6;
+  opacity: 1;
+  font-weight: 400;
+  text-align: center !important;
+  align-self: center !important;
+}
+
+/* 按钮组样式 */
+.VPHero .actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+
+/* 主按钮样式 - 统一样式 */
+.VPHero .action.brand {
+  background: linear-gradient(135deg, #42b883 0%, #3a8ee6 100%);
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 28px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(66, 184, 131, 0.2);
+}
+
+.VPHero .action.brand:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 184, 131, 0.3);
+}
+
+/* 次要按钮样式 - 统一样式 */
+.VPHero .action.alt {
+  background: var(--vp-c-bg-soft);
+  border: 2px solid var(--vp-c-border);
+  color: var(--vp-c-text-1);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 28px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.VPHero .action.alt:hover {
+  border-color: var(--vp-c-brand);
+  color: var(--vp-c-brand);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(66, 184, 131, 0.15);
+}
+
+/* ==================== Features 区域样式 ==================== */
+
+.VPFeatures {
+  padding: 24px 24px !important;
+}
+
+.VPFeatures .container {
+  max-width: 1100px !important;
+}
+
+/* Features 网格布局确保对称 */
+.VPFeatures .VPFeatures {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 24px !important;
+}
+
+/* 特性卡片样式 */
+.VPFeature {
+  border-radius: 20px !important;
+  padding: 2rem !important;
+  background: var(--vp-c-bg);
+  border: 2px solid var(--vp-c-divider);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 卡片顶部装饰条 */
+.VPFeature::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--vp-c-brand) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.VPFeature:hover::before {
+  opacity: 1;
+}
+
+/* 确保卡片内容居中 */
+.VPFeature .icon {
+  text-align: center;
+  margin-bottom: 1.25rem;
+  font-size: 3rem;
+  display: inline-block;
+  filter: drop-shadow(0 4px 8px rgba(66, 184, 131, 0.15));
+}
+
+.VPFeature .title {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.VPFeature .details {
+  text-align: center;
+  flex-grow: 1;
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.VPFeature .link-text {
+  text-align: center;
+  margin-top: auto;
+  color: var(--vp-c-brand);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 卡片悬停效果 */
+.VPFeature:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(66, 184, 131, 0.15);
+  border-color: var(--vp-c-brand);
+  background: var(--vp-c-bg-soft);
+}
+
+.VPFeature:hover .icon {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.VPFeature:hover .link-text {
+  color: var(--vp-c-brand-dark);
+}
+
+/* ==================== 导航栏样式 ==================== */
+
+.VPNavBar {
+  border-bottom: 1px solid var(--vp-c-border);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8);
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+/* 暗色模式下的导航栏 */
+.dark .VPNavBar {
+  background: rgba(24, 24, 28, 0.8);
+}
+
+/* 搜索框样式优化 */
+.VPNavBar .search-box {
+  transition: all 0.3s ease;
+}
+
+.VPNavBar .search-box:focus-within {
+  box-shadow: 0 0 0 3px rgba(66, 184, 131, 0.2);
+}
+
+.VPNavBar .search-box input {
+  color: var(--vp-c-text-1) !important;
+}
+
+.VPNavBar .search-box input::placeholder {
+  color: var(--vp-c-text-2) !important;
+  opacity: 0.8;
+}
+
+/* Logo 样式 */
+.VPNavBarTitle .title {
+  font-weight: 700;
+  background: linear-gradient(120deg, #42b883 0%, #3a8ee6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ==================== 侧边栏样式 ==================== */
+
+.VPSidebar {
+  border-right: 1px solid var(--vp-c-border);
+}
+
+/* 侧边栏链接 */
+.VPSidebarItem .link {
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  margin: 4px 0;
+}
+
+.VPSidebarItem .link:hover {
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-brand);
+}
+
+.VPSidebarItem .link.active {
+  background: var(--vp-c-brand-light);
+  color: white;
+}
+
+/* ==================== 内容区域样式 ==================== */
+
+.VPDoc {
+  padding-top: 32px !important;
+}
+
+/* 标题样式 */
+.VPDoc h1 {
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  background: linear-gradient(120deg, #42b883 0%, #3a8ee6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.VPDoc h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-top: 48px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--vp-c-brand);
+}
+
+/* 代码块样式 */
+.vp-code-group {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== 响应式设计 ==================== */
+
+@media (max-width: 768px) {
+  .VPHero .name {
+    font-size: 40px !important;
+  }
+
+  .VPHero .text {
+    font-size: 20px !important;
+  }
+
+  .VPHero .actions {
+    flex-direction: column;
+  }
+
+  .VPHero .action {
+    width: 100%;
+  }
+}
+
+/* ==================== 页面内容加载动画 ==================== */
+
+/* 页面内容淡入效果 */
+.VPDoc .container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 标题逐个淡入 */
+.VPDoc h1 {
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.VPDoc h2 {
+  animation: fadeInLeft 0.5s ease-out;
+}
+
+.VPDoc h3 {
+  animation: fadeInRight 0.4s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 段落和内容淡入 */
+.VPDoc p,
+.VPDoc ul,
+.VPDoc ol {
+  animation: fadeIn 0.6s ease-out 0.2s backwards;
+}
+
+/* 代码块淡入 */
+.VPDoc .vp-code-group,
+.VPDoc pre {
+  animation: fadeInUp 0.6s ease-out 0.3s backwards;
+}
+
+/* 链接悬停效果 */
+.VPDoc a {
+  transition: all 0.2s ease;
+}
+
+.VPDoc a:hover {
+  color: var(--vp-c-brand);
+  transform: translateX(2px);
+}
+
+/* ==================== 动画效果 ==================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.VPHero,
+.VPFeature {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.VPFeature {
+  animation-delay: 0.2s;
+}
+
+/* ==================== 作者信息卡片位置调整 ==================== */
+
+/* 主页内容区域使用 flex 控制顺序 */
+.VPDoc:not(.has-sidebar) .container > .content {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 作者信息卡片放在 Features 之前 */
+.VPDoc:not(.has-sidebar) .container > .content > div:not(.VPHero):not(.VPFeatures) {
+  order: 1;
+}
+
+.VPFeatures {
+  order: 2;
+}
