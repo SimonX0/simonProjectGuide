@@ -1061,6 +1061,722 @@ git check-ignore -v node_modules/
 git update-index --assume-unchanged config.js
 ```
 
+#### 🔍 .gitignore 语法详解
+
+**基础语法：**
+
+```bash
+# ──────────────────────────────────────
+# .gitignore 语法规则
+# ──────────────────────────────────────
+
+# 1. 注释（以 # 开头）
+# 这是注释，Git会忽略
+
+# 2. 匹配所有目录或文件
+*.log           # 忽略所有 .log 文件
+*.tmp           # 忽略所有 .tmp 文件
+
+# 3. 匹配目录（以 / 结尾）
+node_modules/   # 忽略 node_modules 目录
+logs/          # 忽略 logs 目录
+
+# 4. 匹配具体文件
+config.ini      # 忽略 config.ini 文件
+.env.local      # 忽略 .env.local 文件
+
+# 5. 否定规则（! 开头，不要忽略）
+*.log
+!important.log # 不要忽略 important.log
+
+# 6. 目录匹配
+/build/         # 忽略根目录下的 build 目录
+**/temp/        # 忽略所有 temp 目录
+
+# 7. 通配符详解
+*              # 匹配任意字符
+?              # 匹配单个字符
+**             # 匹配任意多级目录
+abc            # 匹配 abc 目录
+[abc]          # 匹配 a、b 或 c
+[!abc]         # 不匹配 a、b 或 c
+```
+
+#### 📦 常见项目 .gitignore 模板
+
+**Python 项目：**
+```bash
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+```
+
+**Node.js / Vue 项目：**
+```bash
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+dist-ssr/
+*.tgz
+
+# Local env files
+.env
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/snippets/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Vite
+.vitepress/cache/
+.vitepress/dist/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+```
+
+**Java 项目：**
+```bash
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Gradle
+.gradle
+build/
+!gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spring Boot
+spring-boot-starter/
+```
+
+**通用 Web 项目：**
+```bash
+# Dependencies
+node_modules/
+vendor/
+bower_components/
+
+# Build outputs
+dist/
+build/
+out/
+*.min.js
+*.min.css
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+```
+
+#### 🛠️ 实战案例：创建完整的 .gitignore
+
+**场景1：初始化新项目时**
+
+```bash
+# 1. 创建项目目录
+mkdir my-project
+cd my-project
+
+# 2. 初始化 Git 仓库
+git init
+
+# 3. 创建 .gitignore 文件
+cat > .gitignore << 'EOF'
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+EOF
+
+# 4. 查看状态
+git status
+
+# 5. 添加文件
+git add .
+
+# 6. 提交
+git commit -m "feat: 初始化项目"
+```
+
+**场景2：已经提交了不该提交的文件**
+
+```bash
+# 问题：不小心提交了 node_modules/
+git add .
+git commit -m "feat: 添加功能"
+
+# 解决方法：
+# 1. 从 Git 中删除，但保留本地文件
+git rm -r --cached node_modules/
+
+# 2. 添加到 .gitignore
+echo "node_modules/" >> .gitignore
+
+# 3. 提交修改
+git add .gitignore
+git commit -m "chore: 添加 .gitignore，移除 node_modules"
+
+# 4. 推送到远程
+git push origin main
+```
+
+**场景3：特殊文件的忽略**
+
+```bash
+# ──────────────────────────────────────
+# 特殊情况处理
+# ──────────────────────────────────────
+
+# 1. 忽略所有 .log 文件，但除了 important.log
+*.log
+!important.log
+
+# 2. 忽略所有 build 目录，但除了 src/build
+build/
+!/src/build
+
+# 3. 只忽略根目录下的 config.ini
+/config.ini
+
+# 4. 忽略所有目录下的 test.txt
+**/test.txt
+
+# 5. 忽略 doc 目录及其子目录的所有 pdf 文件
+doc/**/*.pdf
+
+# 6. 忽略以 .a 结尾的文件
+*.a
+
+# 7. 但是不忽略 lib.a
+!lib.a
+```
+
+#### ⚠️ 常见问题和解决方案
+
+**问题1：.gitignore 不生效**
+
+**症状**：文件已经在 .gitignore 中，但 Git 还是跟踪它
+
+**原因**：文件已经被 Git 跟踪了
+
+**解决方法**：
+```bash
+# 1. 从 Git 索引中删除文件（保留本地）
+git rm -r --cached node_modules/
+
+# 2. 提交删除
+git commit -m "chore: 移除已跟踪的 node_modules"
+
+# 3. 推送
+git push
+```
+
+**问题2：如何查看文件是否被忽略**
+
+```bash
+# 检查单个文件
+git check-ignore -v node_modules/
+
+# 检查多个文件
+git check-ignore -v *.log
+
+# 查看所有被忽略的文件
+git ls-files --others --ignored --exclude-standard
+```
+
+**问题3：如何调试 .gitignore**
+
+```bash
+# 查看哪个规则导致文件被忽略
+git check-ignore -v config.js
+
+# 输出示例：
+# config.js          .gitignore:2:*.js       <- 第2行的 *.js 规则
+# config.js          .gitignore:5:config.js   <- 第5行的 config.js 规则
+```
+
+**问题4：.gitignore 对已提交的文件无效**
+
+**原因**：.gitignore 只对未跟踪的文件生效
+
+**解决方法**：
+```bash
+# 方法1：从 Git 删除但保留本地
+git rm --cached filename
+
+# 方法2：批量删除
+git rm -r --cached directory/
+
+# 方法3：从历史记录中完全删除（危险！）
+git filter-branch --tree-filter 'rm -f filename' HEAD
+```
+
+**问题5：如何全局配置 .gitignore**
+
+```bash
+# 为所有项目配置全局 .gitignore
+git config --global core.excludesfile ~/.gitignore_global
+
+# 编辑全局忽略文件
+echo ".DS_Store" >> ~/.gitignore_global
+echo "Thumbs.db" >> ~/.gitignore_global
+echo "*.log" >> ~/.gitignore_global
+```
+
+**问题6：如何忽略已修改但未提交的文件**
+
+```bash
+# 临时忽略本地修改
+git update-index --assume-unchanged config.js
+
+# 恢复跟踪
+git update-index --no-assume-unchanged config.js
+```
+
+**问题7：如何忽略空目录**
+
+Git 默认会忽略空目录，如果需要跟踪空目录：
+
+```bash
+# 在目录中创建 .gitkeep 文件
+mkdir empty-dir
+touch empty-dir/.gitkeep
+
+# .gitignore 中可以添加
+!.gitkeep
+```
+
+#### 📚 最佳实践建议
+
+1. **项目初始化时就创建 .gitignore**
+   - 在第一次 commit 之前创建
+   - 避免提交不该提交的文件
+
+2. **使用模板生成器**
+   - 访问：https://gitignore.io/
+   - 输入项目类型（Python、Node、Vue等）
+   - 自动生成完整的 .gitignore
+
+3. **定期检查仓库大小**
+   ```bash
+   # 查看仓库大小
+   du -sh .git
+
+   # 查看大文件
+   git rev-list --objects --all |
+     git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' |
+     awk '/^blob/ {print substr($0,6)}' |
+     sort -n -k2 -r |
+     head -10
+   ```
+
+4. **敏感文件检查清单**
+   - [ ] .env 和环境变量
+   - [ ] 密钥文件（*.key, *.pem）
+   - [ ] 数据库备份
+   - [ ] 日志文件
+   - [ ] 临时文件
+   - [ ] IDE 配置
+   - [ ] 操作系统文件
+
+5. **团队协作建议**
+   - 将 .gitignore 纳入项目模板
+   - 在 README 中说明项目需要的 .gitignore 规则
+   - 使用 pre-commit hook 检查敏感文件
+
+#### 🎯 实战练习
+
+**练习1：创建 Vue 项目的 .gitignore**
+
+```bash
+# 任务：创建一个完整的 Vue3 项目 .gitignore
+# 要求：包含以下内容
+# - 依赖包
+# - 构建产物
+# - 环境变量
+# - IDE配置
+# - 日志文件
+# - 临时文件
+
+# 期望输出：
+cat > .gitignore << 'EOF'
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# VitePress cache
+.vitepress/cache/
+
+# Temporary files
+*.tmp
+*.temp
+EOF
+```
+
+**练习2：清理已提交的敏感文件**
+
+```bash
+# 场景：不小心提交了 .env 文件
+# 任务：从历史记录中完全删除
+
+# 步骤1：从当前分支删除
+git rm --cached .env
+
+# 步骤2：添加到 .gitignore
+echo ".env" >> .gitignore
+
+# 步骤3：提交删除
+git add .gitignore
+git commit -m "chore: 移除敏感文件 .env"
+
+# 步骤4：从历史记录中删除（使用 filter-branch）
+git filter-branch --force --index-filter \
+  "git rm --cached --ignore-unmatch .env" \
+  --prune-empty --tag-name-filter cat -- --all
+
+# 步骤5：强制推送（警告：会重写历史）
+git push origin --force --all
+
+# 步骤6：让所有团队成员重新克隆
+# 通知团队成员：
+# ⚠️ 仓库历史已修改，请重新克隆：
+# git clone https://github.com/xxx/project.git
+```
+
+**练习3：创建多项目 .gitignore**
+
+```bash
+# 场景：Monorepo 项目，包含前端、后端、移动端
+# 任务：为不同子项目创建不同的 .gitignore
+
+# 项目结构：
+# /monorepo
+#   /frontend (Vue)
+#   /backend (Python Flask)
+#   /mobile (React Native)
+
+# 根目录 .gitignore：
+cat > .gitignore << 'EOF'
+# Monorepo .gitignore
+
+# 共同忽略
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# 前端
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.env
+
+# 后端
+/backend/__pycache__/
+/backend/*.py[cod]
+/backend/.env
+/backend/venv/
+
+# 移动端
+/mobile/node_modules/
+/mobile/build/
+/mobile/.env
+EOF
+
+# 或者在每个子目录单独配置
+# frontend/.gitignore
+# backend/.gitignore
+# mobile/.gitignore
+```
+
 ---
 
 ### 5. 分支管理规范
