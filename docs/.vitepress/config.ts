@@ -7,7 +7,7 @@ export default defineConfig({
   title: "小徐的技术充电站",
   description: "小徐技术充电站 - 从零到企业级项目实战",
   lang: "zh-CN",
-  base: "/",
+  base: "/simonProjectGuide/",
   head: [
     ["link", { rel: "icon", href: "/favicon.ico" }],
     ["meta", { name: "theme-color", content: "#42b883" }],
