@@ -240,40 +240,44 @@ features:
 }
 </style>
 
-<script>
-// 确保自定义布局在 Hero 位置显示
-(function() {
+<script setup>
+// 确保自定义布局在 Hero 位置显示（仅在客户端执行）
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  if (typeof window === 'undefined') return
+
   function moveCustomLayout() {
-    const customLayout = document.querySelector('.hero-layout');
-    const hero = document.querySelector('.VPHero');
+    const customLayout = document.querySelector('.hero-layout')
+    const hero = document.querySelector('.VPHero')
 
     if (customLayout && hero) {
-      const container = hero.parentNode;
+      const container = hero.parentNode
       if (hero.nextSibling) {
-        container.insertBefore(customLayout, hero.nextSibling);
+        container.insertBefore(customLayout, hero.nextSibling)
       } else {
-        container.appendChild(customLayout);
+        container.appendChild(customLayout)
       }
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
-  let attempts = 0;
-  const maxAttempts = 10;
+  let attempts = 0
+  const maxAttempts = 10
 
   function tryMove() {
     if (moveCustomLayout() || attempts >= maxAttempts) {
-      return;
+      return
     }
-    attempts++;
-    setTimeout(tryMove, 100);
+    attempts++
+    setTimeout(tryMove, 100)
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', tryMove);
+    document.addEventListener('DOMContentLoaded', tryMove)
   } else {
-    tryMove();
+    tryMove()
   }
-})();
+})
 </script>

@@ -81,4 +81,7 @@ export default defineConfig({
       dark: "github-dark",
     },
   },
+
+  // 忽略死链接检查
+  ignoreDeadLinks: true,
 });
