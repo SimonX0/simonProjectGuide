@@ -374,6 +374,140 @@ git merge       # 合并
 
 ---
 
+## 练习题
+
+### 基础练习
+
+**练习 1：创建你的第一个仓库**
+
+```bash
+# 1. 创建项目文件夹
+mkdir my-first-git-project
+cd my-first-git-project
+
+# 2. 初始化仓库
+git init
+
+# 3. 创建一个文件
+echo "# 我的第一个Git项目" > README.md
+
+# 4. 查看状态
+git status
+
+# 5. 添加到暂存区
+git add README.md
+
+# 6. 提交
+git commit -m "第一次提交：添加README文件"
+```
+
+**练习 2：查看提交历史**
+
+```bash
+# 查看详细日志
+git log
+
+# 查看单行简洁日志
+git log --oneline
+
+# 查看最近的3次提交
+git log --oneline -3
+```
+
+**练习 3：修改文件并提交**
+
+```bash
+# 1. 修改README.md
+echo "## 项目介绍" >> README.md
+echo "这是一个学习Git的练习项目" >> README.md
+
+# 2. 查看改动
+git diff
+
+# 3. 提交改动
+git add README.md
+git commit -m "添加项目介绍"
+```
+
+### 进阶练习
+
+**挑战：体验版本回退**
+
+```bash
+# 1. 再做一次修改
+echo "## 更新日志" >> README.md
+git add .
+git commit -m "添加更新日志"
+
+# 2. 查看所有提交
+git log --oneline
+
+# 3. 回到第一个版本（用实际的commit hash替换）
+git log --oneline  # 找到第一个提交的hash，比如 abc1234
+git reset --hard abc1234
+
+# 4. 查看README.md的内容（应该回到最初版本）
+cat README.md
+
+# ⚠️ 注意：reset --hard会丢弃之后的修改，谨慎使用！
+```
+
+---
+
+## ✅ 学习检查清单
+
+完成本章学习后，请确认你能够：
+
+- [ ] 解释Git是什么，有什么作用
+- [ ] 区分Git和GitHub的不同
+- [ ] 理解工作区、暂存区、本地仓库的概念
+- [ ] 成功安装Git并配置用户信息
+- [ ] 使用`git init`创建仓库
+- [ ] 使用`git add`添加文件到暂存区
+- [ ] 使用`git commit`提交更改
+- [ ] 使用`git status`查看文件状态
+- [ ] 使用`git log`查看提交历史
+
+---
+
+## 💡 学习提示
+
+1. **不要害怕命令行**：Git命令大多很短，多练习几次就熟悉了
+2. **理解后再操作**：每个命令要知道它做什么，不要盲目执行
+3. **多做实验**：在练习项目中随意尝试，出错也没关系
+4. **利用可视化工具**：VSCode的Git界面很直观，可以帮助理解
+5. **记住常用命令**：`status`、`add`、`commit`、`log`是最常用的
+
+---
+
+## 🔗 相关章节推荐
+
+学完本章基础后，你可以继续学习：
+
+**必读章节**：
+- 📚 [第2章：Git常用命令](chapter-02) - 深入学习add、commit、push等命令
+- 🌳 [第3章：Git分支管理](chapter-03) - 掌握分支创建、合并、冲突解决
+
+**进阶章节**：
+- 🔄 [Git工作流程](workflow) - 团队协作最佳实践
+- 🔥 [第5章：Git实战技巧](chapter-05) - 进阶技巧和高效率操作
+
+---
+
+## 📚 延伸阅读
+
+**推荐资源**：
+- [Git官方文档](https://git-scm.com/doc) - 完整的Git参考手册
+- [GitHub Skills](https://skills.github.com/) - 免费的Git和GitHub在线教程
+- [Git简明指南](https://git-scm.com/book/zh/v2) - Git社区书籍（免费）
+
+**可视化工具**：
+- [GitHub Desktop](https://desktop.github.com/) - 官方GUI工具
+- [Sourcetree](https://www.sourcetreeapp.com/) - 强大的Git图形界面
+- [GitKraken](https://www.gitkraken.com/) - 跨平台Git客户端
+
+---
+
 ## 学完这章，你应该知道
 
 - ✅ Git 是什么（时光机）

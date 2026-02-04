@@ -512,17 +512,18 @@ body.vp-loading::after {
 
 /* ==================== 作者信息卡片位置调整 ==================== */
 
-/* 主页内容区域使用 flex 控制顺序 */
-.VPDoc:not(.has-sidebar) .container > .content {
+/* 确保 VPHome 内容区域的正确显示顺序 */
+.VPHome .container {
   display: flex;
   flex-direction: column;
 }
 
-/* 作者信息卡片放在 Features 之前 */
-.VPDoc:not(.has-sidebar) .container > .content > div:not(.VPHero):not(.VPFeatures) {
-  order: 1;
+/* 确保自定义 hero-layout 显示在最前面 */
+.VPHome .hero-layout {
+  order: -1;
 }
 
-.VPFeatures {
-  order: 2;
+/* 确保 VPFeatures 在后面 */
+.VPHome .VPFeatures {
+  order: 0;
 }

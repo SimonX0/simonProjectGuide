@@ -1,0 +1,306 @@
+/* ========================================
+   AI模块自定义样式
+   ======================================== */
+
+/* AI章节导航样式 */
+.ai-chapter-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--vp-c-border);
+}
+
+.ai-chapter-nav-item {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: var(--vp-c-text-1);
+  border: 1px solid var(--vp-c-border);
+}
+
+.ai-chapter-nav-item:hover {
+  background: var(--vp-c-brand);
+  color: #fff;
+  border-color: var(--vp-c-brand);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ai-chapter-nav-item.prev {
+  text-align: left;
+}
+
+.ai-chapter-nav-item.next {
+  text-align: right;
+}
+
+.ai-chapter-nav-label {
+  display: block;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-bottom: 0.25rem;
+}
+
+.ai-chapter-nav-title {
+  display: block;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* AI章节卡片样式 */
+.ai-chapter-card {
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.ai-chapter-card:hover {
+  border-color: var(--vp-c-brand);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 难度徽章 */
+.difficulty-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+.difficulty-badge.beginner {
+  background: var(--vp-c-green-soft);
+  color: var(--vp-c-green);
+}
+
+.difficulty-badge.intermediate {
+  background: var(--vp-c-yellow-soft);
+  color: var(--vp-c-yellow);
+}
+
+.difficulty-badge.advanced {
+  background: var(--vp-c-red-soft);
+  color: var(--vp-c-red);
+}
+
+/* 学习进度卡片 */
+.learning-progress-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 16px;
+  margin: 2rem 0;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.learning-progress-card h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-bar-container {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  height: 12px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+  transition: width 0.5s ease;
+  border-radius: 10px;
+}
+
+.progress-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+/* 学习路线图样式 */
+.learning-roadmap {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+
+.roadmap-step {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  position: relative;
+}
+
+.roadmap-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  top: 3rem;
+  width: 2px;
+  height: calc(100% - 2rem);
+  background: var(--vp-c-border);
+}
+
+.step-number {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.step-content {
+  flex: 1;
+  padding-top: 0.5rem;
+}
+
+.step-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: var(--vp-c-text-1);
+}
+
+.step-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
+.step-description {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+/* 快速开始按钮 */
+.start-learning-btn {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(120deg, #42b883 0%, #3a8ee6 100%);
+  color: white;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 8px 20px rgba(66, 184, 131, 0.4);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.start-learning-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(66, 184, 131, 0.5);
+}
+
+/* 章节列表增强样式 */
+.chapter-list-enhanced {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.chapter-item-enhanced {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--vp-c-bg-soft);
+  border: 2px solid var(--vp-c-border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--vp-c-text-1);
+  transition: all 0.3s ease;
+}
+
+.chapter-item-enhanced:hover {
+  border-color: var(--vp-c-brand);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.chapter-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.chapter-info {
+  flex: 1;
+}
+
+.chapter-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.chapter-meta-info {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .learning-progress-card {
+    padding: 1.5rem;
+  }
+
+  .progress-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chapter-item-enhanced {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .chapter-meta-info {
+    justify-content: center;
+  }
+}
