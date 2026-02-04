@@ -22,7 +22,7 @@ export default defineConfig({
       },
     ],
     ["meta", { name: "og:image", content: "/og-image.png" }],
-    ["link", { rel: "stylesheet", href: "/.vitepress/style/custom.css" }],
+    ["link", { rel: "stylesheet", href: "/.vitepress/theme/custom.css" }],
     ["script", { type: "module", src: "/.vitepress/style/loading.js" }],
   ],
 
