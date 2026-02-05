@@ -1,6 +1,6 @@
 # VueUse组合式函数库完全指南
 ## VueUse组合式函数库完全指南
-## 第17章 VueUse组合式函数库完全指南
+## VueUse组合式函数库完全指南
 
 > **为什么要学VueUse？**
 >
@@ -18,7 +18,7 @@
 
 ---
 
-### VueUse简介与安装
+### VueUse简介与安装 {#vueuse简介与安装}
 
 #### 什么是VueUse？
 
@@ -73,7 +73,7 @@ VueUse的函数可以分为以下几类：
 
 ---
 
-### 核心函数详解
+### 核心函数详解 {#核心函数详解}
 
 #### useStorage - 本地存储
 
@@ -605,7 +605,7 @@ const { data: pollData } = useFetch('https://api.example.com/status', {
 
 ---
 
-### 动画相关函数
+### 动画相关函数 {#动画相关函数}
 
 #### useTransition
 

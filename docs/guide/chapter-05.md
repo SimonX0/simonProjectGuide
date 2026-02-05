@@ -5,7 +5,7 @@
 > **学习目标**：掌握Less预处理器的高级用法
 > **核心内容**：Less安装配置、变量、嵌套、Mixin、运算与函数
 
-### 什么是Less？
+### 什么是Less？ {#什么是less}
 
 #### 什么是Less？
 
@@ -30,7 +30,7 @@ yarn add -D less
 pnpm add -D less
 ```
 
-#### Less核心特性
+#### Less核心特性 {#less核心特性}
 
 ##### 1. 变量（Variables）
 

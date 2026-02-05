@@ -5,7 +5,7 @@
 > **学习目标**：深入掌握组合式API的使用
 > **核心内容**：ref/reactive、computed/watch、组合式函数
 
-### ref 和 reactive
+### ref 和 reactive {#ref-和-reactive}
 
 ```vue
 <script setup lang="ts">
@@ -32,7 +32,7 @@ console.log(userRef.value.name)
 </script>
 ```
 
-### computed 和 watch
+### computed 和 watch {#computed-和-watch}
 
 ```vue
 <script setup lang="ts">
@@ -73,7 +73,7 @@ watch(count, (newVal) => {
 </script>
 ```
 
-### 组合式函数（Composables）
+### 组合式函数（Composables） {#组合式函数composables}
 
 #### 基础组合式函数
 

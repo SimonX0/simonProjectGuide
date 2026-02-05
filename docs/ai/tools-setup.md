@@ -3226,7 +3226,7 @@ async function chatWithRetry(message, maxRetries = 3) {
 
 ---
 
-## 0.1.6 MCP 协议配置与使用
+## MCP 协议配置与使用
 
 **MCP（Model Context Protocol）** 是由 Anthropic（Claude 的公司）推出的开放协议，用于连接 AI 应用程序和外部数据源，打破 AI 的"孤岛"效应。
 

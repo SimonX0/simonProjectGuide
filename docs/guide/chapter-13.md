@@ -5,7 +5,7 @@
 > **学习目标**：全面掌握 Vue3 组件通信方式
 > **核心内容**：Props、Emit、v-model、Provide/Inject、插槽
 
-### Props 父传子（详解）
+### Props 父传子（详解） {#props-父传子详解}
 
 ```vue
 <!-- 父组件 Parent.vue -->
@@ -72,7 +72,7 @@ const props = withDefaults(defineProps<Props>(), {
 </template>
 ```
 
-### Emit 子传父（详解）
+### Emit 子传父（详解） {#emit-子传父详解}
 
 ```vue
 <!-- 子组件 Child.vue -->
@@ -166,7 +166,7 @@ const username = ref("");
 </template>
 ```
 
-### Provide / Inject 跨层级通信
+### Provide / Inject 跨层级通信 {#provide--inject-跨层级通信}
 
 ```vue
 <!-- 祖先组件 Root.vue -->
@@ -214,7 +214,7 @@ const toggleTheme = inject("toggleTheme") as () => void;
 </template>
 ```
 
-### 插槽 Slots
+### 插槽 Slots {#插槽-slots}
 
 ```vue
 <!-- BaseLayout.vue -->
@@ -273,7 +273,7 @@ import BaseLayout from "./BaseLayout.vue";
 </template>
 ```
 
-### 作用域插槽
+### 作用域插槽 {#作用域插槽}
 
 ```vue
 <!-- UserList.vue -->

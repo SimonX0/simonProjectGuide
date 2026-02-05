@@ -1,6 +1,6 @@
 # Pinia 状态管理
 ## Pinia 状态管理
-## 第18章 Pinia 状态管理
+## Pinia 状态管理
 
 > **学习目标**：掌握Pinia状态管理
 > **核心内容**：Store定义、State/Getters/Actions、持久化

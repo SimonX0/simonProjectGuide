@@ -1,11 +1,11 @@
 # Vue Router 路由完全指南
 
-## 第16章 Vue Router 路由完全指南
+## Vue Router 路由完全指南
 
 > **学习目标**：全面掌握Vue Router路由系统
 > **核心内容**：路由配置、动态路由、嵌套路由、路由守卫
 
-### 安装和配置
+### 安装和配置 {#安装和配置}
 
 ```bash
 # 安装 Vue Router
@@ -72,7 +72,7 @@ app.use(router)
 app.mount('#app')
 ```
 
-### 路由使用
+### 路由使用 {#路由使用}
 
 ```vue
 <!-- App.vue -->
@@ -105,7 +105,7 @@ nav a.router-link-active {
 </style>
 ```
 
-### 编程式导航
+### 编程式导航 {#编程式导航}
 
 ```vue
 <script setup lang="ts">
@@ -142,7 +142,7 @@ function goBack() {
 </script>
 ```
 
-### 路由守卫与权限控制
+### 路由守卫与权限控制 {#路由守卫与权限控制}
 
 ```typescript
 // router/index.ts

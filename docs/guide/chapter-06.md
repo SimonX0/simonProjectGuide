@@ -5,7 +5,7 @@
 > **学习目标**：掌握SCSS预处理器的高级特性
 > **核心内容**：SCSS安装配置、变量、嵌套、Mixin、函数、条件循环、模块化
 
-### 什么是SCSS？
+### 什么是SCSS？ {#什么是scss}
 
 SCSS（Sassy CSS）是Sass的第三代，是CSS的预处理器，语法更接近CSS。
 
@@ -28,7 +28,7 @@ yarn add -D sass
 pnpm add -D sass
 ```
 
-#### SCSS核心特性
+#### SCSS核心特性 {#scss核心特性}
 
 ##### 1. 变量（Variables）
 

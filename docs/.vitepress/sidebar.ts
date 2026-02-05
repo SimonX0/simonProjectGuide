@@ -59,7 +59,6 @@ export const sidebar = {
           items: [
             { text: '核心原则', link: '/ai/chapter-03#核心原则' },
             { text: '常用提示词模式', link: '/ai/chapter-03#常用提示词模式' },
-            { text: 'Prompt Chaining', link: '/ai/chapter-03#技巧25-prompt-chaining提示词链' },
             { text: '高级技巧', link: '/ai/chapter-03#高级技巧' },
           ]
         },
@@ -104,13 +103,59 @@ export const sidebar = {
       collapsible: true,
       collapsed: false,
       items: [
-        { text: '第1章：AI辅助前端开发', link: '/guide/chapter-00' },
-        { text: '第2章：JavaScript核心基础', link: '/guide/chapter-01' },
-        { text: '第3章：Vue3简介与环境搭建', link: '/guide/chapter-02' },
+        {
+          text: '第1章：AI辅助前端开发',
+          link: '/guide/chapter-00',
+          items: [
+            { text: '为什么学习 Vue3', link: '/guide/chapter-00#为什么学习-vue3' },
+            { text: '学习路径图', link: '/guide/chapter-00#学习路径图' },
+            { text: 'AI 辅助开发', link: '/guide/chapter-00#为什么需要-ai-辅助开发' }
+          ]
+        },
+        {
+          text: '第2章：JavaScript核心基础',
+          link: '/guide/chapter-01',
+          items: [
+            { text: '数组方法完全指南', link: '/guide/chapter-01#数组方法完全指南' },
+            { text: '遍历方法', link: '/guide/chapter-01#遍历方法' },
+            { text: '查找方法', link: '/guide/chapter-01#查找方法' },
+          ]
+        },
+        {
+          text: '第3章：Vue3简介与环境搭建',
+          link: '/guide/chapter-02',
+          items: [
+            { text: '什么是Vue3', link: '/guide/chapter-02#什么是vue3' },
+            { text: '开发环境搭建', link: '/guide/chapter-02#开发环境搭建' },
+            { text: 'SFC单文件组件', link: '/guide/chapter-02#sfc单文件组件' },
+          ]
+        },
         { text: '第4章：ESLint代码检查', link: '/guide/chapter-03' },
-        { text: '第5章：CSS基础语法', link: '/guide/chapter-04' },
-        { text: '第6章：CSS预处理器 - Less', link: '/guide/chapter-05' },
-        { text: '第7章：CSS预处理器 - SCSS', link: '/guide/chapter-06' },
+        {
+          text: '第5章：CSS基础语法',
+          link: '/guide/chapter-04',
+          items: [
+            { text: '什么是CSS', link: '/guide/chapter-04#什么是css' },
+            { text: 'CSS选择器详解', link: '/guide/chapter-04#css选择器详解' },
+            { text: 'DIV盒子模型', link: '/guide/chapter-04#div盒子模型完全指南' }
+          ]
+        },
+        {
+          text: '第6章：CSS预处理器 - Less',
+          link: '/guide/chapter-05',
+          items: [
+            { text: '什么是Less', link: '/guide/chapter-05#什么是less' },
+            { text: 'Less核心特性', link: '/guide/chapter-05#less核心特性' }
+          ]
+        },
+        {
+          text: '第7章：CSS预处理器 - SCSS',
+          link: '/guide/chapter-06',
+          items: [
+            { text: '什么是SCSS', link: '/guide/chapter-06#什么是scss' },
+            { text: 'SCSS核心特性', link: '/guide/chapter-06#scss核心特性' }
+          ]
+        },
         { text: '第8章：代码规范', link: '/guide/chapter-07' },
         { text: '第9章：模板语法与数据绑定', link: '/guide/chapter-08' }
       ]
@@ -124,9 +169,35 @@ export const sidebar = {
         { text: '第11章：条件渲染与列表渲染', link: '/guide/chapter-10' },
         { text: '第12章：事件处理与表单绑定', link: '/guide/chapter-11' },
         { text: '第13章：组件基础与组件名称定义', link: '/guide/chapter-12' },
-        { text: '第14章：组件通信（完整版）', link: '/guide/chapter-13' },
-        { text: '第15章：组合式API深入', link: '/guide/chapter-14' },
-        { text: '第16章：生命周期与钩子函数', link: '/guide/chapter-15' }
+        {
+          text: '第14章：组件通信（完整版）',
+          link: '/guide/chapter-13',
+          items: [
+            { text: 'Props 父传子', link: '/guide/chapter-13#props-父传子详解' },
+            { text: 'Emit 子传父', link: '/guide/chapter-13#emit-子传父详解' },
+            { text: 'Provide/Inject', link: '/guide/chapter-13#provide--inject-跨层级通信' },
+            { text: '插槽 Slots', link: '/guide/chapter-13#插槽-slots' },
+            { text: '作用域插槽', link: '/guide/chapter-13#作用域插槽' }
+          ]
+        },
+        {
+          text: '第15章：组合式API深入',
+          link: '/guide/chapter-14',
+          items: [
+            { text: 'ref 和 reactive', link: '/guide/chapter-14#ref-和-reactive' },
+            { text: 'computed 和 watch', link: '/guide/chapter-14#computed-和-watch' },
+            { text: '组合式函数', link: '/guide/chapter-14#组合式函数composables' },
+            { text: '⭐ 高级特性', link: '/guide/chapter-14-advanced' }
+          ]
+        },
+        {
+          text: '第16章：生命周期与钩子函数',
+          link: '/guide/chapter-15',
+          items: [
+            { text: '生命周期钩子使用', link: '/guide/chapter-15#生命周期钩子使用' },
+            { text: '生命周期实战应用', link: '/guide/chapter-15#生命周期实战应用场景' }
+          ]
+        }
       ]
     },
     {
@@ -134,9 +205,33 @@ export const sidebar = {
       collapsible: true,
       collapsed: false,
       items: [
-        { text: '第17章：Vue Router 路由完全指南', link: '/guide/chapter-16' },
-        { text: '第18章：VueUse组合式函数库完全指南', link: '/guide/chapter-17' },
-        { text: '第19章：Pinia 状态管理', link: '/guide/chapter-18' },
+        {
+          text: '第17章：Vue Router 路由完全指南',
+          link: '/guide/chapter-16',
+          items: [
+            { text: '安装和配置', link: '/guide/chapter-16#安装和配置' },
+            { text: '路由使用', link: '/guide/chapter-16#路由使用' },
+            { text: '编程式导航', link: '/guide/chapter-16#编程式导航' },
+            { text: '路由守卫与权限控制', link: '/guide/chapter-16#路由守卫与权限控制' },
+            { text: '⭐ 高级特性', link: '/guide/chapter-16-advanced' }
+          ]
+        },
+        {
+          text: '第18章：VueUse组合式函数库完全指南',
+          link: '/guide/chapter-17',
+          items: [
+            { text: 'VueUse简介与安装', link: '/guide/chapter-17#vueuse简介与安装' },
+            { text: '核心函数详解', link: '/guide/chapter-17#核心函数详解' },
+            { text: '动画相关函数', link: '/guide/chapter-17#动画相关函数' },
+          ]
+        },
+        {
+          text: '第19章：Pinia 状态管理',
+          link: '/guide/chapter-18',
+          items: [
+            { text: '⭐ 高级特性', link: '/guide/chapter-18-advanced' }
+          ]
+        },
         { text: '第20章：TypeScript + Vue3', link: '/guide/chapter-19' },
         { text: '第21章：高级特性', link: '/guide/chapter-20' },
         { text: '第22章：ElementPlus组件库完全指南', link: '/guide/chapter-21' },
