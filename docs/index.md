@@ -22,6 +22,10 @@ features:
     details: LangChain, LLM, 大模型应用开发与RAG实践
     link: /ai/
     linkText: 开始充电 →
+  - title: 📝 面试题库
+    details: 前端, AI, Git 按模块分类的中高级面试题精选
+    link: /interview/
+    linkText: 开始刷题 →
   - title: 🗄️ 数据库
     details: MySQL, Redis, MongoDB, 数据库设计与优化
     link: /guide/

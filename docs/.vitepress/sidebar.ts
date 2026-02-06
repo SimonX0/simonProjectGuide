@@ -1,4 +1,94 @@
 export const sidebar = {
+  '/interview/': [
+    {
+      text: '学习路线',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '学习路线', link: '/interview/' }
+      ]
+    },
+    {
+      text: '前端开发面试题',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '学习路线', link: '/interview/frontend/' },
+        {
+          text: '中级面试题',
+          items: [
+            { text: '第1章：JavaScript基础面试题', link: '/interview/frontend/intermediate/chapter-01' },
+            { text: '第2章：Vue3核心面试题', link: '/interview/frontend/intermediate/chapter-02' },
+            { text: '第3章：组件开发面试题', link: '/interview/frontend/intermediate/chapter-03' },
+            { text: '第4章：路由与状态管理面试题', link: '/interview/frontend/intermediate/chapter-04' }
+          ]
+        },
+        {
+          text: '高级面试题',
+          items: [
+            { text: '第5章：性能优化面试题', link: '/interview/frontend/advanced/chapter-05' },
+            { text: '第6章：工程化面试题', link: '/interview/frontend/advanced/chapter-06' },
+            { text: '第7章：架构设计面试题', link: '/interview/frontend/advanced/chapter-07' },
+            { text: '第8章：前端安全面试题', link: '/interview/frontend/advanced/chapter-08' },
+            { text: '第9章：移动端/H5面试题', link: '/interview/frontend/advanced/chapter-09' },
+            { text: '第10章：TypeScript高级类型', link: '/interview/frontend/advanced/chapter-10' },
+            { text: '第11章：AI + 前端结合', link: '/interview/frontend/advanced/chapter-11' },
+            { text: '第12章：大型项目重构经验', link: '/interview/frontend/advanced/chapter-12' },
+            { text: '第13章：团队协作与工程化', link: '/interview/frontend/advanced/chapter-13' },
+            { text: '第14章：大型实战项目经验', link: '/interview/frontend/advanced/chapter-14' }
+          ]
+        }
+      ]
+    },
+    {
+      text: 'AI面试题',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '学习路线', link: '/interview/ai/' },
+        {
+          text: '中级面试题',
+          items: [
+            { text: '第1章：Prompt工程基础', link: '/interview/ai/intermediate/chapter-01' },
+            { text: '第2章：LangChain框架', link: '/interview/ai/intermediate/chapter-02' },
+            { text: '第3章：RAG检索增强', link: '/interview/ai/intermediate/chapter-03' }
+          ]
+        },
+        {
+          text: '高级面试题',
+          items: [
+            { text: '第4章：Agent架构设计', link: '/interview/ai/advanced/chapter-04' },
+            { text: '第5章：模型调优与部署', link: '/interview/ai/advanced/chapter-05' },
+            { text: '第6章：AI应用实战', link: '/interview/ai/advanced/chapter-06' }
+          ]
+        }
+      ]
+    },
+    {
+      text: 'Git面试题',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '学习路线', link: '/interview/git/' },
+        {
+          text: '中级面试题',
+          items: [
+            { text: '第1章：Git基础命令', link: '/interview/git/intermediate/chapter-01' },
+            { text: '第2章：分支管理', link: '/interview/git/intermediate/chapter-02' },
+            { text: '第3章：工作流程', link: '/interview/git/intermediate/chapter-03' }
+          ]
+        },
+        {
+          text: '高级面试题',
+          items: [
+            { text: '第4章：Git高级技巧', link: '/interview/git/advanced/chapter-04' },
+            { text: '第5章：团队协作最佳实践', link: '/interview/git/advanced/chapter-05' },
+            { text: '第6章：Git性能优化', link: '/interview/git/advanced/chapter-06' }
+          ]
+        }
+      ]
+    }
+  ],
   '/git/': [
     {
       text: '学习路线',

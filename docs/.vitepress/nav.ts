@@ -13,6 +13,15 @@ export const nav = [
     ],
   },
   {
+    text: "面试题库",
+    items: [
+      { text: "学习路线", link: "/interview/" },
+      { text: "前端开发面试题", link: "/interview/frontend/" },
+      { text: "AI面试题", link: "/interview/ai/" },
+      { text: "Git面试题", link: "/interview/git/" },
+    ],
+  },
+  {
     text: "Git 教程",
     items: [
       { text: "学习路线", link: "/git/" },
