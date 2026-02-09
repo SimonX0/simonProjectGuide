@@ -820,6 +820,692 @@ class LegacyAPIAdapter {
 }
 ```
 
+## 重构实战经验
+
+### 渐进式重构策略？（字节、阿里必问）
+
+```javascript
+// 渐进式重构：在不影响业务的情况下逐步改善代码
+
+// 策略1：Branch by Abstraction（通过抽象分支）
+// 第1步：创建抽象层
+class IUserRepository {
+  findById(id) {
+    throw new Error('Not implemented')
+  }
+}
+
+// 第2步：旧实现继承抽象
+class LegacyUserRepository extends IUserRepository {
+  findById(id) {
+    // 旧的实现
+    return db.query(`SELECT * FROM users WHERE id = ${id}`)
+  }
+}
+
+// 第3步：新实现继承抽象
+class NewUserRepository extends IUserRepository {
+  findById(id) {
+    // 新的实现（使用ORM）
+    return User.findByPk(id)
+  }
+}
+
+// 第4步：使用工厂模式逐步切换
+class RepositoryFactory {
+  constructor() {
+    this.useNewImplementation = false
+    this.legacy = new LegacyUserRepository()
+    this.new = new NewUserRepository()
+  }
+
+  getUserRepository() {
+    // 通过特性开关控制
+    return this.useNewImplementation ? this.new : this.legacy
+  }
+
+  // 金丝雀发布：先让10%流量使用新实现
+  shouldUseNew(userId) {
+    return userId % 10 === 0
+  }
+
+  findById(id) {
+    return this.shouldUseNew(id)
+      ? this.new.findById(id)
+      : this.legacy.findById(id)
+  }
+}
+
+// 策略2：绞杀者模式（Strangler Fig）
+// 逐步替换旧功能，而不是一次性重写
+
+// 旧的路由
+const oldRoutes = [
+  { path: '/users/:id', handler: oldUserHandler }
+]
+
+// 新的路由
+const newRoutes = [
+  { path: '/users/:id', handler: newUserHandler }
+]
+
+// 路由决策器
+function routeHandler(req, res) {
+  // 根据用户ID决定使用新旧处理
+  const userId = parseInt(req.params.id)
+
+  if (featureFlags.useNewUserHandler(userId)) {
+    return newUserHandler(req, res)
+  }
+
+  return oldUserHandler(req, res)
+}
+
+// 策略3：并行运行
+// 新旧代码同时运行，对比结果
+async function parallelExecution(oldFn, newFn, input) {
+  const [oldResult, newResult] = await Promise.all([
+    oldFn(input),
+    newFn(input)
+  ])
+
+  // 记录差异
+  if (JSON.stringify(oldResult) !== JSON.stringify(newResult)) {
+    logger.warn('Results differ', {
+      input,
+      old: oldResult,
+      new: newResult
+    })
+  }
+
+  // 仍然返回旧结果，直到新结果稳定
+  return oldResult
+}
+
+// 策略4：功能开关
+// 使用配置控制新功能启用
+const featureFlags = {
+  useNewCheckout: process.env.FEATURE_NEW_CHECKOUT === 'true',
+  useNewPayment: getUserPercentage() < 20 // 20%用户
+}
+
+function checkout(cart) {
+  if (featureFlags.useNewCheckout) {
+    return newCheckoutProcess(cart)
+  }
+  return legacyCheckoutProcess(cart)
+}
+```
+
+### 大型项目重构的风险控制？（美团高频）
+
+```javascript
+// 重构风险管理体系
+
+class RefactoringRiskManager {
+  constructor() {
+    this.risks = []
+    this.mitigations = []
+  }
+
+  // 风险识别
+  identifyRisks(refactoringPlan) {
+    const risks = []
+
+    // 1. 影响范围分析
+    const impact = this.analyzeImpact(refactoringPlan)
+    risks.push({
+      type: 'impact',
+      level: impact.score > 50 ? 'high' : 'medium',
+      description: `影响${impact.files}个文件，${impact.modules}个模块`
+    })
+
+    // 2. 依赖关系分析
+    const dependencies = this.analyzeDependencies(refactoringPlan)
+    if (dependencies.critical > 10) {
+      risks.push({
+        type: 'dependency',
+        level: 'high',
+        description: `${dependencies.critical}个关键依赖`
+      })
+    }
+
+    // 3. 测试覆盖率分析
+    const coverage = this.analyzeTestCoverage(refactoringPlan)
+    if (coverage < 60) {
+      risks.push({
+        type: 'testing',
+        level: 'high',
+        description: `测试覆盖率仅${coverage}%`
+      })
+    }
+
+    this.risks = risks
+    return risks
+  }
+
+  // 风险缓解措施
+  planMitigations(risks) {
+    const mitigations = []
+
+    risks.forEach(risk => {
+      switch (risk.type) {
+        case 'impact':
+          mitigations.push({
+            risk: risk,
+            action: '分阶段发布',
+            details: '先发布到测试环境，再逐步推广到生产环境'
+          })
+          break
+
+        case 'dependency':
+          mitigations.push({
+            risk: risk,
+            action: '建立降级机制',
+            details: '新功能出现问题时快速回滚到旧实现'
+          })
+          break
+
+        case 'testing':
+          mitigations.push({
+            risk: risk,
+            action: '增加测试',
+            details: '先补充测试用例，再进行重构'
+          })
+          break
+      }
+    })
+
+    this.mitigations = mitigations
+    return mitigations
+  }
+
+  // 回滚计划
+  createRollbackPlan() {
+    return {
+      preconditions: [
+        '保留旧代码分支',
+        '数据库迁移可回滚',
+        '配置支持快速切换'
+      ],
+      steps: [
+        '1. 关闭新功能开关',
+        '2. 回滚数据库迁移（如有）',
+        '3. 重新部署旧版本',
+        '4. 验证系统正常运行'
+      ],
+      timeToRecovery: '5分钟', // 目标恢复时间
+      testProcedure: `
+        1. 访问主要页面，验证功能正常
+        2. 检查错误日志，确认无异常
+        3. 监控关键指标，确认恢复正常
+      `
+    }
+  }
+
+  // 监控指标
+  defineMetrics() {
+    return {
+      performance: [
+        'page_load_time',
+        'api_response_time',
+        'error_rate'
+      ],
+      business: [
+        'conversion_rate',
+        'user_engagement',
+        'transaction_success_rate'
+      ],
+      system: [
+        'cpu_usage',
+        'memory_usage',
+        'disk_io'
+      ]
+    }
+  }
+
+  // 影响分析
+  analyzeImpact(plan) {
+    // 分析重构影响的文件和模块数量
+    return {
+      files: plan.changedFiles.length,
+      modules: new Set(plan.changedFiles.map(f => f.module)).size,
+      score: this.calculateImpactScore(plan)
+    }
+  }
+
+  calculateImpactScore(plan) {
+    // 计算影响分数
+    let score = 0
+    score += plan.changedFiles.length * 2
+    score += plan.criticalFiles.length * 10
+    score += plan.breakingChanges.length * 15
+    return Math.min(score, 100)
+  }
+}
+
+// 使用
+const riskManager = new RefactoringRiskManager()
+
+const refactoringPlan = {
+  changedFiles: ['user.js', 'auth.js', 'api.js'],
+  criticalFiles: ['auth.js'],
+  breakingChanges: ['User model interface changed']
+}
+
+const risks = riskManager.identifyRisks(refactoringPlan)
+const mitigations = riskManager.planMitigations(risks)
+const rollbackPlan = riskManager.createRollbackPlan()
+
+console.log('Risks:', risks)
+console.log('Mitigations:', mitigations)
+console.log('Rollback Plan:', rollbackPlan)
+```
+
+### 重构时的测试策略？（腾讯真题）
+
+```javascript
+// 重构测试策略
+
+// 1. 测试金字塔
+/*
+       /\
+      /E2E\     少量端到端测试
+     /------\
+    /Integration\  适量集成测试
+   /------------\
+  /    Unit      \ 大量单元测试
+ /________________\
+*/
+
+// 2. 特征测试（Characterization Testing）
+// 为遗留代码建立测试基线
+describe('LegacyFunction', () => {
+  it('behaves as documented', async () => {
+    // 记录当前行为
+    const input = { /* ... */ }
+    const output = await legacyFunction(input)
+
+    // 将当前行为作为测试期望
+    expect(output).toEqual({
+      // 记录实际输出
+    })
+  })
+})
+
+// 3. 测试替身（Test Doubles）
+// 用于隔离依赖进行测试
+
+// 3.1 Fake（假对象）
+class FakeUserRepository {
+  constructor() {
+    this.users = new Map()
+  }
+
+  async findById(id) {
+    return this.users.get(id)
+  }
+
+  async save(user) {
+    this.users.set(user.id, user)
+  }
+}
+
+// 3.2 Mock（模拟对象）
+const mockAPI = {
+  getUser: vi.fn().mockResolvedValue({ id: 1, name: 'Test' }),
+  updateUser: vi.fn().mockResolvedValue({ id: 1, name: 'Updated' })
+}
+
+// 3.3 Stub（存根）
+function stubFetch(data) {
+  return vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => data
+  })
+}
+
+// 4. 测试覆盖率监控
+// vitest.config.js
+export default defineConfig({
+  test: {
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        '**/*.test.ts',
+        '**/*.spec.ts'
+      ],
+      // 设置覆盖率阈值
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80
+      }
+    }
+  }
+})
+
+// 5. 快照测试
+// 用于UI组件重构
+import { mount } from '@vue/test-utils'
+import Component from './Component.vue'
+
+describe('Component', () => {
+  it('matches snapshot', () => {
+    const wrapper = mount(Component, {
+      props: { title: 'Test' }
+    })
+
+    expect(wrapper.html()).toMatchSnapshot()
+  })
+})
+
+// 6. 端到端测试（E2E）
+// 使用Playwright
+import { test, expect } from '@playwright/test'
+
+test('user flow', async ({ page }) => {
+  await page.goto('/login')
+  await page.fill('input[name="email"]', 'test@example.com')
+  await page.fill('input[name="password"]', 'password')
+  await page.click('button[type="submit"]')
+
+  await expect(page).toHaveURL('/dashboard')
+})
+
+// 7. 性能回归测试
+import { bench } from 'vitest'
+
+bench('sorting algorithm', () => {
+  const data = Array(1000).fill(0).map(() => Math.random())
+  sort(data)
+}, { time: 1000 })
+
+// 8. 测试数据构建器
+class TestDataBuilder {
+  constructor() {
+    this.user = {
+      id: 1,
+      name: 'Test User',
+      email: 'test@example.com'
+    }
+  }
+
+  withId(id) {
+    this.user.id = id
+    return this
+  }
+
+  withName(name) {
+    this.user.name = name
+    return this
+  }
+
+  withEmail(email) {
+    this.user.email = email
+    return this
+  }
+
+  build() {
+    return { ...this.user }
+  }
+}
+
+// 使用
+const user = new TestDataBuilder()
+  .withId(123)
+  .withName('Alice')
+  .build()
+```
+
+### 微前端重构实战？（字节真题）
+
+```javascript
+// 从单体应用迁移到微前端
+
+// 方案：使用qiankun进行微前端改造
+
+// 主应用（主应用配置）
+// main-app/src/micro-app.js
+import { registerMicroApps, start, initGlobalState } from 'qiankun'
+
+// 1. 注册微应用
+const microApps = [
+  {
+    name: 'user-center',
+    entry: '//localhost:8081',
+    container: '#subapp-container',
+    activeRule: '/user',
+    props: {
+      routerBase: '/user'
+    }
+  },
+  {
+    name: 'order-system',
+    entry: '//localhost:8082',
+    container: '#subapp-container',
+    activeRule: '/order',
+    props: {
+      routerBase: '/order'
+    }
+  }
+]
+
+registerMicroApps(microApps, {
+  beforeLoad: [
+    app => {
+      console.log('Loading app:', app.name)
+      return Promise.resolve()
+    }
+  ],
+  beforeMount: [
+    app => {
+      console.log('Mounting app:', app.name)
+      return Promise.resolve()
+    }
+  ],
+  afterMount: [
+    app => {
+      console.log('Mounted app:', app.name)
+      return Promise.resolve()
+    }
+  ],
+  beforeUnmount: [
+    app => {
+      console.log('Unmounting app:', app.name)
+      return Promise.resolve()
+    }
+  ]
+})
+
+// 2. 启动微前端
+start({
+  sandbox: {
+    strictStyleIsolation: true, // 样式隔离
+    experimentalStyleIsolation: true
+  },
+  prefetch: 'all', // 预加载所有微应用
+  singular: false // 是否单实例
+})
+
+// 3. 全局状态管理
+const initialState = {
+  user: null,
+  token: null
+}
+
+const actions = initGlobalState(initialState)
+
+actions.onGlobalStateChange((state, prev) => {
+  console.log('State changed:', prev, '->', state)
+})
+
+// 主应用路由配置
+// main-app/src/router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+
+const routes = [
+  {
+    path: '/',
+    component: () => import('@/views/Home.vue')
+  },
+  // 微应用路由容器
+  {
+    path: '/user/:pathMatch(.*)*',
+    component: () => import('@/views/MicroAppContainer.vue')
+  },
+  {
+    path: '/order/:pathMatch(.*)*',
+    component: () => import('@/views/MicroAppContainer.vue')
+  }
+]
+
+// 微应用容器
+<template>
+  <div id="subapp-container"></div>
+</template>
+
+// 微应用（子应用配置）
+// micro-app-user/src/main.js
+import { createApp } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import App from './App.vue'
+
+let app = null
+let router = null
+
+// 独立运行
+if (!window.__POWERED_BY_QIANKUN__) {
+  render()
+}
+
+// qiankun生命周期钩子
+export async function bootstrap() {
+  console.log('User app bootstraped')
+}
+
+export async function mount(props) {
+  render(props)
+}
+
+export async function unmount() {
+  app?.unmount()
+  app = null
+  router = null
+}
+
+function render(props = {}) {
+  const { container } = props
+
+  app = createApp(App)
+
+  router = createRouter({
+    history: createWebHistory(
+      window.__POWERED_BY_QIANKUN__
+        ? '/user'
+        : '/'
+    ),
+    routes
+  })
+
+  app.use(router)
+
+  if (container) {
+    app.mount(container)
+  } else {
+    app.mount('#app')
+  }
+}
+
+// 微应用路由配置
+const routes = [
+  {
+    path: '/',
+    redirect: '/profile'
+  },
+  {
+    path: '/profile',
+    component: () => import('@/views/Profile.vue')
+  },
+  {
+    path: '/settings',
+    component: () => import('@/views/Settings.vue')
+  }
+]
+
+// 微应用打包配置
+// micro-app-user/vite.config.js
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import qiankun from 'vite-plugin-qiankun'
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    qiankun('user-center', {
+      useDevMode: true
+    })
+  ],
+  server: {
+    port: 8081,
+    cors: true,
+    origin: 'http://localhost:8081'
+  },
+  build: {
+    lib: {
+      entry: './src/main.js',
+      name: 'UserCenter',
+      formats: ['umd'],
+      fileName: 'user-center'
+    }
+  }
+})
+
+// 渐进式迁移策略
+// 第1步：识别可拆分的模块
+const modules = [
+  { name: 'user-center', path: '/user/*', independent: true },
+  { name: 'order-system', path: '/order/*', independent: true },
+  { name: 'product-catalog', path: '/products/*', independent: false } // 依赖其他模块
+]
+
+// 第2步：按优先级迁移
+// 优先级标准：
+// 1. 业务独立性高
+// 2. 团队边界清晰
+// 3. 技术栈差异大
+
+// 第3步：建立通信机制
+// 主应用向微应用传递数据
+export async function mount(props) {
+  // 接收主应用传递的props
+  const { routerBase, getGlobalState } = props
+
+  // 监听全局状态变化
+  getGlobalState?.((state, prev) => {
+    console.log('Global state changed in micro app')
+  })
+
+  render(props)
+}
+
+// 微应用向主应用通信
+import { initGlobalState } from 'qiankun'
+
+const actions = initGlobalState(state)
+
+// 微应用中修改全局状态
+actions.setGlobalState({
+  user: { id: 1, name: 'Alice' }
+})
+
+// 微应用之间通信
+// actions.onGlobalStateChange(callback)
+```
+
 ---
 
 **小徐带你飞系列教程**

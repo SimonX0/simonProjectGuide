@@ -814,6 +814,838 @@ const handleScroll = useThrottleFn(() => {
 window.addEventListener('scroll', handleScroll);
 ```
 
+## 移动端调试与兼容性
+
+### 移动端调试方案？（字节、阿里必问）
+
+```javascript
+// 1. vconsole调试工具
+// 安装：npm install vconsole
+import VConsole from 'vconsole';
+
+const vConsole = new VConsole();
+// 在移动端显示调试面板
+
+// 2. eruda调试工具
+// 安装：npm install eruda
+import eruda from 'eruda';
+
+eruda.init();
+// 提供更完整的调试功能
+
+// 3. Chrome DevTools远程调试
+// 1) 手机USB连接电脑
+// 2) 手机开启开发者模式 + USB调试
+// 3) Chrome输入 chrome://inspect
+// 4) 选择设备进行调试
+
+// 4. 抓包调试
+// Charles / Fiddler
+// 1) 设置代理
+// 2) 安装HTTPS证书
+// 3) 查看网络请求
+
+// 5. spy-debugger（无线调试）
+// npm install spy-debugger -g
+// spy-debugger
+// 扫码即可调试
+
+// 6. weinre远程调试
+// npm install weinre -g
+// weinre --httpPort 8080 --boundHost -all-
+// 在HTML中引入：<script src="http://localhost:8080/target/target-script-min.js#anonymous"></script>
+
+// 7. Vue DevTools移动端
+import { createApp } from 'vue'
+import VueDevTools from '@vue/devtools'
+
+const app = createApp(App)
+if (process.env.NODE_ENV === 'development') {
+  app.use(VueDevTools)
+}
+```
+
+### 移动端常见兼容性问题？（字节真题）
+
+```javascript
+// 1. iOS滚动卡顿
+// 解决方案：
+.scroll-container {
+  -webkit-overflow-scrolling: touch; /* 启用硬件加速 */
+  overflow-y: scroll;
+}
+
+// 2. Android点击高亮
+// 移除点击高亮背景
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+// 3. iOS禁止缩放
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+// 4. iOS输入框阴影
+input {
+  -webkit-appearance: none; /* 移除iOS默认样式 */
+}
+
+// 5. iOS圆角问题
+* {
+  -webkit-border-radius: 0; /* 统一圆角样式 */
+}
+
+// 6. Android字体渲染问题
+body {
+  -webkit-font-smoothing: antialiased; /* 字体抗锯齿 */
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 7. 视频自动播放问题
+// iOS需要muted属性才能自动播放
+<video autoplay muted playsinline></video>
+
+// 8. 日期格式兼容问题
+// iOS不支持"YYYY-MM-DD"格式
+// ❌ 错误
+new Date('2024-01-01')
+
+// ✅ 正确
+new Date('2024/01/01')
+// 或
+new Date('2024-01-01T00:00:00')
+
+// 9. fixed定位在iOS上的问题
+// iOS Safari在键盘弹出时fixed定位会失效
+// 解决方案：使用absolute + scroll
+
+// 10. 默认字体大小限制
+// Chrome最小字体12px
+body {
+  /* 使用transform缩放 */
+  font-size: 10px;
+  transform: scale(0.833);
+}
+
+// 或使用viewport单位
+.small-text {
+  font-size: 2.5vw;
+}
+```
+
+### 移动端性能优化方案？（美团高频）
+
+```javascript
+// 1. 首屏加载优化
+// 图片懒加载
+<img loading="lazy" src="image.jpg" />
+
+// 预加载关键资源
+<link rel="preload" href="critical.css" as="style">
+<link rel="prefetch" href="next-page.js">
+
+// 2. 渲染性能优化
+// 使用CSS3硬件加速
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+// 避免重排重绘
+// ❌ 不好
+element.style.width = '100px'
+element.style.height = '100px'
+element.style.background = 'red'
+
+// ✅ 好
+element.style.cssText = 'width: 100px; height: 100px; background: red;'
+
+// 3. 事件优化
+// 使用事件委托
+document.addEventListener('click', (e) => {
+  if (e.target.matches('.button')) {
+    handleClick(e)
+  }
+})
+
+// 防抖节流
+import { useDebounceFn, useThrottleFn } from '@vueuse/core'
+
+const debouncedSearch = useDebounceFn(search, 300)
+const throttledScroll = useThrottleFn(handleScroll, 200)
+
+// 4. 动画性能优化
+// 使用transform代替top/left
+.animated {
+  /* ❌ 不好：触发重排 */
+  left: 100px;
+
+  /* ✅ 好：使用transform */
+  transform: translateX(100px);
+}
+
+// 使用requestAnimationFrame
+function animate() {
+  element.style.transform = `translateX(${pos}px)`
+  requestAnimationFrame(animate)
+}
+
+// 5. 内存优化
+// 及时清理事件监听
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+// 使用对象池复用
+class ObjectPool {
+  constructor(createFn, resetFn) {
+    this.pool = []
+    this.createFn = createFn
+    this.resetFn = resetFn
+  }
+
+  get() {
+    return this.pool.length > 0
+      ? this.pool.pop()
+      : this.createFn()
+  }
+
+  release(obj) {
+    this.resetFn(obj)
+    this.pool.push(obj)
+  }
+}
+```
+
+## H5与原生交互
+
+### H5唤起APP方案？（美团必问）
+
+```javascript
+// 1. URL Scheme方式
+// 配置APP的URL Scheme
+// android: <data android:scheme="myapp" android:host="open" />
+// ios: URL types
+
+// 唤起APP
+function openApp() {
+  const scheme = 'myapp://home?id=123'
+
+  // 尝试打开APP
+  window.location.href = scheme
+
+  // 2秒后跳转下载页（假设未安装APP）
+  setTimeout(() => {
+    window.location.href = 'https://app.example.com/download'
+  }, 2000)
+}
+
+// 2. Universal Link（iOS）
+// iOS 9+支持，无需唤醒中转
+// 配置：https://developer.apple.com/library/archive/documentation/General/Conceptual/AppSearch/UniversalLinks.html
+
+// 使用
+<a href="https://app.example.com/product/123">打开商品详情</a>
+
+// 3. App Links（Android）
+// Android 6.0+支持
+// 配置：assetlinks.json
+
+// 4. webkit-callout（iOS专用）
+<iframe style="display:none" height="0" width="0" frameborder="0"
+  src="myapp://product?id=123">
+</iframe>
+
+// 完整封装
+class AppLauncher {
+  constructor(options) {
+    this.scheme = options.scheme
+    this.universalLink = options.universalLink
+    this.downloadUrl = options.downloadUrl
+    this.timeout = options.timeout || 2500
+  }
+
+  launch(params) {
+    const ua = navigator.userAgent
+    const isiOS = /iPhone|iPad|iPod/.test(ua)
+    const isAndroid = /Android/.test(ua)
+
+    // 构建跳转链接
+    let url = isiOS
+      ? `${this.universalLink}?${new URLSearchParams(params)}`
+      : `${this.scheme}://?${new URLSearchParams(params)}`
+
+    // 记录开始时间
+    const startTime = Date.now()
+
+    // 尝试唤起
+    window.location.href = url
+
+    // 检测是否唤起成功
+    const checkTimer = setInterval(() => {
+      const elapsed = Date.now() - startTime
+      const isHidden = document.hidden || document.webkitHidden
+
+      if (isHidden || elapsed >= this.timeout) {
+        clearInterval(checkTimer)
+
+        // 未唤起成功，跳转下载页
+        if (!isHidden && elapsed >= this.timeout) {
+          window.location.href = this.downloadUrl
+        }
+      }
+    }, 100)
+  }
+}
+
+// 使用
+const launcher = new AppLauncher({
+  scheme: 'myapp://',
+  universalLink: 'https://app.example.com',
+  downloadUrl: 'https://app.example.com/download'
+})
+
+launcher.launch({ id: '123', from: 'h5' })
+```
+
+### JSBridge通信机制？（字节、阿里必问）
+
+```javascript
+// 1. 拦截URL Schema（JavaScript调用Native）
+// H5端
+function callNative(method, params, callback) {
+  const callbackId = 'callback_' + Date.now()
+
+  // 注册回调
+  window[callbackId] = function(result) {
+    callback(result)
+    delete window[callbackId]
+  }
+
+  // 构建URL
+  const url = `jsbridge://method?method=${method}&params=${JSON.stringify(params)}&callbackId=${callbackId}`
+
+  // 创建隐藏iframe唤起
+  const iframe = document.createElement('iframe')
+  iframe.style.display = 'none'
+  iframe.src = url
+  document.body.appendChild(iframe)
+
+  setTimeout(() => {
+    document.body.removeChild(iframe)
+  }, 100)
+}
+
+// 使用
+callNative('getUserInfo', { userId: '123' }, (result) => {
+  console.log('UserInfo:', result)
+})
+
+// 2. 注入JavaScript上下文（Native调用JavaScript）
+// Native端注入方法
+window.jsbridge = {
+  callback: function(result) {
+    console.log('Native callback:', result)
+  }
+}
+
+// H5调用
+window.jsbridge.callback({ status: 'success' })
+
+// 3. WebView modern API
+// prompt方式（早期Android）
+function callNativeByPrompt(method, params) {
+  const message = JSON.stringify({ method, params })
+  const result = prompt(message)
+  return JSON.parse(result)
+}
+
+// 4. 完整JSBridge封装
+class JSBridge {
+  constructor() {
+    this.messageQueue = []
+    this.messageHandlers = {}
+    this.uniqueId = 0
+    this.isNativeReady = false
+
+    this.init()
+  }
+
+  init() {
+    // 监听Native消息
+    document.addEventListener('WebViewBridge', (event) => {
+      const { responseId, responseData } = event.detail
+      const handler = this.messageHandlers[responseId]
+
+      if (handler) {
+        handler(responseData)
+        delete this.messageHandlers[responseId]
+      }
+    })
+
+    // 通知Native准备好了
+    this.sendMessage('jsBridgeReady', {}, () => {
+      this.isNativeReady = true
+      this.flushMessageQueue()
+    })
+  }
+
+  sendMessage(method, data, callback) {
+    const messageId = 'msg_' + (++this.uniqueId)
+
+    if (callback) {
+      this.messageHandlers[messageId] = callback
+    }
+
+    const message = {
+      messageId,
+      method,
+      data
+    }
+
+    // 如果Native未准备好，加入队列
+    if (!this.isNativeReady) {
+      this.messageQueue.push(message)
+      return
+    }
+
+    this._sendToNative(message)
+  }
+
+  _sendToNative(message) {
+    // 根据环境选择通信方式
+    if (window.webkit?.messageHandlers?.Bridge) {
+      // iOS WKWebView
+      window.webkit.messageHandlers.Bridge.postMessage(message)
+    } else if (window.JSBridge && window.JSBridge.sendMessage) {
+      // Android WebView
+      window.JSBridge.sendMessage(JSON.stringify(message))
+    } else {
+      // 后备方案：iframe
+      const iframe = document.createElement('iframe')
+      iframe.style.display = 'none'
+      iframe.src = `jsbridge://message?data=${encodeURIComponent(JSON.stringify(message))}`
+      document.body.appendChild(iframe)
+      setTimeout(() => document.body.removeChild(iframe), 100)
+    }
+  }
+
+  flushMessageQueue() {
+    while (this.messageQueue.length > 0) {
+      const message = this.messageQueue.shift()
+      this._sendToNative(message)
+    }
+  }
+}
+
+// 使用
+const bridge = new JSBridge()
+
+bridge.sendMessage('getUserInfo', { userId: '123' }, (result) => {
+  console.log('UserInfo:', result)
+})
+```
+
+### 键盘弹出问题解决方案？（阿里高频）
+
+```javascript
+// 问题：iOS键盘弹出时fixed定位元素会错位
+
+// 解决方案1：监听键盘事件
+<template>
+  <div
+    class="fixed-bottom"
+    :style="{ bottom: bottomOffset + 'px' }"
+  >
+    底部操作栏
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const bottomOffset = ref(0)
+
+const handleKeyboardShow = (e) => {
+  // 获取键盘高度
+  const keyboardHeight = e.detail ? e.detail.height : 300
+  bottomOffset.value = keyboardHeight
+}
+
+const handleKeyboardHide = () => {
+  bottomOffset.value = 0
+}
+
+onMounted(() => {
+  // iOS
+  window.addEventListener('keyboardWillShow', handleKeyboardShow)
+  window.addEventListener('keyboardWillHide', handleKeyboardHide)
+
+  // Android
+  window.addEventListener('resize', () => {
+    const height = window.innerHeight
+    const initialHeight = window.screen.height
+    if (height < initialHeight) {
+      bottomOffset.value = initialHeight - height
+    } else {
+      bottomOffset.value = 0
+    }
+  })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keyboardWillShow', handleKeyboardShow)
+  window.removeEventListener('keyboardWillHide', handleKeyboardHide)
+})
+</script>
+
+// 解决方案2：使用absolute + scroll
+.container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// 解决方案3：使用scrollIntoView
+<input
+  @focus="scrollToInput"
+  type="text"
+/>
+
+function scrollToInput(e) {
+  setTimeout(() => {
+    e.target.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    })
+  }, 300)
+}
+
+// 解决方案4：使用视觉视口
+const handleResize = () => {
+  const visualViewport = window.visualViewport
+  if (visualViewport) {
+    bottomOffset.value = window.innerHeight - visualViewport.height
+  }
+}
+
+onMounted(() => {
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', handleResize)
+  }
+})
+```
+
+## 移动端高级技巧
+
+### 移动端手势库封装？（美团真题）
+
+```javascript
+// 完整的手势识别库
+class TouchGesture {
+  constructor(element, options = {}) {
+    this.element = element
+    this.options = {
+      tapTimeout: 300,
+      swipeThreshold: 30,
+      longPressTimeout: 750,
+      pinchThreshold: 10,
+      ...options
+    }
+
+    this.touches = []
+    this.startTouch = null
+    this.startTime = 0
+    this.lastTouch = null
+    this.longPressTimer = null
+    this.tapCount = 0
+    this.lastTapTime = 0
+    this.initialDistance = 0
+
+    this.init()
+  }
+
+  init() {
+    this.element.addEventListener('touchstart', this.handleStart, { passive: false })
+    this.element.addEventListener('touchmove', this.handleMove, { passive: false })
+    this.element.addEventListener('touchend', this.handleEnd, { passive: false })
+    this.element.addEventListener('touchcancel', this.handleCancel, { passive: false })
+  }
+
+  handleStart = (e) => {
+    e.preventDefault()
+
+    this.touches = Array.from(e.touches)
+    this.startTouch = this.touches[0]
+    this.startTime = Date.now()
+    this.lastTouch = this.startTouch
+
+    // 单指：可能是tap、long press、swipe
+    if (this.touches.length === 1) {
+      this.longPressTimer = setTimeout(() => {
+        this.emit('longpress', {
+          touch: this.startTouch
+        })
+        this.longPressTimer = null
+      }, this.options.longPressTimeout)
+    }
+
+    // 双指：可能是pinch
+    if (this.touches.length === 2) {
+      this.initialDistance = this.getDistance()
+      this.emit('pinchstart', {
+        distance: this.initialDistance,
+        center: this.getCenter()
+      })
+    }
+
+    this.emit('touchstart', {
+      touches: this.touches
+    })
+  }
+
+  handleMove = (e) => {
+    e.preventDefault()
+
+    // 清除long press
+    if (this.longPressTimer) {
+      clearTimeout(this.longPressTimer)
+      this.longPressTimer = null
+    }
+
+    this.touches = Array.from(e.touches)
+    const currentTouch = this.touches[0]
+
+    // 计算移动距离
+    const deltaX = currentTouch.clientX - this.startTouch.clientX
+    const deltaY = currentTouch.clientY - this.startTouch.clientY
+    const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2)
+
+    this.emit('touchmove', {
+      touches: this.touches,
+      deltaX,
+      deltaY,
+      distance
+    })
+
+    // 双指pinch
+    if (this.touches.length === 2) {
+      const currentDistance = this.getDistance()
+      const scale = currentDistance / this.initialDistance
+
+      this.emit('pinch', {
+        distance: currentDistance,
+        scale: scale,
+        center: this.getCenter()
+      })
+    }
+  }
+
+  handleEnd = (e) => {
+    e.preventDefault()
+
+    // 清除long press
+    if (this.longPressTimer) {
+      clearTimeout(this.longPressTimer)
+      this.longPressTimer = null
+    }
+
+    const touch = e.changedTouches[0]
+    const deltaTime = Date.now() - this.startTime
+
+    const deltaX = touch.clientX - this.startTouch.clientX
+    const deltaY = touch.clientY - this.startTouch.clientY
+    const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2)
+
+    // 判断手势类型
+    if (distance < 10 && deltaTime < this.options.tapTimeout) {
+      // tap
+      const now = Date.now()
+      if (now - this.lastTapTime < 300) {
+        this.tapCount++
+      } else {
+        this.tapCount = 1
+      }
+      this.lastTapTime = now
+
+      this.emit('tap', {
+        touch: touch,
+        count: this.tapCount
+      })
+
+      if (this.tapCount === 2) {
+        this.emit('doubletap', {
+          touch: touch
+        })
+      }
+    } else if (distance >= this.options.swipeThreshold) {
+      // swipe
+      const direction = this.getDirection(deltaX, deltaY)
+      this.emit('swipe', {
+        touch: touch,
+        direction: direction,
+        deltaX: deltaX,
+        deltaY: deltaY
+      })
+      this.emit('swipe' + direction, {
+        touch: touch,
+        deltaX: deltaX,
+        deltaY: deltaY
+      })
+    }
+
+    this.emit('touchend', {
+      changedTouches: Array.from(e.changedTouches)
+    })
+  }
+
+  handleCancel = (e) => {
+    this.emit('touchcancel', {
+      touches: Array.from(e.touches)
+    })
+  }
+
+  getDistance() {
+    const touch1 = this.touches[0]
+    const touch2 = this.touches[1]
+    return Math.sqrt(
+      (touch1.clientX - touch2.clientX) ** 2 +
+      (touch1.clientY - touch2.clientY) ** 2
+    )
+  }
+
+  getCenter() {
+    const touch1 = this.touches[0]
+    const touch2 = this.touches[1]
+    return {
+      x: (touch1.clientX + touch2.clientX) / 2,
+      y: (touch1.clientY + touch2.clientY) / 2
+    }
+  }
+
+  getDirection(deltaX, deltaY) {
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      return deltaX > 0 ? 'right' : 'left'
+    } else {
+      return deltaY > 0 ? 'down' : 'up'
+    }
+  }
+
+  emit(event, data) {
+    const customEvent = new CustomEvent(event, { detail: data })
+    this.element.dispatchEvent(customEvent)
+  }
+
+  destroy() {
+    this.element.removeEventListener('touchstart', this.handleStart)
+    this.element.removeEventListener('touchmove', this.handleMove)
+    this.element.removeEventListener('touchend', this.handleEnd)
+    this.element.removeEventListener('touchcancel', this.handleCancel)
+  }
+}
+
+// 使用
+const gesture = new TouchGesture(element)
+
+element.addEventListener('swipeleft', (e) => {
+  console.log('Swiped left!')
+})
+
+element.addEventListener('pinch', (e) => {
+  console.log('Pinch scale:', e.detail.scale)
+})
+
+element.addEventListener('longpress', (e) => {
+  console.log('Long pressed!')
+})
+```
+
+### 移动端适配方案对比与选择？（腾讯高频）
+
+```javascript
+// 各方案对比：
+
+// 1. rem方案
+/* 优点：
+ * - 兼容性好，支持所有设备
+ * - 可以精确控制尺寸
+ * 缺点：
+ * - 需要计算或使用postcss转换
+ * - 字体可能不够清晰
+ */
+function setRemUnit() {
+  const docEl = document.documentElement
+  const designWidth = 750
+  docEl.style.fontSize = (docEl.clientWidth / designWidth * 100) + 'px'
+}
+
+// 2. vw/vh方案
+/* 优点：
+ * - 无需JS计算
+ * - 真正响应式
+ * 缺点：
+ * - 兼容性问题（老版本浏览器）
+ * - 极端尺寸下体验不佳
+ */
+.container {
+  width: 100vw;
+  height: 100vh;
+}
+
+// 3. 动态Scale方案
+/* 优点：
+ * - 设计稿1:1还原
+ * - 无需转换计算
+ * 缺点：
+ * - 可能导致模糊
+ * - 横竖屏切换体验不佳
+ */
+function setScale() {
+  const designWidth = 750
+  const scale = document.documentElement.clientWidth / designWidth
+  document.body.style.transform = `scale(${scale})`
+}
+
+// 推荐方案：rem + viewport结合
+// 基础样式使用rem
+.content {
+  width: 7rem; // 设计稿700px
+  padding: 0.3rem; // 设计稿30px
+}
+
+// 特殊需求使用viewport
+.full-screen {
+  width: 100vw;
+  height: 100vh;
+}
+
+// Vite配置自动转换
+// vite.config.js
+import { defineConfig } from 'vite'
+import pxtorem from 'postcss-pxtorem'
+
+export default defineConfig({
+  css: {
+    postcss: {
+      plugins: [
+        pxtorem({
+          rootValue: 100, // 设计稿宽度的1/10
+          propList: ['*'],
+          exclude: /node_modules/i
+        })
+      ]
+    }
+  }
+})
+```
+
 ---
 
 **小徐带你飞系列教程**

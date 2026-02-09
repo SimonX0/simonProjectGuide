@@ -665,6 +665,586 @@ const price2 = usd(50);
 addUSD(price1, price2);  // ✅ OK
 ```
 
+## 高级类型体操实战
+
+### 高级类型体操面试题？（字节、阿里必问）
+
+```typescript
+// 1. 实现Pick（选择部分属性）
+type MyPick<T, K extends keyof T> = {
+  [P in K]: T[P]
+}
+
+interface User {
+  id: number
+  name: string
+  age: number
+  email: string
+}
+
+type UserBasic = MyPick<User, 'id' | 'name'>
+// { id: number; name: string }
+
+// 2. 实现Readonly（只读属性）
+type MyReadonly<T> = {
+  readonly [P in keyof T]: T[P]
+}
+
+type ReadonlyUser = MyReadonly<User>
+// { readonly id: number; readonly name: number; ... }
+
+// 3. 实现Exclude（排除联合类型）
+type MyExclude<T, U> = T extends U ? never : T
+
+type T1 = MyExclude<'a' | 'b' | 'c', 'a'>
+// 'b' | 'c'
+
+// 4. 实现Awaited（获取Promise返回值类型）
+type MyAwaited<T> = T extends Promise<infer U>
+  ? U extends Promise<any>
+    ? MyAwaited<U>
+    : U
+  : T
+
+type T2 = MyAwaited<Promise<string>>
+// string
+type T3 = MyAwaited<Promise<Promise<number>>>
+// number
+
+// 5. 实现If（条件类型）
+type If<C extends boolean, T, F> = C extends true ? T : F
+
+type T4 = If<true, 'a', 'b'>
+// 'a'
+type T5 = If<false, 'a', 'b'>
+// 'b'
+
+// 6. 实现Concat（数组类型连接）
+type Concat<T extends any[], U extends any[]> = [...T, ...U]
+
+type T6 = Concat<[1], [2, 3]>
+// [1, 2, 3]
+
+// 7. 实现Includes（判断数组是否包含元素）
+type Includes<T extends any[], U> = T extends [infer First, ...infer Rest]
+  ? Equal<First, U> extends true
+    ? true
+    : Includes<Rest, U>
+  : false
+
+// 辅助类型判断相等
+type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+  ? true
+  : false
+
+type T7 = Includes<['a', 'b', 'c'], 'a'>
+// true
+type T8 = Includes<['a', 'b', 'c'], 'd'>
+// false
+
+// 8. 实现Push（数组添加元素）
+type Push<T extends any[], U> = [...T, U]
+
+type T9 = Push<[1, 2], 3>
+// [1, 2, 3]
+
+// 9. 实现Unshift（数组开头添加元素）
+type Unshift<T extends any[], U> = [U, ...T]
+
+type T10 = Unshift<[1, 2], 0>
+// [0, 1, 2]
+
+// 10. 实现Parameters（获取函数参数类型）
+type MyParameters<T extends (...args: any) => any> = T extends (...args: infer P) => any
+  ? P
+  : never
+
+function foo(a: string, b: number): void {}
+
+type T11 = MyParameters<typeof foo>
+// [string, number]
+```
+
+### Utility Types高级应用？（美团高频）
+
+```typescript
+// 1. Partial<T> - 所有属性变为可选
+type Partial<T> = {
+  [P in keyof T]?: T[P]
+}
+
+// 2. Required<T> - 所有属性变为必需
+type Required<T> = {
+  [P in keyof T]-?: T[P]
+}
+
+// 3. Readonly<T> - 所有属性变为只读
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P]
+}
+
+// 4. Pick<T, K> - 选择指定属性
+type Pick<T, K extends keyof T> = {
+  [P in K]: T[P]
+}
+
+// 5. Omit<T, K> - 排除指定属性
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+
+// 实战：创建更新DTO
+interface UpdateUserDTO {
+  id: number
+  name?: string
+  email?: string
+}
+
+// 从完整类型中排除id，其他属性可选
+type UpdateUserInput = Partial<Omit<User, 'id'>> & { id: number }
+
+// 6. Record<K, T> - 构建对象类型
+type Record<K extends keyof any, T> = {
+  [P in K]: T
+}
+
+// 实战：字典类型
+type Dictionary<T> = Record<string, T>
+
+const userDict: Dictionary<User> = {
+  user1: { id: 1, name: 'Alice', age: 30, email: 'alice@example.com' },
+  user2: { id: 2, name: 'Bob', age: 25, email: 'bob@example.com' }
+}
+
+// 7. NonNullable<T> - 排除null和undefined
+type NonNullable<T> = T extends null | undefined ? never : T
+
+// 8. ReturnType<T> - 获取函数返回值类型
+type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any
+
+// 9. InstanceType<T> - 获取类实例类型
+type InstanceType<T extends new (...args: any) => any> = T extends new (...args: any) => infer R ? R : any
+
+class UserService {
+  getUsers() {}
+}
+
+type ServiceInstance = InstanceType<typeof UserService>
+// UserService
+
+// 10. ThisParameterType<T> - 获取函数this参数类型
+type ThisParameterType<T> = T extends (this: infer U, ...args: any[]) => any ? U : unknown
+
+// 11. OmitThisParameter<T> - 移除函数this参数
+type OmitThisParameter<T> = T extends (this: any, ...args: infer A) => infer R
+  ? (...args: A) => R
+  : T
+
+// 12. NoInfer<T> - 阻止类型推断（TypeScript 5.4+）
+function foo<T extends string>(x: NoInfer<T>) {
+  return x
+}
+
+// ❌ 错误：不能推断为'hello'
+// foo('hello')
+
+// ✅ 正确：必须指定类型
+foo<'hello'>('hello')
+```
+
+### TypeScript装饰器详解？（腾讯真题）
+
+```typescript
+// 类装饰器
+function sealed(constructor: Function) {
+  Object.seal(constructor)
+  Object.seal(constructor.prototype)
+}
+
+@sealed
+class MyClass {
+  // 无法再添加或删除属性
+}
+
+// 类装饰器工厂
+function configurable(value: boolean) {
+  return function (constructor: Function) {
+    Object.defineProperty(constructor, 'configurable', {
+      value: value,
+      writable: true
+    })
+  }
+}
+
+@configurable(true)
+class MyConfigurableClass {}
+
+// 属性装饰器
+function format(formatString: string) {
+  return function (target: any, propertyKey: string) {
+    let value = target[propertyKey]
+
+    const getter = () => {
+      return `${formatString} ${value}`
+    }
+
+    const setter = (newVal: string) => {
+      value = newVal
+    }
+
+    Object.defineProperty(target, propertyKey, {
+      get: getter,
+      set: setter,
+      enumerable: true,
+      configurable: true
+    })
+  }
+}
+
+class Person {
+  @format('Hello,')
+  name: string = 'World'
+}
+
+const person = new Person()
+console.log(person.name)  // "Hello, World"
+
+// 方法装饰器
+function log(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value
+
+  descriptor.value = function (...args: any[]) {
+    console.log(`Calling ${propertyKey} with`, args)
+    const result = originalMethod.apply(this, args)
+    console.log(`${propertyKey} returned`, result)
+    return result
+  }
+}
+
+class Calculator {
+  @log
+  add(a: number, b: number): number {
+    return a + b
+  }
+}
+
+const calc = new Calculator()
+calc.add(1, 2)
+// Calling add with [1, 2]
+// add returned 3
+
+// 参数装饰器
+function required(target: any, propertyKey: string, parameterIndex: number) {
+  const requiredParameters: number[] = target.requiredParameters || []
+  requiredParameters.push(parameterIndex)
+  target.requiredParameters = requiredParameters
+}
+
+class User {
+  greet(@required name: string) {
+    console.log(`Hello, ${name}`)
+  }
+}
+
+// 装饰器组合
+@sealed
+@configurable(true)
+class CombinedExample {
+  @format('Mr.')
+  name: string
+
+  @log
+  method() {}
+}
+
+// 实战：Vue组件装饰器（vue-class-component）
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component
+export default class MyComponent extends Vue {
+  @Prop({ type: String, required: true })
+  readonly title!: string
+
+  @State('user')
+  readonly user!: User
+
+  @Getter('isLoggedIn')
+  readonly isLoggedIn!: boolean
+
+  @Action('fetchUser')
+  fetchUser!: (id: string) => Promise<void>
+
+  mounted() {
+    console.log(this.title)
+  }
+}
+```
+
+### TypeScript模块系统深度解析？（字节2025真题）
+
+```typescript
+// 1. 全局模块 vs 文件模块
+// global.d.ts - 全局类型声明
+declare global {
+  interface Window {
+    myGlobal: any
+  }
+
+  namespace NodeJS {
+    interface ProcessEnv {
+      CUSTOM_VAR: string
+    }
+  }
+}
+
+export {}  // 使其成为模块
+
+// 2. 模块声明（declare module）
+// 为无类型的JS库添加类型
+declare module 'my-library' {
+  export interface Options {
+    debug?: boolean
+  }
+
+  export default function init(options?: Options): void
+}
+
+// 3. 模块扩展（module augmentation）
+// 扩展现有模块
+declare module 'vue' {
+  interface ComponentCustomProperties {
+    $http: typeof import('axios')
+    $store: import('vuex').Store<any>
+  }
+}
+
+// 使用
+export default {
+  mounted() {
+    this.$http.get('/api')
+    this.$store.dispatch('fetch')
+  }
+}
+
+// 4. 命名空间（namespace）
+namespace Utils {
+  export function formatDate(date: Date): string {
+    return date.toISOString()
+  }
+
+  export function formatNumber(num: number): string {
+    return num.toFixed(2)
+  }
+
+  export namespace String {
+    export function capitalize(str: string): string {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+  }
+}
+
+// 使用
+Utils.formatDate(new Date())
+Utils.String.capitalize('hello')
+
+// 5. 动态导入（import()）
+async function loadModule() {
+  const { default: Component } = await import('./HeavyComponent.vue')
+  return Component
+}
+
+// 6. 类型导入（import type）
+// 只导入类型，编译后会被删除
+import type { User } from './types'
+
+// 7. re-exports（重导出）
+// 从其他模块导出
+export { User, Admin } from './types'
+export * from './utils'
+export { default as UserService } from './services/UserService'
+
+// 8. moduleResolution配置
+// tsconfig.json
+{
+  "compilerOptions": {
+    "moduleResolution": "node",  // 或 "bundler" (TS 5.0+)
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/components/*": ["src/components/*"],
+      "@/utils/*": ["src/utils/*"]
+    },
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "types": ["node", "jest", "vite/client"]
+  }
+}
+
+// 9. 条件类型（conditional types）用于模块选择
+type ModuleType<T> = T extends 'vue' ? typeof import('vue')
+  : T extends 'react' ? typeof import('react')
+  : never
+
+const vue: ModuleType<'vue'> = require('vue')
+```
+
+### TypeScript配置最佳实践？（阿里系统设计题）
+
+```json
+// tsconfig.json - 生产环境推荐配置
+{
+  "compilerOptions": {
+    // 类型检查
+    "strict": true,  // 启用所有严格类型检查选项
+    "noImplicitAny": true,  // 禁止隐式any
+    "strictNullChecks": true,  // 严格null检查
+    "strictFunctionTypes": true,  // 严格函数类型检查
+    "strictBindCallApply": true,  // 严格bind/call/apply检查
+    "strictPropertyInitialization": true,  // 严格属性初始化检查
+    "noImplicitThis": true,  // 禁止隐式this
+    "alwaysStrict": true,  // 总是严格模式
+    "noUnusedLocals": true,  // 检查未使用的局部变量
+    "noUnusedParameters": true,  // 检查未使用的参数
+    "noImplicitReturns": true,  // 检查是否有隐式返回
+    "noFallthroughCasesInSwitch": true,  // 检查switch中的fallthrough
+    "noUncheckedIndexedAccess": true,  // 索引访问时检查undefined
+
+    // 模块解析
+    "module": "ESNext",  // 模块系统
+    "moduleResolution": "bundler",  // 模块解析策略
+    "target": "ES2020",  // 编译目标
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],  // 包含的库定义
+    "jsx": "preserve",  // JSX处理方式
+    "esModuleInterop": true,  // ES模块互操作
+    "allowSyntheticDefaultImports": true,  // 允许合成默认导入
+    "resolveJsonModule": true,  // 允许导入JSON文件
+    "isolatedModules": true,  // 每个文件作为独立模块
+
+    // 输出配置
+    "outDir": "./dist",  // 输出目录
+    "declaration": true,  // 生成.d.ts文件
+    "declarationMap": true,  // 生成声明文件map
+    "sourceMap": true,  // 生成source map
+    "removeComments": false,  // 保留注释
+    "importHelpers": true,  // 导入tslib helpers
+
+    // 其他选项
+    "skipLibCheck": true,  // 跳过声明文件检查
+    "forceConsistentCasingInFileNames": true,  // 强制文件名大小写一致
+    "incremental": true,  // 增量编译
+    "tsBuildInfoFile": ".tsbuildinfo"  // 构建信息文件
+  },
+
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
+
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
+}
+
+// 项目结构：
+// src/
+//   types/
+//     global.d.ts       - 全局类型声明
+//     vue.d.ts         - Vue相关类型扩展
+//     env.d.ts         - 环境变量类型
+//   utils/
+//     types.ts         - 工具类型
+//     helpers.ts       - 辅助函数
+//   components/
+//     MyComponent.vue
+```
+
+### 泛型推断优化技巧？（美团高频）
+
+```typescript
+// 1. 推断类型参数
+function identity<T>(arg: T): T {
+  return arg
+}
+
+// TypeScript自动推断T为string
+const result = identity('hello')
+
+// 2. 多个类型参数推断
+function pair<T, U>(first: T, second: U): [T, U] {
+  return [first, second]
+}
+
+const p = pair('hello', 42)  // [string, number]
+
+// 3. 上下文推断
+function map<T, U>(array: T[], fn: (item: T) => U): U[] {
+  return array.map(fn)
+}
+
+const numbers = [1, 2, 3]
+const strings = map(numbers, n => n.toString())  // string[]
+
+// 4. 约束推断
+function first<T extends { length: number }>(arg: T): T {
+  return arg
+}
+
+first([1, 2, 3])  // T推断为number[]
+first('hello')  // T推断为string
+
+// 5. 条件推断
+type Unpacked<T> = T extends (infer U)[]
+  ? U
+  : T extends (...args: any[]) => infer U
+  ? U
+  : T extends Promise<infer U>
+  ? U
+  : T
+
+type T0 = Unpacked<string>  // string
+type T1 = Unpacked<string[]>  // string
+type T2 = Unpacked<() => string>  // string
+type T3 = Unpacked<Promise<string>>  // string
+
+// 6. 尾部递归推断
+type Head<T extends any[]> = T extends [infer H, ...any[]] ? H : never
+type Tail<T extends any[]> = T extends [...any[], infer T] ? T : never
+
+type H = Head<[1, 2, 3]>  // 1
+type T = Tail<[1, 2, 3]>  // 3
+
+// 7. 推断优化（使用infer）
+function returnValue<T>(fn: () => T): T {
+  return fn()
+}
+
+const val = returnValue(() => 'hello')  // string
+
+// 8. 映射推断
+type Getters<T> = {
+  [P in keyof T as `get${Capitalize<string & P>}`]: () => T[P]
+}
+
+interface Person {
+  name: string
+  age: number
+}
+
+type PersonGetters = Getters<Person>
+// {
+//   getName: () => string;
+//   getAge: () => number;
+// }
+
+// 9. 条件类型推断优化
+type Flatten<T> = T extends any[] ? T[number] : T
+
+type Str = Flatten<string[]>  // string
+type Num = Flatten<number>  // number
+```
+
 ---
 
 **小徐带你飞系列教程**

@@ -1568,6 +1568,730 @@ export default defineConfig({
    </script>
    ```
 
+### 高级性能优化技巧
+
+42. **Web Worker性能优化实战？（字节高频）**
+
+Web Worker可以将计算密集型任务移出主线程，避免阻塞UI渲染。
+
+```javascript
+// workers/heavy-computation.js
+// Web Worker代码
+self.onmessage = function(e) {
+  const { data, type } = e.data
+
+  if (type === 'process-large-array') {
+    // 处理大型数组计算
+    const result = data.map(item => {
+      // 复杂计算逻辑
+      return item * Math.sqrt(item) + Math.log(item)
+    })
+
+    // 将结果发送回主线程
+    self.postMessage({ type: 'result', data: result })
+  }
+
+  if (type === 'image-processing') {
+    // 图片处理
+    const imageData = e.data.imageData
+    const processed = processImage(imageData)
+    self.postMessage({ type: 'image-processed', data: processed })
+  }
+}
+
+// Vue组件中使用
+<script setup>
+import { ref, onUnmounted } from 'vue'
+
+const processing = ref(false)
+const result = ref(null)
+
+let worker = null
+
+onMounted(() => {
+  // 创建Web Worker
+  worker = new Worker(
+    new URL('@/workers/heavy-computation.js', import.meta.url),
+    { type: 'module' }
+  )
+
+  // 监听Worker消息
+  worker.onmessage = (e) => {
+    const { type, data } = e.data
+
+    if (type === 'result') {
+      result.value = data
+      processing.value = false
+    }
+  }
+
+  worker.onerror = (error) => {
+    console.error('Worker error:', error)
+    processing.value = false
+  }
+})
+
+// 发送任务到Worker
+const processLargeData = (largeArray) => {
+  processing.value = true
+  worker.postMessage({
+    type: 'process-large-array',
+    data: largeArray
+  })
+}
+
+// 清理Worker
+onUnmounted(() => {
+  worker?.terminate()
+})
+</script>
+
+// 实战场景：大数据可视化
+// 1. 在Worker中预处理数据
+// 2. 主线程只负责渲染
+// 3. 避免UI卡顿
+```
+
+**Worker使用注意事项**：
+- Worker不能直接操作DOM
+- 数据传递需要序列化（使用Transferable对象优化）
+- 同源限制
+- 内存开销较大，按需创建
+
+43. **首屏性能优化完整方案？（美团必问）**
+
+首屏加载速度直接影响用户留存，需要从多个维度优化。
+
+```javascript
+// 1. 路由懒加载 + 预加载
+// router.js
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    // 首页组件需要立即加载，不使用懒加载
+    component: Home
+  },
+  {
+    path: '/about',
+    // 预加载其他路由
+    component: () => import(
+      /* webpackPrefetch: true */
+      /* webpackChunkName: "about" */
+      '@/views/About.vue'
+    )
+  }
+]
+
+// 2. 首屏关键CSS内联
+// vite.config.js
+import { defineConfig } from 'vite'
+import vitePluginInlineCss from 'vite-plugin-inline-css'
+
+export default defineConfig({
+  plugins: [
+    vitePluginInlineCss({
+      // 只内联首屏关键CSS
+      files: ['src/assets/styles/critical.css']
+    })
+  ]
+})
+
+// 3. 图片优化策略
+<template>
+  <!-- 首屏图片优先级最高 -->
+  <img
+    :src="heroImage"
+    loading="eager"
+    fetchpriority="high"
+    decoding="sync"
+    :width="1200"
+    :height="600"
+    alt="Hero"
+  />
+
+  <!-- 非首屏图片懒加载 -->
+  <img
+    v-for="img in otherImages"
+    :key="img.id"
+    :src="img.url"
+    loading="lazy"
+    decoding="async"
+    :alt="img.alt"
+  />
+</template>
+
+<script setup>
+// 使用WebP格式 + 响应式图片
+const heroImage = computed(() => {
+  return {
+    src: '/images/hero.webp',
+    fallback: '/images/hero.jpg',
+    srcset: `
+      /images/hero-800.webp 800w,
+      /images/hero-1200.webp 1200w,
+      /images/hero-1600.webp 1600w
+    `,
+    sizes: '(max-width: 768px) 100vw, 1200px'
+  }
+})
+</script>
+
+// 4. 骨架屏优化
+<template>
+  <div class="home-page">
+    <!-- 骨架屏 -->
+    <div v-if="loading" class="skeleton">
+      <div class="skeleton-header"></div>
+      <div class="skeleton-content">
+        <div v-for="i in 6" :key="i" class="skeleton-item"></div>
+      </div>
+    </div>
+
+    <!-- 实际内容 -->
+    <div v-else class="content">
+      <Header />
+      <ProductList :products="products" />
+    </div>
+  </div>
+</template>
+
+<style scoped>
+/* 骨架屏动画 */
+.skeleton-item {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+</style>
+
+// 5. 数据预取
+// main.js
+import { createApp } from 'vue'
+import { createRouter } from 'vue-router'
+
+const router = createRouter({
+  routes
+})
+
+// 预取数据
+router.beforeResolve(async (to) => {
+  if (to.meta.prefetch) {
+    // 在路由解析前预取数据
+    await to.meta.prefetch(to.params)
+  }
+})
+
+// 页面组件
+<script setup>
+import { onMounted } from 'vue'
+
+// ✅ 好：结合Suspense使用
+async function fetchData() {
+  const [products, banners] = await Promise.all([
+    fetchProducts(),
+    fetchBanners()
+  ])
+  return { products, banners }
+}
+</script>
+
+// 6. 字体优化
+<!-- index.html -->
+<link
+  rel="preload"
+  href="/fonts/main.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+
+<!-- 使用font-display: swap避免字体闪烁 -->
+<style>
+@font-face {
+  font-family: 'Custom Font';
+  src: url('/fonts/main.woff2') format('woff2');
+  font-display: swap; /* 立即显示后备字体 */
+}
+</style>
+
+// 7. 代码分割与Tree Shaking
+// vite.config.js
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // 首屏必需的chunk优先级高
+          'vue-core': ['vue', 'vue-router', 'pinia'],
+          // 非首屏延迟加载
+          'editor': ['@vueup/vue-quill'],
+          'charts': ['echarts']
+        }
+      }
+    }
+  }
+})
+```
+
+**首屏性能指标**：
+- FCP (First Contentful Paint): < 1.8s
+- LCP (Largest Contentful Paint): < 2.5s
+- TTI (Time to Interactive): < 3.8s
+
+44. **图片性能优化深入？（腾讯高频）**
+
+图片通常占据页面大部分带宽，优化图片能显著提升性能。
+
+```javascript
+// 1. 现代图片格式
+<template>
+  <picture>
+    <!-- 优先使用AVIF（最佳压缩率） -->
+    <source
+      :srcset="image.avif"
+      type="image/avif"
+    />
+    <!-- 后备WebP -->
+    <source
+      :srcset="image.webp"
+      type="image/webp"
+    />
+    <!-- 最后后备JPEG -->
+    <img
+      :src="image.jpg"
+      :alt="image.alt"
+      :loading="lazy ? 'lazy' : 'eager'"
+      :decoding="lazy ? 'async' : 'sync'"
+      :width="image.width"
+      :height="image.height"
+    />
+  </picture>
+</template>
+
+// 2. 响应式图片
+<template>
+  <img
+    :src="smallImage"
+    :srcset="`
+      ${image600} 600w,
+      ${image1200} 1200w,
+      ${image1800} 1800w
+    `"
+    sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
+    :alt="alt"
+  />
+</template>
+
+// 3. 图片懒加载优化
+<script setup>
+import { ref } from 'vue'
+
+const props = defineProps({
+  src: String,
+  alt: String
+})
+
+const imageRef = ref(null)
+const isLoaded = ref(false)
+const isError = ref(false)
+
+// 使用IntersectionObserver
+onMounted(() => {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target
+          img.src = props.src
+          observer.unobserve(img)
+        }
+      })
+    },
+    { rootMargin: '50px' } // 提前50px开始加载
+  )
+
+  observer.observe(imageRef.value)
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+})
+</script>
+
+// 4. 图片压缩与裁剪服务
+// utils/image-optimizer.js
+export class ImageOptimizer {
+  // 使用CDN图片处理服务（如阿里云OSS、腾讯云COS）
+  static optimize(url, options = {}) {
+    const {
+      width,
+      height,
+      quality = 80,
+      format = 'webp'
+    } = options
+
+    // 阿里云OSS示例
+    const params = []
+    if (width) params.push(`x-oss-process=image/resize,w_${width}`)
+    if (height) params.push(`h_${height}`)
+    params.push(`/quality,q_${quality}`)
+    params.push(`/format,${format}`)
+
+    return `${url}?${params.join('')}`
+  }
+
+  // 响应式图片生成器
+  static generateSrcSet(baseUrl, sizes) {
+    return sizes.map(size => {
+      const url = this.optimize(baseUrl, {
+        width: size,
+        quality: 80,
+        format: 'webp'
+      })
+      return `${url} ${size}w`
+    }).join(', ')
+  }
+}
+
+// 使用
+const optimizedImage = ImageOptimizer.optimize(originalUrl, {
+  width: 800,
+  quality: 75,
+  format: 'webp'
+})
+
+// 5. 预加载关键图片
+<template>
+  <!-- 首屏Hero图片 -->
+  <link
+    rel="preload"
+    as="image"
+    :href="heroImage.webp"
+    imagesrcset="
+      /images/hero-800.webp 800w,
+      /images/hero-1200.webp 1200w
+    "
+    imagesizes="(max-width: 800px) 100vw, 50vw"
+  />
+</template>
+
+// 6. 图片占位与BlurHash
+<script setup>
+import { ref } from 'vue'
+
+// 使用BlurHash生成模糊占位图
+const blurHash = 'L6H{2xj[~pWB%WM{NHtQ^t7jZj['
+const placeholder = ref(null)
+
+onMounted(async () => {
+  // 解码BlurHash
+  const { decode } = await import('blurhash')
+  placeholder.value = decode(blurHash, 32, 32)
+})
+</script>
+
+<template>
+  <div class="image-container">
+    <!-- 模糊占位图 -->
+    <canvas
+      v-if="placeholder"
+      ref="placeholderCanvas"
+      class="blur-placeholder"
+    />
+
+    <!-- 实际图片加载完成后淡入 -->
+    <img
+      :src="src"
+      :alt="alt"
+      @load="onImageLoad"
+      :class="{ loaded: isLoaded }"
+    />
+  </div>
+</template>
+
+<style scoped>
+.image-container {
+  position: relative;
+}
+
+.blur-placeholder {
+  position: absolute;
+  filter: blur(20px);
+  transition: opacity 0.3s;
+}
+
+img.loaded + .blur-placeholder {
+  opacity: 0;
+}
+</style>
+```
+
+45. **代码分割策略最佳实践？（字节真题）**
+
+合理的代码分割能显著减少首屏加载体积。
+
+```javascript
+// 1. 路由级别分割
+// router.js
+const routes = [
+  {
+    path: '/',
+    component: () => import('@/views/Home.vue') // chunk-home.js
+  },
+  {
+    path: '/admin',
+    component: () => import('@/views/Admin.vue') // chunk-admin.js
+  }
+]
+
+// 2. 组件级别分割
+<script setup>
+import { defineAsyncComponent } from 'vue'
+
+// ✅ 异步组件
+const HeavyChart = defineAsyncComponent(() =>
+  import('@/components/HeavyChart.vue')
+)
+
+// ✅ 带加载状态的异步组件
+const RichTextEditor = defineAsyncComponent({
+  loader: () => import('@/components/RichTextEditor.vue'),
+  loadingComponent: LoadingSpinner,
+  errorComponent: ErrorDisplay,
+  delay: 200,
+  timeout: 10000
+})
+</script>
+
+// 3. 功能性分割
+// 按功能模块分割代码
+const routes = [
+  {
+    path: '/dashboard',
+    component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue')
+  },
+  {
+    path: '/reports',
+    component: () => import(/* webpackChunkName: "reports" */ '@/views/Reports.vue')
+  }
+]
+
+// 4. 依赖库分割
+// vite.config.js
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // node_modules打包到vendor
+          if (id.includes('node_modules')) {
+            // 将大型库单独分包
+            if (id.includes('vue')) {
+              return 'vue-core'
+            }
+            if (id.includes('element-plus')) {
+              return 'element-plus'
+            }
+            if (id.includes('echarts')) {
+              return 'echarts'
+            }
+            if (id.includes('lodash')) {
+              return 'lodash'
+            }
+            return 'vendor'
+          }
+        }
+      }
+    }
+  }
+})
+
+// 5. 条件加载
+<script setup>
+// 只在需要时加载功能
+const showAdvanced = ref(false)
+
+const AdvancedFeatures = computed(() => {
+  if (!showAdvanced.value) return null
+
+  // 动态导入
+  return defineAsyncComponent(() =>
+    import('@/components/AdvancedFeatures.vue')
+  )
+})
+</script>
+
+// 6. Prefetch和Preload策略
+const routes = [
+  {
+    path: '/',
+    component: Home
+  },
+  {
+    path: '/about',
+    // 空闲时预加载
+    component: () => import(
+      /* webpackPrefetch: true */
+      /* webpackChunkName: "about" */
+      '@/views/About.vue'
+    )
+  },
+  {
+    path: '/admin',
+    // 立即预加载（高优先级）
+    component: () => import(
+      /* webpackPreload: true */
+      /* webpackChunkName: "admin" */
+      '@/views/Admin.vue'
+    )
+  }
+]
+
+// 7. 动态import()
+// 按需加载功能模块
+const loadFeature = async (featureName) => {
+  const module = await import(`@/features/${featureName}.js`)
+  return module.default
+}
+
+// 使用
+const theme = await loadFeature('dark-theme')
+```
+
+46. **长任务优化技巧？（字节2025真题）**
+
+长任务（Long Tasks, >50ms）会阻塞主线程，导致界面卡顿。
+
+```javascript
+// 1. 识别长任务
+// 使用Performance API检测
+const observer = new PerformanceObserver((list) => {
+  list.getEntries().forEach((entry) => {
+    if (entry.duration > 50) {
+      console.warn('Long Task detected:', {
+        name: entry.name,
+        duration: entry.duration,
+        startTime: entry.startTime
+      })
+    }
+  })
+})
+
+observer.observe({ entryTypes: ['longtask'] })
+
+// 2. 使用requestIdleCallback
+function runTaskWhenIdle(task, timeout = 2000) {
+  return new Promise((resolve) => {
+    requestIdleCallback(
+      (deadline) => {
+        task()
+        resolve()
+      },
+      { timeout }
+    )
+  })
+}
+
+// 使用
+runTaskWhenIdle(() => {
+  // 在浏览器空闲时执行
+  analytics.track('pageview')
+})
+
+// 3. 使用Scheduler API（现代浏览器）
+function scheduleTask(task) {
+  if ('scheduler' in navigator) {
+    // 使用Scheduler API
+    navigator.scheduler.postTask(task, {
+      priority: 'background',
+      delay: 0
+    })
+  } else {
+    // 后备方案
+    setTimeout(task, 0)
+  }
+}
+
+// 4. 分批处理大量数据
+<script setup>
+import { ref } from 'vue'
+
+const items = ref([])
+const allData = []
+
+// ❌ 不好：一次性处理大量数据
+const processAll = () => {
+  items.value = allData.map(item => {
+    // 复杂计算
+    return heavyComputation(item)
+  })
+}
+
+// ✅ 好：分批处理
+const processBatch = async () => {
+  const batchSize = 100
+  const batches = []
+
+  for (let i = 0; i < allData.length; i += batchSize) {
+    batches.push(allData.slice(i, i + batchSize))
+  }
+
+  for (const batch of batches) {
+    // 每批处理后让出主线程
+    const processed = batch.map(item => heavyComputation(item))
+    items.value.push(...processed)
+
+    // 让出主线程
+    await new Promise(resolve => setTimeout(resolve, 0))
+  }
+}
+</script>
+
+// 5. 使用Time Slicing算法
+function timeSlice(tasks, callback) {
+  let index = 0
+
+  function _run() {
+    const now = performance.now()
+
+    // 每次执行最多5ms
+    while (index < tasks.length && performance.now() - now < 5) {
+      tasks[index]()
+      index++
+    }
+
+    if (index < tasks.length) {
+      // 还有任务未完成，继续调度
+      requestAnimationFrame(_run)
+    } else {
+      callback()
+    }
+  }
+
+  _run()
+}
+
+// 使用
+const tasks = Array(10000).fill(0).map((_, i) => () => {
+  console.log(i)
+})
+
+timeSlice(tasks, () => {
+  console.log('All tasks completed!')
+})
+```
+
 ---
 
 **小徐带你飞系列教程**

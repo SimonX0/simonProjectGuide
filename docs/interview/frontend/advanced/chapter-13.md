@@ -859,6 +859,635 @@ jobs:
         run: pnpm build
 ```
 
+## 高级工程化实践
+
+### 前端监控体系搭建？（阿里2025真题）
+
+```javascript
+// 完整的前端监控方案
+
+// 1. 错误监控
+class ErrorMonitor {
+  constructor(options) {
+    this.dsn = options.dsn
+    this.environment = options.environment || 'production'
+    this.sampleRate = options.sampleRate || 1
+
+    this.init()
+  }
+
+  init() {
+    // 捕获JS错误
+    window.addEventListener('error', (event) => {
+      this.captureException(new Error(event.message), {
+        type: 'javascript',
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno
+      })
+    })
+
+    // 捕获Promise rejection
+    window.addEventListener('unhandledrejection', (event) => {
+      this.captureException(event.reason, {
+        type: 'unhandledrejection',
+        promise: event.promise
+      })
+    })
+
+    // 捕获Vue错误
+    app.config.errorHandler = (err, instance, info) => {
+      this.captureException(err, {
+        type: 'vue',
+        component: instance?.$options?.name,
+        info
+      })
+    }
+
+    // 捕获资源加载错误
+    window.addEventListener('error', (event) => {
+      if (event.target !== window) {
+        this.captureMessage('Resource load failed', {
+          type: 'resource',
+          tagName: event.target.tagName,
+          src: event.target.src || event.target.href
+        })
+      }
+    }, true)
+  }
+
+  captureException(error, context = {}) {
+    if (Math.random() > this.sampleRate) return
+
+    const errorInfo = {
+      message: error.message,
+      stack: error.stack,
+      context: {
+        ...context,
+        environment: this.environment,
+        userAgent: navigator.userAgent,
+        url: location.href,
+        timestamp: Date.now()
+      }
+    }
+
+    this.send(errorInfo)
+  }
+
+  captureMessage(message, context = {}) {
+    this.send({
+      message,
+      context: {
+        ...context,
+        environment: this.environment,
+        timestamp: Date.now()
+      }
+    })
+  }
+
+  async send(data) {
+    try {
+      await fetch(this.dsn, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        keepalive: true
+      })
+    } catch (e) {
+      console.error('Failed to send error report:', e)
+    }
+  }
+}
+
+// 2. 性能监控
+class PerformanceMonitor {
+  constructor() {
+    this.metrics = {}
+  }
+
+  // Core Web Vitals
+  measureCoreVitals() {
+    // FCP
+    new PerformanceObserver((list) => {
+      const entries = list.getEntries()
+      const fcp = entries.find(e => e.name === 'first-contentful-paint')
+      if (fcp) {
+        this.reportMetric('FCP', fcp.startTime)
+      }
+    }).observe({ entryTypes: ['paint'] })
+
+    // LCP
+    new PerformanceObserver((list) => {
+      const entries = list.getEntries()
+      const lcp = entries[entries.length - 1]
+      this.reportMetric('LCP', lcp.startTime)
+    }).observe({ entryTypes: ['largest-contentful-paint'] })
+
+    // FID
+    new PerformanceObserver((list) => {
+      const entries = list.getEntries()
+      const fid = entries[0]
+      this.reportMetric('FID', fid.processingStart - fid.startTime)
+    }).observe({ entryTypes: ['first-input'] })
+
+    // CLS
+    let clsValue = 0
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (!entry.hadRecentInput) {
+          clsValue += entry.value
+        }
+      }
+      this.reportMetric('CLS', clsValue)
+    }).observe({ entryTypes: ['layout-shift'] })
+  }
+
+  // API性能
+  observeAPI() {
+    const originalFetch = window.fetch
+    window.fetch = async (...args) => {
+      const start = performance.now()
+      const url = args[0]
+
+      try {
+        const response = await originalFetch(...args)
+        const duration = performance.now() - start
+
+        this.reportMetric('API', {
+          url,
+          duration,
+          status: response.status,
+          success: response.ok
+        })
+
+        return response
+      } catch (error) {
+        const duration = performance.now() - start
+        this.reportMetric('API', {
+          url,
+          duration,
+          error: error.message
+        })
+        throw error
+      }
+    }
+  }
+
+  reportMetric(name, value) {
+    // 发送到监控服务
+    this.send({
+      type: 'performance',
+      name,
+      value,
+      timestamp: Date.now()
+    })
+  }
+
+  async send(data) {
+    // 使用sendBeacon确保数据发送
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/analytics', JSON.stringify(data))
+    } else {
+      fetch('/api/analytics', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        keepalive: true
+      })
+    }
+  }
+}
+
+// 3. 用户行为监控
+class BehaviorMonitor {
+  constructor() {
+    this.events = []
+  }
+
+  init() {
+    // 点击事件
+    document.addEventListener('click', (e) => {
+      this.trackEvent('click', {
+        tagName: e.target.tagName,
+        id: e.target.id,
+        className: e.target.className,
+        text: e.target.textContent?.slice(0, 50)
+      })
+    })
+
+    // 路由变化
+    this.trackRouteChange()
+
+    // 页面停留时间
+    this.trackPageStay()
+  }
+
+  trackEvent(type, data) {
+    this.events.push({
+      type,
+      data,
+      timestamp: Date.now(),
+      url: location.href
+    })
+
+    // 批量上报
+    if (this.events.length >= 10) {
+      this.flush()
+    }
+  }
+
+  trackRouteChange() {
+    const originalPushState = history.pushState
+    const originalReplaceState = history.replaceState
+
+    history.pushState = (...args) => {
+      originalPushState.apply(history, args)
+      this.trackEvent('route', { type: 'push' })
+    }
+
+    history.replaceState = (...args) => {
+      originalReplaceState.apply(history, args)
+      this.trackEvent('route', { type: 'replace' })
+    }
+
+    window.addEventListener('popstate', () => {
+      this.trackEvent('route', { type: 'popstate' })
+    })
+  }
+
+  trackPageStay() {
+    const startTime = Date.now()
+
+    window.addEventListener('beforeunload', () => {
+      const duration = Date.now() - startTime
+      this.trackEvent('stay', { duration })
+      this.flush()
+    })
+  }
+
+  flush() {
+    if (this.events.length === 0) return
+
+    fetch('/api/analytics/events', {
+      method: 'POST',
+      body: JSON.stringify(this.events),
+      keepalive: true
+    })
+
+    this.events = []
+  }
+}
+
+// 初始化监控系统
+const errorMonitor = new ErrorMonitor({
+  dsn: '/api/errors',
+  environment: import.meta.env.MODE,
+  sampleRate: 1
+})
+
+const perfMonitor = new PerformanceMonitor()
+perfMonitor.measureCoreVitals()
+perfMonitor.observeAPI()
+
+const behaviorMonitor = new BehaviorMonitor()
+behaviorMonitor.init()
+```
+
+### 代码审查最佳实践？（字节、阿里必问）
+
+```javascript
+// Code Review Checklist & Best Practices
+
+// Pull Request模板
+// .github/PULL_REQUEST_TEMPLATE.md
+## 描述
+<!-- 简要描述本次PR的变更内容 -->
+
+## 变更类型
+- [ ] 新功能
+- [ ] Bug修复
+- [ ] 性能优化
+- [ ] 重构
+- [ ] 文档更新
+- [ ] 测试相关
+
+## 相关Issue
+Closes #issue_number
+
+## 变更说明
+<!-- 详细说明你的变更 -->
+
+## 测试
+- [ ] 已添加单元测试
+- [ ] 已添加集成测试
+- [ ] 已进行手动测试
+
+## 截图（如适用）
+<!-- 添加UI变更的截图 -->
+
+## Checklist
+- [ ] 代码遵循项目规范
+- [ ] 已添加必要的注释
+- [ ] 文档已更新
+- [ ] 无console.log或调试代码
+- [ ] 通过所有CI检查
+
+// 代码审查检查清单
+const reviewChecklist = {
+  // 1. 代码质量
+  codeQuality: [
+    '命名是否清晰易懂？',
+    '函数是否单一职责？',
+    '是否有重复代码？',
+    '是否有魔法数字？',
+    '是否有注释说明复杂逻辑？'
+  ],
+
+  // 2. 性能考虑
+  performance: [
+    '是否有不必要的循环嵌套？',
+    '大数组操作是否需要优化？',
+    '是否有内存泄漏风险？',
+    '图片和资源是否优化？',
+    '是否使用了适当的缓存？'
+  ],
+
+  // 3. 安全问题
+  security: [
+    '用户输入是否验证？',
+    '敏感数据是否正确处理？',
+    '是否有XSS风险？',
+    '是否有CSRF保护？',
+    'API调用是否有错误处理？'
+  ],
+
+  // 4. 测试覆盖
+  testing: [
+    '是否有足够的单元测试？',
+    '边界情况是否测试？',
+    '错误处理是否测试？',
+    '测试命名是否清晰？'
+  ],
+
+  // 5. TypeScript
+  typescript: [
+    '类型定义是否完整？',
+    '是否使用了any？',
+    '接口是否可复用？',
+    '泛型使用是否合理？'
+  ]
+}
+
+// Git Commit规范
+// .gitmessage
+# <type>(<scope>): <subject>
+#
+# type: feat, fix, docs, style, refactor, test, chore
+# scope: 影响
+# subject: 简短描述（不超过50字符）
+#
+# 详细描述（可选）
+#
+# Footer（可选）
+# Closes #issue
+
+// Commitlint配置
+// .commitlintrc.js
+module.exports = {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    'type-enum': [2, 'always', [
+      'feat',     // 新功能
+      'fix',      // Bug修复
+      'docs',     // 文档
+      'style',    // 代码格式
+      'refactor', // 重构
+      'perf',     // 性能优化
+      'test',     // 测试
+      'chore',    // 构建/工具
+      'revert'    // 回退
+    ]],
+    'scope-enum': [2, 'always', [
+      'components',
+      'utils',
+      'api',
+      'store',
+      'router'
+    ]],
+    'subject-case': [0],
+    'subject-empty': [2, 'never'],
+    'subject-full-stop': [2, 'never', '.'],
+    'type-case': [2, 'always', 'lower-case'],
+    'type-empty': [2, 'never'],
+    'scope-case': [2, 'always', 'lower-case']
+  }
+}
+
+// 自动化代码审查工具
+// .eslintrc.js
+module.exports = {
+  extends: [
+    'eslint:recommended',
+    'plugin:vue/vue3-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'prettier'
+  ],
+  rules: {
+    // 代码质量
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-unused-vars': 'warn',
+    'no-var': 'error',
+    'prefer-const': 'warn',
+
+    // Vue相关
+    'vue/multi-word-component-names': 'off',
+    'vue/no-v-html': 'warn',
+    'vue/require-default-prop': 'warn',
+    'vue/require-prop-types': 'warn',
+
+    // TypeScript
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-unused-vars': ['warn', {
+      argsIgnorePattern: '^_'
+    }]
+  }
+}
+```
+
+### 文档管理最佳实践？（腾讯高频）
+
+```javascript
+// 文档管理体系
+
+// 1. JSDoc规范
+/**
+ * 用户数据获取函数
+ * @param {number} userId - 用户ID
+ * @param {Object} options - 配置选项
+ * @param {boolean} options.includeProfile - 是否包含个人资料
+ * @param {string[]} [options.fields] - 需要返回的字段
+ * @returns {Promise<User>} 用户数据
+ * @throws {Error} 当用户不存在时抛出错误
+ * @example
+ * const user = await getUser(123, { includeProfile: true })
+ */
+async function getUser(userId, options = {}) {
+  // 实现
+}
+
+// 2. 组件文档规范
+// Button.vue文档
+/**
+ * Button组件 - 基础按钮组件
+ *
+ * @description 提供多种样式和尺寸的按钮
+ *
+ * @example
+ * <Button type="primary" size="large" @click="handleClick">
+ *   点击我
+ * </Button>
+ */
+
+// 3. README模板
+// README.md
+# 项目名称
+
+## 简介
+<!-- 一句话描述项目 -->
+
+## 功能特性
+- ✅ 特性1
+- ✅ 特性2
+- ✅ 特性3
+
+## 技术栈
+- Vue 3
+- TypeScript
+- Vite
+- Pinia
+
+## 快速开始
+
+### 安装依赖
+\`\`\`bash
+pnpm install
+\`\`\`
+
+### 开发
+\`\`\`bash
+pnpm dev
+\`\`\`
+
+### 构建
+\`\`\`bash
+pnpm build
+\`\`\`
+
+## 项目结构
+\`\`\`
+src/
+├── assets/      # 静态资源
+├── components/  # 组件
+├── composables/ # 组合式函数
+├── router/      # 路由
+├── stores/      # 状态管理
+└── views/       # 页面
+\`\`\`
+
+## 开发规范
+- [代码规范](./docs/CODING_STANDARDS.md)
+- [Git工作流](./docs/GIT_WORKFLOW.md)
+- [提交规范](./docs/COMMIT_CONVENTION.md)
+
+## 常见问题
+### Q: 如何配置环境变量？
+A: 在根目录创建.env文件...
+
+## 贡献指南
+欢迎提交PR！
+
+## 许可证
+MIT
+
+// 4. API文档规范
+/**
+ * @api {POST} /api/users 创建用户
+ * @apiGroup Users
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {String} name 用户名
+ * @apiParam {String} email 邮箱
+ *
+ * @apiSuccess {Number} code 状态码
+ * @apiSuccess {Object} data 用户数据
+ * @apiSuccess {Number} data.id 用户ID
+ *
+ * @apiError {Number} code 错误码
+ * @apiError {String} message 错误信息
+ *
+ * @apiExample {curl} 示例:
+ * curl -X POST http://api.example.com/api/users \\
+ *   -d "name=John&email=john@example.com"
+ */
+
+// 5. 变更日志维护
+// CHANGELOG.md
+# Changelog
+
+## [1.2.0] - 2024-01-15
+### Added
+- 新增用户头像上传功能
+- 添加暗色模式支持
+
+### Changed
+- 优化首页加载速度（50%提升）
+- 更新UI组件库到v2.0
+
+### Fixed
+- 修复登录状态丢失问题
+- 修复移动端布局错位
+
+### Deprecated
+- `oldMethod()` 将在v2.0移除
+
+### Removed
+- 移除不再使用的工具函数
+
+### Security
+- 修复XSS漏洞
+
+// 6. 架构文档
+// docs/architecture.md
+# 系统架构
+
+## 整体架构
+\`\`\`
+┌─────────────┐
+│   Browser   │
+└──────┬──────┘
+       │
+┌──────▼──────────┐
+│   Nginx (CDN)   │
+└──────┬──────────┘
+       │
+┌──────▼──────────┐
+│  Load Balancer  │
+└──────┬──────────┘
+       │
+  ┌────┴────┐
+  │         │
+┌─▼──┐  ┌──▼─┐
+│Web1│  │Web2│  (应用服务器)
+└─┬──┘  └──┬─┘
+  │         │
+┌─▼─────────▼─┐
+│  Redis Cluster│ (缓存)
+└──────────────┘
+
+## 数据流
+\`\`\`
+```
+
 ---
 
 **小徐带你飞系列教程**
