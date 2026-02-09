@@ -1,4 +1,43 @@
-# GitLab CI 与 GitHub Actions
+# CI/CD 自动化
+
+## 2024-2026 更新
+
+### CI/CD 技术栈变化 (2024-2026)
+
+**2024-2026年的CI/CD格局：**
+
+- **GitHub Actions 成为主流**：替代Jenkins，成为标准CI/CD平台
+- **GitLab CI/CD 持续演进**：深度集成GitLab生态
+- **Jenkins 定位转变**：传统CI/CD工具，维护模式
+- **CI/CD最佳实践**：GitOps + IaC + 自动化测试
+
+**推荐技术栈 (2024-2026)：**
+```yaml
+CI/CD平台选择：
+  开源项目: GitHub Actions (免费、强大)
+  企业自托管: GitLab CI/CD (一体化)
+  复杂工作流: Jenkins (可选、维护成本高)
+
+特性对比：
+  GitHub Actions:
+    ✅ 原生集成GitHub
+    ✅ YAML配置简单
+    ✅ Actions市场丰富
+    ✅ 支持自托管Runner
+    ✅ 免费额度慷慨
+
+  GitLab CI/CD:
+    ✅ 内置集成
+    ✅ 可视化Pipeline
+    ✅ 内置Registry
+    ✅ 功能全面
+
+  Jenkins:
+    ⚠️ 插件生态庞大
+    ⚠️ 配置复杂
+    ⚠️ 维护成本高
+    ⚠️ 适合传统项目
+```
 
 ## GitLab CI/CD
 

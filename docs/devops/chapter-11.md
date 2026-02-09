@@ -1,5 +1,39 @@
 # 系统监控与日志
 
+## 2024-2026 更新
+
+### 监控技术栈变化 (2024-2026)
+
+**2024-2026年监控技术栈：**
+
+- **Prometheus 2.55+**：云原生监控标准，性能提升
+- **Grafana 11+**：强大的可视化平台，集成AI功能
+- **Loki**：轻量级日志聚合，替代ELK Stack
+- **eBPF监控**：革命性内核级可观测性 (Falco、Pixie、Parca)
+- **OpenTelemetry**：可观测性标准，统一数据收集
+- **Cilium**：基于eBPF的网络+安全+可观测性
+
+**推荐技术栈 (2024-2026)：**
+```yaml
+监控栈选择：
+  指标(Metrics):
+    标准选择: Prometheus 2.55+ + Grafana 11+
+    eBPF增强: Pixie (自动APM)
+
+  日志(Logs):
+    轻量选择: Loki + Promtail (推荐)
+    完整方案: ELK Stack (Elasticsearch 8+)
+
+  链路(Traces):
+    标准: OpenTelemetry + Jaeger/Tempo
+
+  eBPF可观测性 (2024+重点):
+    安全: Falco (运行时安全)
+    性能: Pixie (自动APM)
+    网络: Cilium + Hubble (网络可视化)
+    调优: Parca (持续性能分析)
+```
+
 ## 为什么需要监控
 
 监控系统运行状态，及时发现问题，保障服务稳定性。

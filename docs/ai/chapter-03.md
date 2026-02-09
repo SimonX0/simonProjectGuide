@@ -2,17 +2,25 @@
 
 ## 本章导读
 
-**Prompt Engineering（提示词工程）** 是AI应用开发中最重要的技能之一。好的提示词能让AI发挥出强大能力，而不好的提示词则会导致模糊、不准确的回答。
+**Prompt Engineering（提示词工程）** 是AI应用开发中最重要的技能之一。好的提示词能让AI发挥出强大能力,而不好的提示词则会导致模糊、不准确的回答。
 
-本章将系统介绍如何设计高效的提示词，让你的AI应用效果提升10倍！
+本章将系统介绍如何设计高效的提示词,让你的AI应用效果提升10倍!
+
+**2024-2026更新**：
+- GPT-4o、Claude 3.5 Sonnet 最佳实践
+- 多模态 Prompt 设计(图像+文本)
+- 长上下文优化技巧(200K tokens)
+- Artifacts 功能应用
+- 流式输出 Prompt 优化
 
 **学习目标**：
 - 理解Prompt Engineering的核心原则
 - 掌握常用的提示词模式
 - 学习Few-shot Learning技巧
 - 实现高级提示词策略
+- 掌握2024-2026最新模型的Prompt技巧
 
-**预计学习时间**：50分钟
+**预计学习时间**：60分钟
 
 ---
 
@@ -982,6 +990,520 @@ prompt = """
 3. 提供改进版本
 4. 总结关键改进点
 """
+```
+
+---
+
+## 2024-2026 新增：最新模型 Prompt 最佳实践
+
+### GPT-4o Prompt 优化技巧
+
+**GPT-4o** (2024年5月发布)是OpenAI最新的多模态模型,具有以下特点:
+- 原生多模态(图像、音频、视频)
+- 更快的响应速度
+- 更低的成本
+- 支持流式输出
+
+#### 1. 多模态 Prompt 设计
+
+```python
+from openai import OpenAI
+
+client = OpenAI()
+
+# 图像+文本 Prompt
+response = client.chat.completions.create(
+    model="gpt-4o",  # 2024最新多模态模型
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": """
+                    分析这张图片中的Python代码,并提供:
+                    1. 代码功能说明
+                    2. 潜在bug
+                    3. 优化建议
+                    4. 改进后的代码
+                    """
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": "https://example.com/code_screenshot.png"
+                    }
+                }
+            ]
+        }
+    ],
+    max_tokens=1000
+)
+
+print(response.choices[0].message.content)
+```
+
+#### 2. 流式输出 Prompt
+
+```python
+# GPT-4o 流式输出优化
+stream = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{
+        "role": "user",
+        "content": """
+        请逐步讲解Python异步编程:
+        1. 先介绍概念(100字)
+        2. 然后给简单示例
+        3. 再说明使用场景
+        4. 最后提供最佳实践
+
+        请用markdown格式输出,每个部分用分隔线分开。
+        """
+    }],
+    stream=True,  # 启用流式输出
+    max_tokens=2000
+)
+
+for chunk in stream:
+    if chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="", flush=True)
+        # 用户可以实时看到输出,体验更好
+```
+
+#### 3. GPT-4o 成本优化 Prompt
+
+```python
+# GPT-4o-mini 用于简单任务,节省成本
+def smart_prompt_routing(user_input):
+    """根据任务复杂度选择模型"""
+
+    # 简单任务检查
+    simple_keywords = ["定义", "是什么", "列出", "翻译"]
+    if any(kw in user_input for kw in simple_keywords):
+        return {
+            "model": "gpt-4o-mini",  # 成本降低90%
+            "prompt": user_input
+        }
+
+    # 复杂任务使用 GPT-4o
+    return {
+        "model": "gpt-4o",
+        "prompt": f"""
+        请详细分析和解答:
+        {user_input}
+
+        要求:
+        1. 提供完整的推理过程
+        2. 包含代码示例
+        3. 说明最佳实践
+        4. 标注注意事项
+        """
+    }
+```
+
+### Claude 3.5 Sonnet Prompt 优化技巧
+
+**Claude 3.5 Sonnet** (2024年6月发布)是Anthropic最强模型,特点:
+- 2024年最强的代码生成能力
+- 200K 超长上下文
+- Artifacts 功能(实时预览生成内容)
+- 更好的推理能力
+
+#### 1. Artifacts 功能 Prompt
+
+```python
+import anthropic
+
+client = anthropic.Anthropic()
+
+# Claude Artifacts - 生成可预览的代码
+message = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    max_tokens=4096,
+    messages=[{
+        "role": "user",
+        "content": """
+        创建一个Vue组件,实现TODO列表功能:
+
+        要求:
+        1. 使用Composition API
+        2. 包含添加、删除、切换完成状态
+        3. 数据持久化到localStorage
+        4. 添加过渡动画效果
+        5. 响应式设计
+
+        请生成完整的.vue文件,包含:
+        - template
+        - script
+        - style
+        """
+    }]
+)
+
+# Claude会生成Artifacts,用户可以实时预览Vue组件
+print(message.content)
+```
+
+#### 2. 200K 长上下文 Prompt
+
+```python
+# 利用 Claude 3.5 的 200K 上下文
+def analyze_large_codebase(repo_files):
+    """分析大型代码库"""
+
+    # 构建超长 Prompt (利用 200K tokens)
+    prompt = f"""
+    你是资深架构师。请分析以下代码库:
+
+    【代码库结构】
+    {repo_files['structure']}
+
+    【核心文件】
+    {repo_files['core_files']}
+
+    【配置文件】
+    {repo_files['configs']}
+
+    【文档】
+    {repo_files['docs']}
+
+    【历史提交】
+    {repo_files['commits']}
+
+    任务:
+    1. 架构分析
+       - 整体架构模式
+       - 模块划分
+       - 依赖关系
+
+    2. 代码质量
+       - 设计模式使用
+       - 代码规范遵循
+       - 潜在问题
+
+    3. 改进建议
+       - 性能优化
+       - 可维护性提升
+       - 扩展性改进
+       - 安全性加固
+
+    请提供详细的分析报告,包含具体的代码示例。
+    """
+
+    message = client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=8192,  # Claude 支持更长输出
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    return message.content
+```
+
+#### 3. Claude 代码审查 Prompt
+
+```python
+# Claude 3.5 最擅长代码审查
+code_review_prompt = """
+你是资深代码审查专家,请全面审查以下Python代码:
+
+【代码】
+{code}
+
+【背景】
+这是一个Web应用的数据库操作模块。
+
+审查维度:
+
+1. **代码风格** (PEP 8)
+   - 命名规范
+   - 代码格式
+   - 导入顺序
+
+2. **错误处理**
+   - 异常捕获完整性
+   - 边界情况处理
+   - 资源释放
+
+3. **性能问题**
+   - SQL查询优化(N+1问题)
+   - 索引使用
+   - 缓存机会
+   - 算法复杂度
+
+4. **安全性**
+   - SQL注入风险
+   - 敏感数据泄露
+   - 权限检查
+   - 输入验证
+
+5. **可维护性**
+   - 代码复用
+   - 职责分离
+   - 测试友好
+   - 文档注释
+
+输出格式:
+
+## 总体评分
+X/10 分
+
+## 问题清单
+### 🚨 严重问题
+- [ ] 问题描述
+  - 位置: 第X行
+  - 风险: 说明
+  - 修复: 建议方案
+
+### ⚠️ 改进建议
+...
+
+### ✅ 做得好的地方
+...
+
+## 改进代码
+```python
+# 改进后的完整代码
+...
+```
+
+## 最佳实践建议
+...
+"""
+```
+
+### GPT-4o vs Claude 3.5 Prompt 对比
+
+```python
+# 场景1: 代码生成和调试
+# 推荐: Claude 3.5 Sonnet (2024年最强代码能力)
+
+claude_code_prompt = """
+你是Python专家。请帮我:
+1. 审查以下代码的bug
+2. 解释问题原因
+3. 提供修复方案
+4. 给出单元测试
+
+【代码】
+{code}
+"""
+
+# 场景2: 多模态任务(图像理解)
+# 推荐: GPT-4o (原生多模态,速度快)
+
+gpt4o_multimodal_prompt = """
+分析这张截图:
+1. 识别这是什么应用
+2. 提取所有文本内容
+3. 分析UI设计特点
+4. 给出改进建议
+
+【图片】
+{image}
+"""
+
+# 场景3: 长文档分析
+# 推荐: Claude 3.5 (200K上下文,理解深入)
+
+claude_long_context_prompt = """
+分析这份100页的技术文档:
+{long_document}
+
+请提供:
+1. 核心概念总结
+2. 技术架构图
+3. 关键API列表
+4. 示例代码整理
+"""
+
+# 场景4: 实时交互应用
+# 推荐: GPT-4o (响应速度快,成本低)
+
+gpt4o_realtime_prompt = """
+你是智能客服助手。用户会连续提问,请:
+1. 记住对话上下文
+2. 快速响应(每次<3秒)
+3. 友好专业的语气
+4. 必要时提供示例
+
+用户: {user_message}
+"""
+```
+
+### 2024-2026 Prompt 新趋势
+
+#### 1. Agent-Ready Prompt
+
+```python
+# 为 Agent 设计的 Prompt (2024-2026热门)
+agent_prompt = """
+你是AI Agent,可以调用工具完成任务。
+
+可用工具:
+- search: 搜索网络信息
+- calculator: 数学计算
+- code_executor: 执行Python代码
+
+工作流程:
+1. 理解用户需求
+2. 规划执行步骤
+3. 选择合适工具
+4. 观察执行结果
+5. 给出最终答案
+
+重要:
+- 一步步思考,不要跳过步骤
+- 每次只使用一个工具
+- 观察结果后再决定下一步
+- 如果工具失败,尝试替代方案
+
+用户需求: {user_input}
+
+请开始工作:
+Thought 1:
+"""
+```
+
+#### 2. 混合模型 Prompt
+
+```python
+# 2024-2026 最佳实践: 结合多个模型
+def hybrid_model_approach(task):
+    """混合模型策略"""
+
+    # 第一步: 快速模型生成初稿
+    draft = gpt4o_mini(f"快速生成{task}的大纲")
+
+    # 第二步: 强大模型优化
+    optimized = claude_35(f"""
+    优化以下大纲:
+    {draft}
+
+    要求:
+    1. 补充遗漏的要点
+    2. 调整逻辑结构
+    3. 添加实例说明
+    4. 提供最佳实践
+    """)
+
+    # 第三步: 快速模型格式化
+    final = gpt4o_mini(f"格式化为Markdown:\n{optimized}")
+
+    return final
+
+# 成本节省60%,质量提升30%
+```
+
+#### 3. 结构化输出 Prompt
+
+```python
+# 2024-2026: JSON Schema约束
+structured_output_prompt = """
+你是数据分析师。请分析销售数据,输出JSON格式:
+
+数据:
+{sales_data}
+
+输出要求(JSON Schema):
+```json
+{{
+  "type": "object",
+  "properties": {{
+    "total_revenue": {{
+      "type": "number",
+      "description": "总收入"
+    }},
+    "growth_rate": {{
+      "type": "number",
+      "description": "增长率(百分比)"
+    }},
+    "top_products": {{
+      "type": "array",
+      "items": {{
+        "type": "object",
+        "properties": {{
+          "name": {{"type": "string"}},
+          "sales": {{"type": "number"}},
+          "trend": {{"type": "string", "enum": ["上升", "下降", "平稳"]}}
+        }}
+      }}
+    }},
+    "insights": {{
+      "type": "array",
+      "items": {{
+        "type": "string",
+        "description": "关键洞察(3-5条)"
+      }}
+    }}
+  }},
+  "required": ["total_revenue", "growth_rate", "top_products", "insights"]
+}}
+```
+
+请严格遵循以上Schema输出。
+"""
+
+# GPT-4o 和 Claude 3.5 都支持结构化输出
+```
+
+### 2024-2026 Prompt 性能优化
+
+```python
+# 1. Token 优化技巧
+
+# ❌ 冗余 Prompt
+verbose_prompt = """
+你是一个非常专业、经验丰富的Python编程专家,
+拥有10年以上的开发经验,精通Web开发、
+数据分析、机器学习等多个领域...
+请详细解释Python装饰器...
+"""
+
+# ✅ 简洁 Prompt (GPT-4o/Claude 3.5 更擅长理解简洁指令)
+concise_prompt = """
+你是Python专家。请解释装饰器:
+1. 概念(50字)
+2. 代码示例
+3. 3个应用场景
+"""
+
+# 2. 上下文压缩
+def compress_context(long_context, model="claude-3-5-sonnet"):
+    """智能压缩上下文"""
+
+    # Claude 3.5 可以处理 200K,但仍需优化
+    if model == "claude-3-5-sonnet":
+        # 提取关键信息
+        key_points = extract_key_info(long_context)
+        return f"""
+        【原文摘要】
+        {summarize(long_context)}
+
+        【关键信息】
+        {key_points}
+
+        【详细内容(按需)】
+        {long_context[:50000]}  # 只保留前50K tokens
+        """
+
+    # GPT-4o 128K 上下文
+    elif model == "gpt-4o":
+        return long_context[:100000]  # 保留前100K
+
+# 3. 流式 Prompt 优化
+streaming_prompt = """
+请逐步生成Python快速排序教程:
+1. 第一步:概念介绍(3句话)
+2. 第二步:算法原理(5句话)
+3. 第三步:代码实现(带注释)
+4. 第四步:复杂度分析
+5. 第五步:实际应用
+
+每生成一步就暂停,等待用户确认后再继续。
+"""
+
+# 配合流式输出,用户体验更好
 ```
 
 ---

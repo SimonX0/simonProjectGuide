@@ -6,11 +6,19 @@
 
 **LangChain** 是目前最流行的LLM应用开发框架，它为我们提供了一套完整的工具链，大大简化了LLM应用的开发。
 
+**2024-2026更新**：
+- LangChain 0.3+ 重新设计的架构
+- LCEL（LangChain Expression Language）成为标准
+- 内置 LangGraph 支持复杂 Agent
+- 改进的类型提示和错误处理
+- 更好的流式输出支持
+
 **学习目标**：
 - 理解LangChain的核心概念和架构
 - 掌握Model I/O：模型、提示词、输出解析
 - 学习Chains：串联多个操作
 - 实现Memory：对话记忆管理
+- 了解LangGraph基础
 
 **预计学习时间**：60分钟
 
@@ -82,20 +90,42 @@ LangChain的解决方案：
 ### 安装LangChain
 
 ```bash
-# 核心包
-pip install langchain
+# 2024-2026 推荐安装方式
 
-# OpenAI集成
-pip install langchain-openai
+# 核心 - LangChain 0.3+
+pip install langchain==0.3.0
+pip install langchain-core==0.3.0
+pip install langchain-openai==0.2.0
 
-# 其他常用包
-pip install langchain-community  # 社区扩展
-pip install chromadb              # 向量数据库
-pip install faiss-cpu             # 向量搜索
+# 社区扩展
+pip install langchain-community==0.3.0
 
-# 完整依赖
-pip install langchain langchain-openai langchain-community chromadb
+# LangGraph - 复杂Agent编排
+pip install langgraph==0.2.0
+
+# 向量数据库
+pip install chromadb==0.5.0
+pip install faiss-cpu==1.8.0
+
+# 完整依赖（一键安装）
+pip install langchain==0.3.0 \
+            langchain-openai==0.2.0 \
+            langchain-community==0.3.0 \
+            langgraph==0.2.0 \
+            chromadb==0.5.0
+
+# 验证安装
+python -c "import langchain; print(langchain.__version__)"
+# 应输出: 0.3.0 或更高版本
 ```
+
+**版本说明（2024-2026）**：
+- **LangChain 0.3+**（2024年10月发布）- 重大架构更新
+  - 完全基于LCEL重写
+  - 移除所有废弃的API
+  - 性能提升30-50%
+  - 更好的Python类型提示
+  - 内置LangGraph支持
 
 ---
 
@@ -112,27 +142,45 @@ LangChain提供了统一的模型接口，支持多种模型：
 
 ```python
 from langchain_openai import ChatOpenAI
-from langchain_openai import OpenAI
+from langchain_anthropic import ChatAnthropic
 from config import Config
 
-# 1. Chat模型（推荐）
-chat = ChatOpenAI(
-    model="gpt-3.5-turbo",
+# 2024-2026 推荐模型配置
+
+# 1. GPT-4o - 多模态、速度快
+gpt4o = ChatOpenAI(
+    model="gpt-4o",  # 2024年最新多模态模型
     api_key=Config.OPENAI_API_KEY,
     temperature=0.7,
-    max_tokens=1000
+    max_tokens=4096
 )
 
-# 2. Completion模型（旧版）
-llm = OpenAI(
-    model="gpt-3.5-turbo-instruct",
-    api_key=Config.OPENAI_API_KEY
+# 2. Claude 3.5 Sonnet - 综合能力最强
+claude = ChatAnthropic(
+    model="claude-3-5-sonnet-20241022",  # 2024年最强模型
+    api_key=Config.ANTHROPIC_API_KEY,
+    temperature=0.7,
+    max_tokens=8192  # Claude支持更长输出
+)
+
+# 3. GPT-4o-mini - 性价比最高
+gpt4o_mini = ChatOpenAI(
+    model="gpt-4o-mini",  # 2024年性价比之王
+    api_key=Config.OPENAI_API_KEY,
+    temperature=0.7,
+    max_tokens=16384
 )
 
 # 使用示例
 message = "你好，请介绍一下你自己"
-response = chat.invoke(message)
+response = gpt4o.invoke(message)
 print(response.content)  # AI的回复
+
+# 2024-2026 模型选择建议：
+# - 复杂任务/代码 → Claude 3.5 Sonnet
+# - 多模态/实时 → GPT-4o
+# - 高频简单任务 → GPT-4o-mini
+# - 中文优化 → Qwen 2.5 / DeepSeek-V3
 ```
 
 **Message类型**：
@@ -550,6 +598,35 @@ chain = MultiPromptChain(
 # 使用
 result = chain.run("如何在Python中实现快速排序？")
 # 会自动路由到code链
+```
+
+**2024-2026更新：使用RunnableLambda实现更灵活的路由**
+
+```python
+from langchain_core.runnables import RunnableLambda
+
+# 定义路由函数
+def route_func(inputs):
+    query = inputs["input"].lower()
+    if "代码" in query or "编程" in query:
+        return "code"
+    elif "文章" in query or "文案" in query:
+        return "text"
+    else:
+        return "general"
+
+# 创建路由链
+from langchain_core.runnables import RunnableBranch
+
+branch = RunnableBranch(
+    (lambda x: "代码" in x["input"], code_chain),
+    (lambda x: "文本" in x["input"], text_chain),
+    general_chain
+)
+
+# 使用LCEL语法
+chain = branch
+result = chain.invoke({"input": "写Python代码实现快速排序"})
 ```
 
 ---
@@ -1625,9 +1702,120 @@ agent = AgentExecutor(
 
 ---
 
+## 2024-2026新增：LangGraph基础
+
+### 什么是LangGraph？
+
+**LangGraph** 是LangChain官方在2024年推出的新库，专门用于构建**有状态的、多步骤的Agent应用**。
+
+```
+LangChain vs LangGraph：
+
+┌─────────────┬──────────────────┬──────────────────┐
+│   特性      │   LangChain      │   LangGraph      │
+├─────────────┼──────────────────┼──────────────────┤
+│ 适用场景    │ 线性/简单工作流  │ 复杂状态机      │
+│ 状态管理    │ 手动            │ 内置状态管理     │
+│ 循环/分支   │ 困难            │ 原生支持         │
+│ Agent编排   │ 基础Agent       │ Multi-Agent系统  │
+│ 可视化      │ 无              │ 自动生成图       │
+│ 学习曲线    │ 低              │ 中等             │
+└─────────────┴──────────────────┴──────────────────┘
+```
+
+### 快速开始
+
+```python
+# 安装 LangGraph
+pip install langgraph==0.2.0
+
+# 简单示例：状态图
+from langgraph.graph import StateGraph, END
+from typing import TypedDict
+
+# 1. 定义状态
+class GraphState(TypedDict):
+    input: str
+    intermediate: str
+    output: str
+
+# 2. 定义节点函数
+def node_a(state: GraphState) -> GraphState:
+    """节点A：处理输入"""
+    return {
+        **state,
+        "intermediate": f"处理过: {state['input']}"
+    }
+
+def node_b(state: GraphState) -> GraphState:
+    """节点B：生成输出"""
+    return {
+        **state,
+        "output": f"最终结果: {state['intermediate']}"
+    }
+
+# 3. 构建图
+workflow = StateGraph(GraphState)
+
+# 添加节点
+workflow.add_node("process", node_a)
+workflow.add_node("finalize", node_b)
+
+# 添加边
+workflow.set_entry_point("process")
+workflow.add_edge("process", "finalize")
+workflow.add_edge("finalize", END)
+
+# 4. 编译图
+app = workflow.compile()
+
+# 5. 运行
+result = app.invoke({"input": "Hello LangGraph"})
+print(result)
+# {'input': 'Hello LangGraph', 'intermediate': '处理过: Hello LangGraph', 'output': '最终结果: 处理过: Hello LangGraph'}
+```
+
+### LangGraph vs 传统Chain
+
+```python
+# 传统Chain - 线性流程
+chain = (
+    prompt
+    | llm
+    | parser
+)
+result = chain.invoke(input)
+
+# LangGraph - 复杂状态流程
+workflow = StateGraph(State)
+workflow.add_node("step1", step1_func)
+workflow.add_node("step2", step2_func)
+workflow.add_conditional_edges(
+    "step1",
+    should_continue,  # 条件函数
+    {
+        "continue": "step2",
+        "end": END
+    }
+)
+app = workflow.compile()
+result = app.invoke(initial_state)
+```
+
+**什么时候用LangGraph？**
+- ✅ 需要循环和条件分支
+- ✅ 多Agent协作
+- ✅ 需要维护复杂状态
+- ✅ 需要可视化和调试工作流
+
+**更多LangGraph内容见 [Chapter 05: AI Agent](chapter-05)**
+
+---
+
 **遇到问题？**
 - 查看代码示例：`examples/` 目录
 - 参考官方文档：https://python.langchain.com
+- LangGraph文档：https://langchain-ai.github.io/langgraph
 - 发邮件求助：esimonx@163.com
 
 **下一章：[Prompt Engineering →](chapter-03)**

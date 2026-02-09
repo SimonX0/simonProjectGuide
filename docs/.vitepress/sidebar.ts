@@ -111,6 +111,45 @@ export const sidebar = {
       ]
     },
     {
+      text: 'Java面试题',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '学习路线', link: '/interview/java/' },
+        {
+          text: '📗 中级面试题',
+          collapsible: true,
+          collapsed: false,
+          items: [
+            { text: 'Java基础与并发编程', link: '/interview/java/intermediate/java-basics' },
+            { text: 'Spring框架', link: '/interview/java/intermediate/spring-framework' },
+            { text: '数据库与Redis', link: '/interview/java/intermediate/database-redis' },
+            { text: '消息队列', link: '/interview/java/intermediate/message-queue' }
+          ]
+        },
+        {
+          text: '📕 高级面试题',
+          collapsible: true,
+          collapsed: false,
+          items: [
+            { text: '微服务架构', link: '/interview/java/advanced/microservices' },
+            { text: '分布式系统', link: '/interview/java/advanced/distributed-system' },
+            { text: '性能调优', link: '/interview/java/advanced/performance-tuning' }
+          ]
+        },
+        {
+          text: '🚀 实战项目面试题',
+          collapsible: true,
+          collapsed: false,
+          items: [
+            { text: '电商微服务平台', link: '/interview/java/advanced/project-interview' },
+            { text: '秒杀系统设计', link: '/interview/java/advanced/project-interview#项目二秒杀系统设计' },
+            { text: '高并发系统设计', link: '/interview/java/advanced/project-interview#项目三高并发系统设计' }
+          ]
+        }
+      ]
+    },
+    {
       text: 'AI面试题',
       collapsible: true,
       collapsed: false,
@@ -841,6 +880,88 @@ export const sidebar = {
         { text: '附录C：代码模板与脚手架', link: '/guide/appendix-templates' },
         { text: '附录D：快速开始检查清单', link: '/guide/appendix-checklist' },
         { text: '附录E：Git命令速查手册', link: '/guide/appendix-git' }
+      ]
+    }
+  ],
+  '/java/': [
+    {
+      text: '学习路线',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '学习路线', link: '/java/' }
+      ]
+    },
+    {
+      text: '基础入门',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '第1章：Java简介与环境搭建', link: '/java/chapter-114' },
+        { text: '第2章：Java基础语法', link: '/java/chapter-115' },
+        { text: '第3章：面向对象编程', link: '/java/chapter-116' },
+        { text: '第4章：数组与集合框架', link: '/java/chapter-117' },
+        { text: '第5章：异常处理与调试', link: '/java/chapter-118' },
+        { text: '第6章：IO流与文件操作', link: '/java/chapter-119' },
+        { text: '第7章：多线程基础', link: '/java/chapter-120' },
+        { text: '第8章：泛型与注解', link: '/java/chapter-121' },
+        { text: '第9章：Lambda表达式与Stream API', link: '/java/chapter-122' },
+        { text: '第10章：Java新特性（Java 17-21）', link: '/java/chapter-123' }
+      ]
+    },
+    {
+      text: 'Web开发',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '第11章：Spring Boot 3.x快速入门', link: '/java/chapter-124' },
+        { text: '第12章：Spring MVC开发', link: '/java/chapter-125' },
+        { text: '第13章：API设计与调用', link: '/java/chapter-125-api' },
+        { text: '第14章：Spring Data JPA数据访问', link: '/java/chapter-126' },
+        { text: '第15章：Spring Security + JWT认证', link: '/java/chapter-127' },
+        { text: '第16章：Redis缓存与分布式锁', link: '/java/chapter-128' },
+        { text: '第17章：RabbitMQ/Kafka消息队列', link: '/java/chapter-129' },
+        { text: '第18章：响应式编程（WebFlux）', link: '/java/chapter-130' },
+        { text: '第19章：实战项目1：个人博客系统', link: '/java/chapter-131' }
+      ]
+    },
+    {
+      text: '微服务全家桶',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '第20章：Nacos注册中心与配置中心', link: '/java/chapter-132' },
+        { text: '第21章：Sentinel熔断限流降级', link: '/java/chapter-133' },
+        { text: '第22章：Seata分布式事务', link: '/java/chapter-134' },
+        { text: '第23章：Spring Cloud Gateway网关', link: '/java/chapter-135' },
+        { text: '第24章：Skywalking链路追踪', link: '/java/chapter-136' },
+        { text: '第25章：定时任务与异步处理', link: '/java/chapter-137' },
+        { text: '第26章：日志管理与监控（ELK）', link: '/java/chapter-138' },
+        { text: '第27章：实战项目2：电商平台微服务版', link: '/java/chapter-139' },
+        { text: '第28章：实战项目3：在线教育平台（AI集成）', link: '/java/chapter-140' },
+        { text: '第29章：实战项目4：微服务架构完整系统', link: '/java/chapter-141' }
+      ]
+    },
+    {
+      text: '高级进阶',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '第30章：虚拟线程实战（Java 21）', link: '/java/chapter-142' },
+        { text: '第31章：GraalVM原生镜像', link: '/java/chapter-143' },
+        { text: '第32章：Spring AI完全指南', link: '/java/chapter-144' },
+        { text: '第33章：Quarkus云原生框架', link: '/java/chapter-145' },
+        { text: '第34章：事件驱动架构', link: '/java/chapter-146' },
+        { text: '第35章：JVM性能调优', link: '/java/chapter-147' },
+        { text: '第36章：企业级架构设计', link: '/java/chapter-148' }
+      ]
+    },
+    {
+      text: '附录',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '📖 附录：Java开发工具速查手册', link: '/java/appendix-tools' }
       ]
     }
   ],

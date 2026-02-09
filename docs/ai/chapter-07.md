@@ -4,13 +4,21 @@
 
 恭喜你进入进阶学习！本章将介绍AI应用开发的前沿技术和高级主题，帮助你构建更强大、更专业的AI应用。
 
+**2024-2026新增**：
+- **Llama 3.1本地部署**：405B/70B/8B模型实践
+- **MCP协议**：Model Context Protocol（Anthropic标准）
+- **vLLM高性能推理**：本地模型加速
+- **AutoGen Multi-Agent**：微软Agent框架
+- **Agent Protocol**：标准化Agent通信
+
 **学习目标**：
-- 了解主流LLM模型的特点和选择策略
-- 掌握Claude等其他模型API的使用
+- 了解2024-2026主流LLM模型的特点和选择策略
+- 掌握Claude 3.5/GPT-4o等最新模型API的使用
 - 学习MCP协议和LangGraph框架
+- 掌握Llama 3.1本地部署
 - 掌握AI应用的评估和测试方法
 
-**预计学习时间**：80分钟
+**预计学习时间**：90分钟
 
 ---
 

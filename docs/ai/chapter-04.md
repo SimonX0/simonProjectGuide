@@ -4,13 +4,21 @@
 
 **RAG（Retrieval-Augmented Generation，检索增强生成）** 是目前最热门的AI应用技术之一。它结合了信息检索和文本生成，让AI能够基于你的私有数据回答问题，解决LLM知识过时和幻觉问题。
 
+**2024-2026更新**：
+- RAG 2.0：混合检索、重排序、查询扩展
+- 最新Embedding模型：text-embedding-3、Cohere Rerank 3
+- 向量数据库：Pinecone、Weaviate、Qdrant最新特性
+- GraphRAG：知识图谱+RAG结合
+- Adaptive RAG：动态检索策略
+
 **学习目标**：
 - 理解RAG的原理和应用场景
 - 掌握文档加载和分割技术
-- 学习Embeddings和向量数据库
-- 构建完整的RAG系统
+- 学习最新Embeddings和向量数据库
+- 构建生产级RAG系统
+- 了解RAG 2.0高级技术
 
-**预计学习时间**：70分钟
+**预计学习时间**：75分钟
 
 ---
 

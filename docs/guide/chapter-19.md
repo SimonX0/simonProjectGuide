@@ -2,6 +2,8 @@
 
 ## TypeScript + Vue3
 
+> **2024-2026更新**：本章节已更新到 TypeScript 5.3+，包含最新的装饰器、import attributes 等新特性。
+
 > **学习目标**：全面掌握 Vue3 与 TypeScript 结合使用
 > **核心内容**：
 > - TypeScript 配置详解
@@ -18,16 +20,27 @@
 
 ### 初始化 TypeScript 项目
 
+> **2024-2026更新**：TypeScript 5.3+ 是当前最新稳定版，支持最新的 ECMAScript 特性。
+
 #### 创建 Vue3 + TypeScript 项目
 
 ```bash
-# 使用 Vite 创建项目
+# 使用 Vite 创建项目（推荐）
 npm create vite@latest my-vue-app -- --template vue-ts
 
 # 或使用 Vue CLI
 npm create vue@latest my-vue-app
 # 选择 TypeScript、Vue Router、Pinia 等特性
 ```
+
+**TypeScript 5.3+ 新特性（2024-2026）：**
+- 🎯 稳定的装饰器（Decorators）支持
+- 🔧 import attributes（导入属性）语法
+- ⚡ 性能优化：编译速度提升 15%
+- 📦 改进的类型推导
+- 🛡️ 增强的错误提示
+- 🚀 支持 ECMAScript 2023+ 特性
+- 💡 优化的包体积
 
 #### 项目结构
 
@@ -66,19 +79,19 @@ vue3-ts-project/
 ```json
 {
   "compilerOptions": {
-    // ===== 语言和环境 =====
-    "target": "ES2020",                    // 编译目标
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],  // 包含的库
+    // ===== 语言和环境（2024-2026标准） =====
+    "target": "ES2022",                    // 编译目标（TypeScript 5.3+推荐）
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],  // 包含的库（支持ES2023）
     "jsx": "preserve",                     // JSX 处理方式
 
     // ===== 模块 =====
     "module": "ESNext",                    // 模块系统
-    "moduleResolution": "bundler",         // 模块解析策略
+    "moduleResolution": "bundler",         // 模块解析策略（Vite 5.4+）
     "resolveJsonModule": true,             // 允许导入 JSON
     "allowImportingTsExtensions": true,    // 允许导入 .ts 文件
     "types": ["vite/client", "element-plus/global"],  // 包含的类型声明
 
-    // ===== 类型检查 =====
+    // ===== 类型检查（TypeScript 5.3+ 严格模式） =====
     "strict": true,                        // 启用所有严格类型检查
     "noUnusedLocals": true,                // 检查未使用的局部变量
     "noUnusedParameters": true,            // 检查未使用的参数
@@ -86,6 +99,7 @@ vue3-ts-project/
     "noImplicitReturns": true,             // 检查函数是否有隐式返回
     "noUncheckedIndexedAccess": true,      // 索引访问检查
     "noImplicitOverride": true,            // 检查 override 修饰符
+    "exactOptionalPropertyTypes": true,    // 精确可选属性类型（TS 5.3+）
 
     // ===== 模块绑定 =====
     "esModuleInterop": true,               // ES 模块互操作性

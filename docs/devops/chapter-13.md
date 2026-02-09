@@ -1,5 +1,40 @@
 # Terraform 基础设施即代码
 
+## 2024-2026 更新
+
+### Terraform 和 IaC 技术栈变化 (2024-2026)
+
+**2024-2026年的IaC格局：**
+
+- **Terraform 1.8+**：持续改进，声明式IaC标准
+- **Terraform 2.0预览**：语言改进，更佳的开发者体验
+- **Pulumi崛起**：使用真实编程语言(Python/TS/Go)
+- **CDK for Terraform**：使用TypeScript/Python定义基础设施
+- **Platform Engineering**：IDP(内部开发者平台)成为趋势
+
+**推荐技术栈 (2024-2026)：**
+```yaml
+IaC工具选择：
+  声明式IaC:
+    标准: Terraform 1.8+ (HCL语言)
+    多云、生态成熟、最佳实践丰富
+
+  编程式IaC:
+    真实语言: Pulumi (Python/TS/Go)
+    AWS CDK: AWS专属、TypeScript优先
+    CDK for TF: Terraform + TypeScript
+
+  平台工程 (2024+趋势):
+    IDP框架: Backstage (Spotify开源)
+    云原生: Humanitec
+    Golden Path: 标准化最佳实践
+
+版本建议:
+  Terraform: 1.8+ (准备Terraform 2.0)
+  Pulumi: 3.100+ (编程式IaC)
+  Backstage: 1.20+ (IDP平台)
+```
+
 ## 什么是基础设施即代码 (IaC)
 
 基础设施即代码（Infrastructure as Code，IaC）是用代码来管理和配置基础设施的方法，而不是手动配置。

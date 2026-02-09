@@ -1,5 +1,29 @@
 # Kubernetes 容器编排
 
+## 2024-2026 更新
+
+### Kubernetes 1.30+ 主要更新 (2024-2026)
+
+**Kubernetes 1.30+ (2024-2026)的重要变化：**
+
+- **Sidecar容器正式GA** (1.29+)：独立的容器生命周期管理
+- **动态资源分配(DRA)** (1.26+)：GPU、FPGA、SR-IOV等资源动态分配
+- **CEL验证策略** (1.25+)：替代Webhook的内置验证机制
+- **Job成功终止控制** (1.23+)：更灵活的Job完成策略
+- **StatefulSet启动顺序控制** (1.27+)：精细的Pod启动控制
+- **NetworkPolicy状态** (1.27+)：网络策略测试模式
+- **网络改进**：对等IPVS、SCTP支持、CoreDNS优化
+
+**版本建议：**
+```bash
+# 推荐版本 (2024-2026)
+Kubernetes: 1.30+      # 最新稳定版
+Helm: 3.16+            # K8s包管理标准
+kubectl: 1.30+         # 与集群版本匹配
+containerd: 1.7+       # 容器运行时
+CNI: Calico/Cilium     # 网络插件
+```
+
 ## 什么是 Kubernetes
 
 Kubernetes（简称 K8s）是一个开源的容器编排平台，用于自动化部署、扩展和管理容器化应用。由 Google 开发，现在是 CNCF（云原生计算基金会）的毕业项目。

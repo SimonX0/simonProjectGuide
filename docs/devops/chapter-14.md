@@ -1,5 +1,41 @@
 # Argo CD 与 GitOps
 
+## 2024-2026 更新
+
+### GitOps 技术栈变化 (2024-2026)
+
+**2024-2026年GitOps技术栈：**
+
+- **Argo CD 2.10+**：GitOps持续交付标准，功能完善
+- **Flux CD**：CNCF孵化项目，轻量级替代
+- **GitOps成为标准**：声明式CD、自动同步、版本控制
+- **CI/CD分离**：CI构建镜像，CD(GitOps)自动部署
+- **Secret管理**：Sealed Secrets、External Secrets Operator
+- **Helm + Kustomize**：包管理和覆盖标准
+
+**推荐技术栈 (2024-2026)：**
+```yaml
+GitOps工具选择：
+  标准选择: Argo CD 2.10+ (功能最完善)
+  轻量级: Flux CD (CNCF孵化)
+  企业级: Argo CD Pro + RBAC
+
+配置管理：
+  包管理: Helm 3.16+ (K8s包管理标准)
+  覆盖: Kustomize (原生支持)
+  模板: Helm + Kustomize组合
+
+Secret管理：
+  加密: Sealed Secrets (Bitnami)
+  集成: External Secrets Operator
+  Vault: HashiCorp Vault (企业级)
+
+工作流:
+  开发: GitHub Actions (CI)
+  部署: Argo CD (CD)
+  监控: Prometheus + Grafana
+```
+
 ## 什么是 GitOps
 
 GitOps 是一种持续交付（CD）的方法论，使用 Git 作为"单一事实来源"来管理基础设施和应用的部署。

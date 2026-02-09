@@ -1,16 +1,16 @@
 ---
-title: AI应用开发完全指南
+title: AI应用开发完全指南（2024-2026最新版）
 ---
 
-# AI 应用开发完全指南
+# AI 应用开发完全指南（2024-2026最新版）
 
 ## 简介
 
-欢迎来到 AI 应用开发完全指南！本章节将从零开始，系统地介绍如何使用大语言模型（LLM）和 LangChain 框架开发智能应用。
+欢迎来到 AI 应用开发完全指南！本章节基于 **2024-2026 最新 AI 技术栈**，将从零开始，系统地介绍如何使用大语言模型（LLM）、LangChain 0.3+、RAG、AI Agents 等技术构建智能应用。
 
 ## 为什么学习 AI 应用开发？
 
-我们正处于 AI 革命的时代，学会使用 AI 技术构建应用将成为开发者必备的核心竞争力。本教程将教你如何从 0 到 1 构建属于自己的 AI 应用。
+我们正处于 AI 革命的时代，2024-2026 年 AI 技术快速发展，学会使用 AI 技术构建应用已成为开发者必备的核心竞争力。本教程将教你如何从 0 到 1 构建属于自己的 AI 应用。
 
 ### AI 应用开发的核心价值
 
@@ -20,32 +20,36 @@ title: AI应用开发完全指南
 - ✅ **创新产品**：构建前所未有的智能产品和服务
 - ✅ **职业发展**：把握 AI 时代的职业机遇
 
-## 📊 学习路径图
+## 📊 学习路径图（2024-2026）
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    AI应用开发学习路径                         │
+│           AI应用开发学习路径（2024-2026最新版）                │
 └─────────────────────────────────────────────────────────────┘
 
 📚 学习路线
    └─ 查看完整的学习规划和推荐路径
 
-📖 基础入门（第1-4章）[⏱️ 2.5小时 | 🔰 入门]
-   ├─ AI辅助开发
+📖 基础入门（第1-4章）[⏱️ 3小时 | 🔰 入门]
+   ├─ AI辅助开发（Claude 3.5、GPT-4o）
    ├─ 工具配置指南
-   ├─ AI应用基础
-   └─ LangChain框架
+   ├─ AI应用基础（LLM、Token、Temperature）
+   └─ LangChain 0.3+框架
                            ↓
-🎯 进阶（第5-7章）[⏱️ 3.5小时 | ⭐⭐ 进阶]
-   ├─ Prompt工程
-   ├─ RAG检索增强
-   └─ AI Agent
+🎯 进阶（第5-7章）[⏱️ 4小时 | ⭐⭐ 进阶]
+   ├─ Prompt工程（结构化提示词）
+   ├─ RAG检索增强（向量数据库、Embedding）
+   └─ AI Agent（Function Calling、工具调用）
                            ↓
-🚀 拓展（第8-9章）[⏱️ 3.5小时 | ⭐⭐⭐ 高级]
-   ├─ 实战项目
-   └─ 应用进阶（MCP、LangGraph、本地部署）
+🚀 拓展（第8-10章）[⏱️ 6小时 | ⭐⭐⭐ 高级]
+   ├─ 2026 Agent Skills（CrewAI、AutoGen、Semantic Kernel）
+   ├─ LangChain 0.3+新特性
+   ├─ LangGraph复杂Agent
+   ├─ Llama 3.1本地部署
+   ├─ MCP协议（Model Context Protocol）
+   └─ 实战项目（完整RAG应用、Agent应用）
 
-总计学习时间：约 10-12小时（建议2-3周完成）
+总计学习时间：约 13-15小时（建议2-3周完成）
 ```
 
 ## 📚 课程模块概览
@@ -63,10 +67,11 @@ title: AI应用开发完全指南
 - [第6章：RAG检索增强](chapter-04) - 检索增强生成
 - [第7章：AI Agent](chapter-05) - 智能体开发
 
-### 模块 3：拓展（2 章）
+### 模块 3：拓展（3 章）
 
-- [第8章：实战项目](chapter-06) - 完整项目实战
-- [第9章：应用进阶](chapter-07) - 高级主题与最佳实践
+- [第8章：2026 Agent Skills](chapter-08-agent-skills) - 多Agent协作框架
+- [第9章：实战项目](chapter-06) - 完整项目实战
+- [第10章：应用进阶](chapter-07) - 高级主题与最佳实践
 
 ### 📊 学习时间规划
 
@@ -76,20 +81,22 @@ title: AI应用开发完全指南
 |   进阶    | 3.5 小时 |  ⭐⭐  | 核心技术掌握       |
 |   拓展    | 3.5 小时 | ⭐⭐⭐  | 项目实战与高级应用  |
 
-### 技术栈
+### 技术栈（2024-2026）
 
 本教程使用以下技术栈：
 
-- **Python 3.9+** - AI 开发的标准语言
-- **LangChain** - 最流行的 LLM 应用开发框架
-- **OpenAI API / Claude API** - 强大的大语言模型
-- **Ollama** - 本地部署开源模型
-- **Moltbot (原 ClawdBot)** - 轻量级 AI Agent 开发框架
-- **MCP** - Model Context Protocol 数据接口协议
-- **LangGraph** - 复杂 Agent 状态图框架
-- **Vector Database (Chroma/Pinecone)** - 向量数据库
+- **Python 3.11+** - AI 开发的标准语言（推荐 3.11+）
+- **LangChain 0.3+** - 最流行的 LLM 应用开发框架（最新版）
+- **OpenAI GPT-4o / o1** - 最新的 GPT-4o 和 o1 系列模型
+- **Anthropic Claude 3.5 Sonnet** - 强大的 Claude 3.5 Sonnet 模型
+- **Llama 3.1 (405B/70B/8B)** - Meta 最新开源模型
+- **Ollama** - 本地部署开源模型（支持 Llama 3.1）
+- **MCP (Model Context Protocol)** - Anthropic 的数据接口协议
+- **LangGraph** - 复杂 Agent 状态图框架（LangChain 0.3+ 内置）
+- **Vector Database** - 向量数据库（Chroma、Pinecone、Weaviate、Qdrant）
 - **Streamlit / FastAPI** - 快速构建 AI 应用界面
 - **Ragas** - AI 应用评估框架
+- **Function Calling** - 模型工具调用能力（GPT-4o、Claude 3.5）
 
 ## 适用人群
 
@@ -120,15 +127,18 @@ title: AI应用开发完全指南
 
 完成本教程后，你将能够：
 
-- ✅ 理解大语言模型的工作原理
-- ✅ 使用 LangChain 构建 LLM 应用
-- ✅ 编写高效的提示词（Prompt）
-- ✅ 实现 RAG 检索增强生成系统
-- ✅ 开发具备工具调用能力的 AI Agent
+- ✅ 理解大语言模型的工作原理（GPT-4o、Claude 3.5、Llama 3.1）
+- ✅ 使用 LangChain 0.3+ 构建现代化 LLM 应用
+- ✅ 编写高效的提示词（Prompt Engineering）
+- ✅ 实现 RAG 检索增强生成系统（向量数据库）
+- ✅ 开发具备 Function Calling 的 AI Agent
+- ✅ 使用 LangGraph 构建复杂多步 Agent
+- ✅ 本地部署 Llama 3.1 开源模型
+- ✅ 使用 MCP 协议连接数据源
+- ✅ 掌握 2026 Agent Skills（CrewAI、AutoGen、Semantic Kernel）
+- ✅ 构建多 Agent 协作系统
 - ✅ 部署和优化 AI 应用
-- ✅ 选择合适的 LLM 模型（GPT、Claude、开源模型）
-- ✅ 使用 MCP 协议和 LangGraph 构建高级应用
-- ✅ 评估和测试 AI 应用的质量
+- ✅ 评估和测试 AI 应用的质量（Ragas 框架）
 
 ## 课程特色
 
@@ -136,21 +146,44 @@ title: AI应用开发完全指南
 - 💡 **实战导向**：每个知识点都配有可运行的代码示例
 - 🛠️ **最佳实践**：总结生产环境中的经验和坑点
 - 🎯 **项目驱动**：通过完整项目掌握全流程开发
-- 🚀 **紧跟前沿**：涵盖 2024-2025 年最新的 AI 技术趋势
+- 🚀 **紧跟前沿**：涵盖 2024-2026 年最新的 AI 技术趋势
+- 🤖 **最新模型**：GPT-4o、Claude 3.5 Sonnet、Llama 3.1、OpenAI o1
+- 🔗 **LangChain 0.3+**：使用最新版本框架和特性
+- 🌐 **MCP 协议**：Anthropic 的数据接口标准
+- 🧠 **LangGraph**：复杂 Agent 状态图开发
+- 🤝 **Agent Skills 2026**：CrewAI、AutoGen、Semantic Kernel、Multi-Agent 协作
 
-## 技术栈
+## 技术栈（2024-2026）
 
 本教程使用以下技术栈：
 
-- **Python 3.9+** - AI 开发的标准语言
-- **LangChain** - 最流行的 LLM 应用开发框架
-- **OpenAI API / Claude API** - 强大的大语言模型
-- **Ollama** - 本地部署开源模型
-- **Moltbot (原 ClawdBot)** - 轻量级 AI Agent 开发框架
-- **MCP** - Model Context Protocol 数据接口协议
-- **LangGraph** - 复杂 Agent 状态图框架
-- **Vector Database** - 向量数据库
+### 核心 AI 框架
+- **Python 3.11+** - AI 开发的标准语言（推荐 3.11+）
+- **LangChain 0.3+** - 最新版 LLM 应用开发框架
+- **LangGraph** - 复杂 Agent 状态图框架（LangChain 0.3+ 内置）
+
+### AI 模型
+- **OpenAI GPT-4o / o1** - OpenAI 最新模型（o1 具备系统推理能力）
+- **Anthropic Claude 3.5 Sonnet** - Anthropic 最新模型（最强代码能力）
+- **Llama 3.1 (405B/70B/8B)** - Meta 最新开源模型
+- **Google Gemini 2.0** - Google 最新多模态模型（Agent 原生支持）
+
+### 🆕 Agent Skills 框架（2026）
+- **CrewAI** - 多 Agent 协作框架（角色扮演、任务分配）
+- **AutoGen** (Microsoft) - 多 Agent 对话框架
+- **Semantic Kernel** (Microsoft) - 企业级 Agent 编排框架
+- **Agent Protocol** - Agent 通信标准化协议
+- **Multi-Agent Orchestration** - 分层、扁平、顺序协作模式
+
+### 数据与协议
+- **MCP (Model Context Protocol)** - Anthropic 数据接口协议
+- **Vector Database** - 向量数据库（Chroma、Pinecone、Weaviate、Qdrant）
+- **Agent Memory Systems** - Agent 长期记忆系统
+
+### 部署与开发
+- **Ollama** - 本地部署开源模型（支持 Llama 3.1）
 - **Streamlit / FastAPI** - 快速构建 AI 应用界面
+- **Docker / Kubernetes** - AI 应用容器化部署
 
 ## 快速导航
 
@@ -163,6 +196,7 @@ title: AI应用开发完全指南
 - [Prompt工程](chapter-03) - 提示词优化技巧
 - [RAG检索增强](chapter-04) - 知识库问答系统
 - [AI Agent](chapter-05) - 智能体开发实战
+- [2026 Agent Skills](chapter-08-agent-skills) - 多Agent协作完全指南
 
 ### 常见问题
 
