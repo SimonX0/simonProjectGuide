@@ -143,8 +143,6 @@ export const sidebar = {
           collapsed: false,
           items: [
             { text: '电商微服务平台', link: '/interview/java/advanced/project-interview' },
-            { text: '秒杀系统设计', link: '/interview/java/advanced/project-interview#项目二秒杀系统设计' },
-            { text: '高并发系统设计', link: '/interview/java/advanced/project-interview#项目三高并发系统设计' }
           ]
         }
       ]

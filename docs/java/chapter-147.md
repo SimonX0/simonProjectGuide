@@ -276,18 +276,16 @@ jstack <pid> | grep "java.lang.Thread.State" | sort | uniq -c
 ### jstat - JVM统计信息
 
 ```bash
-```bash
-1. 查看GC统计（每秒更新一次）
+# 1. 查看GC统计（每秒更新一次）
 jstat -gc <pid> 1s
 
 # 输出示例：
 #  S0C    S1C    S0U    S1U      EC       EU         OC       OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT
-# 512.0  512.0    0.0   256.0   2048.0    1024.0    4096.0    2048.0   256.0  128.0  512.0   384.0     10    0.250    2    0.150    0.400
+#-512.0  512.0    0.0   256.0   2048.0    1024.0    4096.0    2048.0   256.0  128.0  512.0   384.0     10    0.250    2    0.150    0.400
 
 # 字段说明：
 # S0C/S1C: Survivor 0/1 区容量
 # S0U/S1U: Survivor 0/1 区使用量
-```
 # EC: Eden区容量
 # EU: Eden区使用量
 # OC: 老年代容量

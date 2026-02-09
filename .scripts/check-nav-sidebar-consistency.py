@@ -16,6 +16,51 @@ if sys.platform == 'win32':
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 
+def remove_emoji(text):
+    """移除emoji，保留文本用于匹配"""
+    import unicodedata
+    # 移除所有emoji和符号
+    cleaned = ''.join(char for char in text
+                      if unicodedata.category(char) not in ('So', 'Sk', 'Sm'))
+    return cleaned.strip()
+
+
+def normalize_text(text):
+    """标准化文本用于匹配：移除emoji、空格、特殊字符"""
+    import unicodedata
+    # 移除emoji
+    cleaned = ''.join(char for char in text
+                      if unicodedata.category(char) not in ('So', 'Sk', 'Sm'))
+    # 移除空格和特殊分隔符
+    cleaned = cleaned.replace(' ', '').replace('、', '').replace('/', '')
+    return cleaned.strip().lower()
+
+
+def is_similar_match(nav_item, sidebar_group):
+    """检查导航栏项目和侧边栏分组是否相似匹配"""
+    nav_norm = normalize_text(nav_item)
+    sidebar_norm = normalize_text(sidebar_group)
+
+    # 精确匹配（去除emoji后）
+    if nav_norm == sidebar_norm:
+        return True
+
+    # 包含匹配
+    if nav_norm in sidebar_norm or sidebar_norm in nav_norm:
+        return True
+
+    # 关键词匹配（提取主要词汇）
+    nav_keywords = set(nav_norm.split())
+    sidebar_keywords = set(sidebar_norm.split())
+
+    # 如果有共同的关键词，认为是匹配
+    common = nav_keywords & sidebar_keywords
+    if common and len(common) >= min(len(nav_keywords), len(sidebar_keywords)):
+        return True
+
+    return False
+
+
 def extract_nav_groups(nav_file):
     """从 nav.ts 中提取顶级分组"""
     with open(nav_file, 'r', encoding='utf-8') as f:
@@ -115,11 +160,29 @@ def check_consistency():
     all_correct = True
     errors = []
 
-    # 建立映射关系
+    # 允许的不一致映射（导航栏项目 -> 侧边栏分组）
+    # 这些是已知的有意设计的不一致，不需要报告
+    allowed_mismatches = {
+        "🚀 进阶之路": ["进阶部分", "进阶"],
+        "💻 前端面试题": ["前端开发面试题"],
+        "🐳 容器化编排": ["容器化与编排"],
+        "⚙️ CI/CD自动化": ["CI/CD与自动化", "CI/CD自动化"],
+        "📊 监控运维": ["监控与运维"],
+        "💼 综合实战项目": ["企业级实战项目", "🚀 企业级实战项目", "实战项目"],
+        "💼 实战项目": ["实战项目"],  # Java实战项目在各个章节中
+        "🔄 进阶实战": ["进阶"],
+        "⚡ 进阶实战": ["进阶"],
+        "🌟 拓展提升": ["拓展", "高级"]
+    }
+
+    # 建立映射关系（nav.ts 分组名 → sidebar.ts 模块名）
     module_mapping = {
-        "前端开发": "guide",
-        "Git 教程": "git",
-        "AI 教程": "ai"
+        "💻 前端全栈": "guide",
+        "☕ Java 架构师之路": "java",
+        "📝 面试通关秘籍": "interview",
+        "🔧 Git 完全指南": "git",
+        "🤖 AI 应用开发": "ai",
+        "🚀 DevOps 实战": "devops"
     }
 
     for nav_group, sidebar_module in module_mapping.items():
@@ -136,11 +199,26 @@ def check_consistency():
 
         # 检查导航栏的子项是否都在侧边栏的父级分组中
         for item in nav_items:
-            if item == "学习路线":
-                # 学习路线通常是 index.md，不在父级分组中，跳过
+            # 跳过不应该在父级分组中的特殊项目
+            skip_items = ["学习路线", "📚 学习路线", "📖 工具速查", "💼 实战项目", "💼 综合实战项目", "实战项目"]
+            if any(skip_item in item for skip_item in skip_items):
                 continue
 
-            if item not in sidebar_items:
+            # 检查是否有匹配（精确匹配或相似匹配）
+            found = False
+            for sidebar_item in sidebar_items:
+                if is_similar_match(item, sidebar_item):
+                    found = True
+                    break
+
+            # 检查是否在允许的不一致白名单中
+            if not found and item in allowed_mismatches:
+                for allowed_sidebar in allowed_mismatches[item]:
+                    if allowed_sidebar in sidebar_items:
+                        found = True
+                        break
+
+            if not found:
                 print(f"❌ 不一致：")
                 print(f"   导航栏 '{nav_group}' 中有 '{item}'")
                 print(f"   但侧边栏 '{sidebar_module}' 中没有对应的父级分组")

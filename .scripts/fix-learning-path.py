@@ -59,8 +59,8 @@ def check_learning_path_index(index_file, expected_chapters):
     if not expected_chapters:
         return False, "没有章节信息"
 
-    # 提取 index.md 中的所有章节范围
-    ranges = re.findall(r'（第(\d+)-(\d+)章）', content)
+    # 提取 index.md 中的所有章节范围（支持中文和英文括号）
+    ranges = re.findall(r'[（\(]第(\d+)-(\d+)章[）\)]', content)
 
     if not ranges:
         return False, "未找到学习路径图"
@@ -151,7 +151,7 @@ def main():
             if index_file.exists():
                 with open(index_file, 'r', encoding='utf-8') as f:
                     content = f.read()
-                    current_ranges = re.findall(r'（第(\d+)-(\d+)章）', content)
+                    current_ranges = re.findall(r'[（\(]第(\d+)-(\d+)章[）\)]', content)
                     if current_ranges:
                         print("  当前范围:")
                         for r in current_ranges[:5]:
