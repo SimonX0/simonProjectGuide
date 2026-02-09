@@ -20,100 +20,640 @@
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│            大语言模型生态全景                        │
+│            大语言模型生态全景 (2024-2026)            │
 ├─────────────────────────────────────────────────────┤
 │                                                     │
-│  🔵 闭源商业模型                                     │
-│  ├── GPT-4 / GPT-4 Turbo (OpenAI)                  │
-│  ├── Claude 3 Opus/Sonnet (Anthropic)              │
-│  └── Gemini Pro (Google)                           │
+│  🔵 闭源商业模型 (2024-2026)                        │
+│  ├── GPT-4o / GPT-4o-mini (OpenAI)                 │
+│  ├── Claude 3.5 Sonnet / Claude 4.0 (Anthropic)    │
+│  ├── Gemini 2.0 Pro (Google)                       │
+│  └── DeepSeek-V3 (深度求索)                        │
 │                                                     │
-│  🟢 开源模型                                        │
-│  ├── Llama 3 (Meta)                                │
-│  ├── Mistral (Mistral AI)                          │
-│  ├── Qwen (阿里)                                   │
-│  ├── Yi (零一万物)                                 │
-│  └── DeepSeek (深度求索)                           │
+│  🟢 开源模型 (2024-2026)                            │
+│  ├── Llama 3.3 / 3.2 (Meta)                        │
+│  ├── Qwen 2.5 (阿里)                               │
+│  ├── Mistral Large 2 (Mistral AI)                  │
+│  ├── DeepSeek-V2 / V3 (深度求索)                   │
+│  └── Phi-4 (Microsoft)                             │
 │                                                     │
-│  🟡 本地部署                                        │
-│  ├── Ollama                                        │
-│  ├── LocalAI                                       │
-│  └── vLLM                                          │
+│  🟡 本地部署框架                                     │
+│  ├── Ollama (轻量级)                                │
+│  ├── vLLM (高性能推理)                              │
+│  ├── LM Studio (图形界面)                           │
+│  └── TensorRT-LLM (NVIDIA优化)                     │
 │                                                     │
 └─────────────────────────────────────────────────────┘
 ```
 
-### 主流模型详细对比
+### 主流模型详细对比 (2024-2026)
 
 | 模型 | 开发者 | 上下文 | 优势 | 劣势 | 价格 | 最适合场景 |
 |------|--------|--------|------|------|------|-----------|
-| **GPT-4 Turbo** | OpenAI | 128K | 综合能力最强 | 输出慢 | $$$ | 复杂任务、代码 |
-| **GPT-3.5 Turbo** | OpenAI | 16K | 速度快、便宜 | 能力较弱 | $ | 简单任务、聊天 |
-| **Claude 3 Opus** | Anthropic | 200K | 长文本、分析 | 价格高 | $$$$ | 长文档分析 |
-| **Claude 3 Sonnet** | Anthropic | 200K | 平衡性好 | 中文略弱 | $$$ | 通用场景 |
-| **Llama 3 70B** | Meta | 8K | 开源免费 | 需要部署 | 免费 | 本地部署 |
-| **Mistral Large** | Mistral AI | 32K | 性价比高 | 生态弱 | $$ | 中等任务 |
-| **Qwen 72B** | 阿里 | 32K | 中文优秀 | 需要部署 | 免费 | 中文场景 |
-| **Gemini Pro** | Google | 32K | 多模态 | 稳定性 | $$ | 多模态任务 |
+| **Claude 3.5 Sonnet** | Anthropic | 200K | 综合最强、Artifacts | 价格高 | $$$$ | 复杂任务、代码、2024首选 |
+| **Claude 4.0 Opus** | Anthropic | 200K+ | 最强推理能力 | 价格极高 | $$$$$ | 2025最复杂任务 |
+| **GPT-4o** | OpenAI | 128K | 多模态、速度快 | 上下文较小 | $$$ | 多模态应用、实时对话 |
+| **GPT-4o-mini** | OpenAI | 128K | 性价比最高 | 能力略弱 | $ | 高频简单任务 |
+| **DeepSeek-V3** | 深度求索 | 128K | 免费开源、MoE | 需要部署 | 免费 | 中文、本地部署 |
+| **Llama 3.3 70B** | Meta | 128K | 开源最强 | 需要部署 | 免费 | 本地部署 |
+| **Qwen 2.5 72B** | 阿里 | 128K | 中文最强 | 需要部署 | 免费 | 中文场景 |
+| **Gemini 2.0 Pro** | Google | 1M+ | 超长上下文 | 稳定性 | $$$$ | 超长文档分析 |
+| **Phi-4** | Microsoft | 128K | 小而美 | 能力有限 | 免费 | 边缘设备 |
 
-### 模型选择策略
+### 模型选择策略 (2024-2026更新)
 
 #### 决策树
 
 ```
-开始选择
+开始选择 (2024-2026)
   ↓
-需要处理超长文档(>100K tokens)?
-  ├─ 是 → Claude 3 Opus (200K)
+需要处理超长文档(>500K tokens)?
+  ├─ 是 → Gemini 2.0 Pro (1M+ 上下文)
   └─ 否 ↓
-      需要最强的代码能力?
-      ├─ 是 → GPT-4 Turbo
+      需要最强的综合能力(代码+推理)?
+      ├─ 是 → Claude 3.5 Sonnet / Claude 4.0 Opus
       └─ 否 ↓
-          预算有限?
-          ├─ 是 → GPT-3.5 Turbo / Mistral
+          需要多模态(图像+音频+视频)?
+          ├─ 是 → GPT-4o
           └─ 否 ↓
-              需要中文优化?
-              ├─ 是 → Qwen / Claude 3 Sonnet
-              └─ 否 → GPT-4 / Claude 3 Opus
+              预算有限或高频调用?
+              ├─ 是 → GPT-4o-mini / DeepSeek-V3
+              └─ 否 ↓
+                  需要中文优化?
+                  ├─ 是 → Qwen 2.5 / DeepSeek-V3
+                  └─ 否 → Claude 3.5 Sonnet
 ```
 
-#### 具体建议
+#### 2024-2026推荐组合
+
+**个人开发者/小团队**：
+```yaml
+主力模型: Claude 3.5 Sonnet
+  - 综合能力最强
+  - Artifacts功能强大
+  - 适合复杂任务
+
+备用模型: GPT-4o-mini
+  - 性价比最高
+  - 高频简单任务
+  - 降低成本
+
+本地模型: DeepSeek-V3
+  - 敏感数据处理
+  - 离线环境
+  - 零成本
+```
+
+**企业级应用**：
+```yaml
+核心业务: Claude 4.0 Opus
+  - 最强推理能力
+  - 关键决策任务
+
+多模态: GPT-4o
+  - 图像、音频处理
+  - 实时交互
+
+微调模型: Qwen 2.5 / Llama 3.3
+  - 领域专家
+  - 部署在内网
+```
+
+#### 具体建议 (2024-2026)
 
 ```python
-# 场景1：代码生成和调试
-推荐模型：GPT-4 Turbo
+# 场景1：代码生成和调试 (2024-2026首选)
+推荐模型：Claude 3.5 Sonnet
 理由：
-- 代码能力强
-- 理解复杂逻辑
-- Bug检测准确
+- 2024年代码能力最强
+- Artifacts功能可直接运行代码
+- 理解复杂架构
+- 支持大型项目重构
+
+备选：GPT-4o (实时性要求高)
 
 # 场景2：长文档分析
-推荐模型：Claude 3 Opus
+推荐模型：Claude 3.5 Sonnet / Gemini 2.0 Pro
 理由：
-- 200K上下文（约15万汉字）
-- 分析能力强
+- Claude: 200K上下文，分析深入
+- Gemini: 超长文档(>500K tokens)
 - 不易遗漏细节
+- 支持多文档对比
 
-# 场景3：客服聊天机器人
-推荐模型：Claude 3 Sonnet / GPT-3.5 Turbo
+# 场景3：高频聊天机器人 (2024-2026成本优化)
+推荐模型：GPT-4o-mini / DeepSeek-V3
 理由：
-- 成本可控
+- GPT-4o-mini: 性价比最高($0.15/1M tokens)
+- DeepSeek-V3: 开源免费
 - 响应速度快
 - 用户体验好
 
-# 场景4：敏感数据处理
-推荐模型：本地部署（Llama 3 / Qwen）
+# 场景4：敏感数据处理 (2024-2026本地部署)
+推荐模型：DeepSeek-V3 / Qwen 2.5 72B
 理由：
+- MoE架构，性能接近GPT-4
 - 数据不出域
 - 隐私安全
-- 无API费用
+- 部署成本可控
 
-# 场景5：多模态应用
-推荐模型：GPT-4V / Gemini Pro
+# 场景5：多模态应用 (2024-2026原生多模态)
+推荐模型：GPT-4o / Gemini 2.0 Pro
 理由：
-- 理解图像
-- 处理多种输入
+- 原生多模态(图像+音频+视频)
+- 实时语音对话
+- 理解视频内容
 - 综合能力强
+
+# 场景6：AI Agent开发 (2024-2026新场景)
+推荐模型：Claude 3.5 Sonnet
+理由：
+- 推理能力强
+- 工具调用稳定
+- 支持复杂决策
+- 适合多Agent协作
+
+# 场景7：前端+AI开发 (2024-2026热门)
+推荐模型：Claude 3.5 Sonnet + Artifacts
+理由：
+- Artifacts实时预览
+- 生成完整Vue/React组件
+- 支持迭代修改
+- 开发效率提升10倍
+```
+
+---
+
+## 2024-2026 AI技术热点
+
+### Claude 3.5 Sonnet - 2024年度模型
+
+**核心特性**：
+
+```python
+import anthropic
+
+client = anthropic.Anthropic(api_key="your-api-key")
+
+# 1. Artifacts功能 - 代码实时预览
+response = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    max_tokens=4096,
+    messages=[{
+        "role": "user",
+        "content": "创建一个Vue3待办事项组件，支持拖拽排序"
+    }]
+)
+
+# Artifacts会在右侧面板实时渲染代码
+# 支持HTML/CSS/JavaScript/Vue/React等
+
+# 2. 超长上下文处理
+long_text = open("huge_document.txt").read()  # 200K tokens
+
+response = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    max_tokens=8192,
+    messages=[{
+        "role": "user",
+        "content": f"分析以下文档并提取关键信息：\n{long_text}"
+    }]
+)
+
+# 3. 复杂代码重构
+response = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    max_tokens=16384,
+    messages=[{
+        "role": "user",
+        "content": """
+        我有一个大型Vue项目，请帮我：
+        1. 将Options API改为Composition API
+        2. 添加TypeScript类型
+        3. 优化性能
+        [项目代码...]
+        """
+    }]
+)
+```
+
+**Artifacts实战案例**：
+
+```vue
+<!-- Claude 3.5 Sonnet生成的Vue组件 -->
+<template>
+  <div class="todo-app">
+    <h2>{{ title }}</h2>
+    <input
+      v-model="newTodo"
+      @keyup.enter="addTodo"
+      placeholder="添加新任务..."
+    />
+    <TransitionGroup name="list" tag="ul">
+      <li
+        v-for="todo in sortedTodos"
+        :key="todo.id"
+        draggable="true"
+        @dragstart="onDragStart($event, todo)"
+        @drop="onDrop($event, todo)"
+        @dragover.prevent
+      >
+        <input
+          type="checkbox"
+          v-model="todo.completed"
+        />
+        <span
+          :class="{ completed: todo.completed }"
+        >
+          {{ todo.text }}
+        </span>
+        <button @click="removeTodo(todo.id)">
+          删除
+        </button>
+      </li>
+    </TransitionGroup>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+
+interface Todo {
+  id: number
+  text: string
+  completed: boolean
+  order: number
+}
+
+const title = ref('待办事项')
+const newTodo = ref('')
+const todos = ref<Todo[]>([])
+const draggedItem = ref<Todo | null>(null)
+
+const sortedTodos = computed(() =>
+  [...todos.value].sort((a, b) => a.order - b.order)
+)
+
+function addTodo() {
+  if (!newTodo.value.trim()) return
+  todos.value.push({
+    id: Date.now(),
+    text: newTodo.value,
+    completed: false,
+    order: todos.value.length
+  })
+  newTodo.value = ''
+}
+
+function onDragStart(event: DragEvent, todo: Todo) {
+  draggedItem.value = todo
+}
+
+function onDrop(event: DragEvent, targetTodo: Todo) {
+  if (!draggedItem.value) return
+  // 拖拽排序逻辑...
+}
+</script>
+
+<style scoped>
+.todo-app {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.completed {
+  text-decoration: line-through;
+  color: #999;
+}
+</style>
+```
+
+### GPT-4o - 原生多模态模型
+
+**实时语音对话**：
+
+```python
+from openai import OpenAI
+import pyaudio
+
+client = OpenAI(api_key="your-api-key")
+
+# 实时语音对话
+def real_time_voice_chat():
+    """GPT-4o实时语音对话"""
+
+    # 1. 录音
+    audio = record_audio()
+
+    # 2. 转文字(Whisper)
+    transcript = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio
+    )
+
+    # 3. GPT-4o生成回复
+    response = client.chat.completions.create(
+        model="gpt-4o",  # 原生多模态
+        messages=[{
+            "role": "user",
+            "content": transcript.text
+        }]
+    )
+
+    # 4. 文字转语音(TTS)
+    speech = client.audio.speech.create(
+        model="tts-1",
+        voice="alloy",
+        input=response.choices[0].message.content
+    )
+
+    # 5. 播放
+    play_audio(speech)
+
+# 实时视频理解
+def analyze_video(video_path: str):
+    """GPT-4o分析视频内容"""
+
+    # 提取视频帧
+    frames = extract_video_frames(video_path)
+
+    # 逐帧分析
+    responses = []
+    for frame in frames:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{frame}"
+                        }
+                    },
+                    {
+                        "type": "text",
+                        "text": "描述这一帧发生了什么？"
+                    }
+                ]
+            }]
+        )
+        responses.append(response.choices[0].message.content)
+
+    return responses
+```
+
+### AI Agent框架对比 (2024-2026)
+
+| 框架 | 特点 | 适用场景 | 学习曲线 |
+|------|------|----------|----------|
+| **LangGraph** | 状态图、可视化 | 复杂Agent流程 | 中等 |
+| **AutoGen** | 多Agent对话 | 协作任务 | 较低 |
+| **CrewAI** | 角色明确 | 专业团队模拟 | 较低 |
+| **Semantic Kernel** | 企业级 | 微软生态 | 较高 |
+
+**LangGraph实战** (2024热门)：
+
+```python
+from langgraph.graph import StateGraph, END
+from typing import TypedDict
+
+# 1. 定义状态
+class AgentState(TypedDict):
+    task: str
+    research_result: str
+    code: str
+    test_result: str
+    final_output: str
+
+# 2. 定义节点
+def researcher(state: AgentState):
+    """研究节点"""
+    # 使用Claude 3.5 Sonnet进行研究
+    result = claude_client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        messages=[{
+            "role": "user",
+            "content": f"研究以下任务的最佳实践：\n{state['task']}"
+        }]
+    )
+    state["research_result"] = result.content[0].text
+    return state
+
+def coder(state: AgentState):
+    """编码节点"""
+    result = claude_client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        messages=[{
+            "role": "user",
+            "content": f"""
+            根据研究结果编写代码：
+
+            研究：{state['research_result']}
+            任务：{state['task']}
+
+            要求：
+            1. 使用Vue3 + TypeScript
+            2. 遵循最佳实践
+            3. 包含完整类型定义
+            """
+        }]
+    )
+    state["code"] = result.content[0].text
+    return state
+
+def tester(state: AgentState):
+    """测试节点"""
+    # 生成测试代码
+    result = claude_client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        messages=[{
+            "role": "user",
+            "content": f"为以下代码生成单元测试：\n{state['code']}"
+        }]
+    )
+    state["test_result"] = result.content[0].text
+    return state
+
+# 3. 构建图
+workflow = StateGraph(AgentState)
+
+# 添加节点
+workflow.add_node("researcher", researcher)
+workflow.add_node("coder", coder)
+workflow.add_node("tester", tester)
+
+# 添加边
+workflow.add_edge("researcher", "coder")
+workflow.add_edge("coder", "tester")
+workflow.add_edge("tester", END)
+
+# 设置入口
+workflow.set_entry_point("researcher")
+
+# 4. 编译和运行
+app = workflow.compile()
+
+# 执行
+result = app.invoke({
+    "task": "创建一个支持拖拽的待办事项组件"
+})
+
+print(result["final_output"])
+```
+
+**AutoGen多Agent协作** (2024热门)：
+
+```python
+import autogen
+
+# 1. 定义助手
+assistant = autogen.AssistantAgent(
+    name="assistant",
+    llm_config={
+        "model": "claude-3-5-sonnet-20241022",
+        "api_key": "your-api-key"
+    }
+)
+
+# 2. 定义代码执行器
+user_proxy = autogen.UserProxyAgent(
+    name="user_proxy",
+    human_input_mode="NEVER",
+    max_consecutive_auto_reply=10,
+    code_execution_config={
+        "work_dir": "coding",
+        "use_docker": False
+    }
+)
+
+# 3. Agent对话
+user_proxy.initiate_chat(
+    assistant,
+    message="""
+    请帮我创建一个Vue3组件：
+    1. 待办事项列表
+    2. 支持添加、删除、完成
+    3. 使用TypeScript
+    4. 包含单元测试
+    """
+)
+
+# AutoGen会自动：
+# 1. 分析需求
+# 2. 编写代码
+# 3. 运行测试
+# 4. 修复错误
+# 5. 迭代优化
+```
+
+### 本地模型部署 (2024-2025成熟方案)
+
+**Ollama + vLLM组合**：
+
+```bash
+# 1. 安装Ollama(最简单)
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# 拉取模型
+ollama pull deepseek-v3:70b
+ollama pull qwen2.5:72b
+ollama pull llama3.3:70b
+
+# 运行本地模型
+ollama run deepseek-v3:70b
+
+# 2. API服务(与OpenAI兼容)
+ollama serve
+
+# 3. 使用(代码无需修改)
+import openai
+
+client = openai.OpenAI(
+    base_url="http://localhost:11434/v1",
+    api_key="ollama"  # required but unused
+)
+
+response = client.chat.completions.create(
+    model="deepseek-v3:70b",
+    messages=[{
+        "role": "user",
+        "content": "你好"
+    }]
+)
+```
+
+**vLLM高性能推理** (2024企业首选)：
+
+```python
+from vllm import LLM, SamplingParams
+
+# 初始化模型
+llm = LLM(
+    model="deepseek-ai/DeepSeek-V3",
+    tensor_parallel_size=4,  # 4卡GPU
+    max_model_len=128000,
+    gpu_memory_utilization=0.9
+)
+
+# 批量推理
+prompts = [
+    "你好，请介绍一下自己",
+    "如何学习Vue3？",
+    "解释什么是DevOps"
+]
+
+sampling_params = SamplingParams(
+    temperature=0.7,
+    top_p=0.9,
+    max_tokens=1024
+)
+
+outputs = llm.generate(prompts, sampling_params)
+
+for output in outputs:
+    print(f"Prompt: {output.prompt}")
+    print(f"Generated: {output.outputs[0].text}\n")
+```
+
+**模型量化** (2024-2025降低成本)：
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+
+# 1. 量化到4-bit(Reduce 75% memory)
+model = AutoModelForCausalLM.from_pretrained(
+    "deepseek-ai/DeepSeek-V3",
+    load_in_4bit=True,  # 4-bit量化
+    device_map="auto"
+)
+
+# 2. AWQ量化(更好的性能)
+# pip install autoawq
+from awq import AutoAWQForCausalLM
+
+model = AutoAWQForCausalLM.from_quantized(
+    "deepseek-ai/DeepSeek-V3-AWQ",
+    fuse_layers=True,
+    safetensors=True
+)
+
+# 硬件要求对比:
+# FP16: 70B模型需要140GB VRAM
+# 8-bit: 70B模型需要70GB VRAM
+# 4-bit: 70B模型需要35GB VRAM (2x RTX 3090)
 ```
 
 ---

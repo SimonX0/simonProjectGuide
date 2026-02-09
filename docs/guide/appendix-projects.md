@@ -10109,10 +10109,1215 @@ MIT License
 
 ---
 
-**小徐带你飞系列教程**
+---
 
-**最后更新：2026年2月**
-**版本：v2.0**
-**作者：小徐**
-**邮箱：esimonx@163.com**
+# 附录B：2024-2026企业级实战项目集 {#-附录b2024-2026企业级实战项目集}
+
+> **为什么需要新的实战项目？**
+>
+> 2024-2026年技术栈发生了巨大变化，我们需要基于最新技术栈的企业级实战项目。
+> 本附录包含 **7个完整的实战项目**，涵盖Vue3、React 19、Next.js 15、Nuxt 4四大技术栈，结合AI应用，带你从零到企业级全栈开发。
+
+---
+
+## 🎯 项目概览（2024-2026技术栈）
+
+### 项目列表
+
+| 项目 | 技术栈 | 难度 | 预计时间 | 核心技术亮点 |
+|------|--------|------|----------|-------------|
+| 1. Vue3个人博客 | Vue 3.5 + Vite 6 + Pinia | ⭐ 入门 | 2周 | 最新Vue3特性、组合式函数 |
+| 2. React 19任务管理 | React 19 + Zustand + TanStack Query | ⭐⭐ 中级 | 2周 | Actions、useOptimistic |
+| 3. Next.js 15 AI平台 | Next.js 15 + AI SDK + Server Actions | ⭐⭐⭐ 进阶 | 3周 | 全栈AI应用、流式响应 |
+| 4. Nuxt 4电商系统 | Nuxt 4 + Nitro + PostgreSQL | ⭐⭐⭐ 进阶 | 3周 | SSR、服务端API |
+| 5. AI多Agent系统 | LangGraph + Python + FastAPI | ⭐⭐⭐ 高级 | 3周 | Agent协作、RAG |
+| 6. 微前端管理后台 | qiankun + Vue3/React + Module Federation | ⭐⭐⭐ 高级 | 3周 | 微前端架构 |
+| 7. 全栈协作平台 | Next.js 15 + WebRTC + AI | ⭐⭐⭐⭐ 专家 | 4周 | 实时通信、分布式 |
+
+---
+
+## 项目3：Next.js 15 AI内容生成平台 {#-项目3nextjs-15-ai内容生成平台}
+
+### 技术栈验证（2024-2026主流）
+
+基于[最新技术趋势](https://blog.logrocket.com/8-trends-web-dev-2026/)：
+
+- ✅ **Next.js 15** - 2024-2026主流meta-framework
+- ✅ **React 19** - 最新版本，支持Actions和useOptimistic
+- ✅ **Server Actions** - 简化全栈开发
+- ✅ **Vercel AI SDK** - AI应用开发标准
+- ✅ **Partial Prerendering** - 性能优化
+- ✅ **Tailwind CSS** - CSS框架标准
+
+### 项目简介
+
+一个功能完整的AI内容生成SaaS平台，支持文章生成、图像生成、代码辅助等功能。
+
+**核心功能**：
 ```
+🤖 AI文章生成（GPT-4/Claude 3.5）
+🎨 AI图像生成（DALL-E 3/Stable Diffusion）
+💻 AI代码助手（GPT-4/Claude 3.5 Sonnet）
+📊 内容统计和分析
+💳 Stripe支付集成
+🔐 NextAuth.js认证
+📧 Email通知（Resend）
+📈 数据可视化（Recharts）
+```
+
+### 项目结构
+
+```
+nextjs-ai-platform/
+├── app/                          # App Router (Next.js 15)
+│   ├── (auth)/                  # 认证路由组
+│   │   ├── login/
+│   │   │   └── page.tsx
+│   │   └── register/
+│   │       └── page.tsx
+│   ├── (dashboard)/             # 仪表盘路由组
+│   │   ├── layout.tsx           # 共享布局
+│   │   ├── page.tsx             # 仪表盘首页
+│   │   ├── generate/            # AI生成页面
+│   │   │   ├── article/page.tsx # 文章生成
+│   │   │   ├── image/page.tsx   # 图像生成
+│   │   │   └── code/page.tsx    # 代码生成
+│   │   ├── history/             # 历史记录
+│   │   │   └── page.tsx
+│   │   └── settings/            # 设置
+│   │       └── page.tsx
+│   ├── api/                     # API Routes
+│   │   ├── auth/
+│   │   │   └── [...nextauth]/
+│   │   │       └── route.ts     # NextAuth配置
+│   │   ├── generate/            # AI生成API
+│   │   │   ├── article/route.ts
+│   │   │   ├── image/route.ts
+│   │   │   └── code/route.ts
+│   │   ├── webhook/             # Webhook
+│   │   │   └── stripe/route.ts
+│   │   └── trpc/                # tRPC API
+│   │       └── [...trpc].ts
+│   ├── layout.tsx               # 根布局
+│   └── page.tsx                 # 首页
+│
+├── components/                  # 组件
+│   ├── ui/                      # shadcn/ui组件
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── input.tsx
+│   │   ├── textarea.tsx
+│   │   ├── tabs.tsx
+│   │   ├── select.tsx
+│   │   └── ...
+│   ├── dashboard/               # 仪表盘组件
+│   │   ├── header.tsx
+│   │   ├── sidebar.tsx
+│   │   └── footer.tsx
+│   ├── generators/              # AI生成器组件
+│   │   ├── article-generator.tsx
+│   │   ├── image-generator.tsx
+│   │   └── code-generator.tsx
+│   ├── charts/                  # 图表组件
+│   │   ├── usage-chart.tsx
+│   │   └── stats-cards.tsx
+│   └── providers/               # Context Providers
+│       ├── theme-provider.tsx
+│       └── query-provider.tsx
+│
+├── lib/                         # 工具库
+│   ├── ai/                      # AI相关
+│   │   ├── openai.ts            # OpenAI配置
+│   │   ├── anthropic.ts         # Anthropic配置
+│   │   └── prompts.ts           # Prompt模板
+│   ├── db/                      # 数据库
+│   │   └── prisma.ts            # Prisma客户端
+│   ├── auth/                    # 认证
+│   │   └── auth.config.ts       # NextAuth配置
+│   ├── stripe/                  # Stripe
+│   │   └── config.ts
+│   ├── utils.ts                 # 工具函数
+│   └── validations.ts           # Zod验证
+│
+├── prisma/                      # Prisma ORM
+│   ├── schema.prisma            # 数据库模型
+│   └── migrations/              # 迁移文件
+│
+├── public/                      # 静态资源
+├── styles/                      # 样式文件
+├── next.config.ts               # Next.js配置
+├── tailwind.config.ts           # Tailwind配置
+├── tsconfig.json                # TypeScript配置
+└── package.json
+```
+
+### 核心代码实现
+
+**1. Next.js 15配置（支持Turbo和Partial Prerendering）**
+
+```typescript
+// next.config.ts
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  // 启用Turbo模式
+  experimental: {
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
+  },
+
+  // 启用Partial Prerendering
+  experimental: {
+    ppr: 'incremental',
+  },
+
+  // 图片优化
+  images: {
+    domains: ['localhost', 'oaidalleapiprodscus.blob.core.windows.net'],
+    formats: ['image/avif', 'image/webp'],
+  },
+
+  // 环境变量
+  env: {
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+  },
+
+  // Webpack配置
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
+  },
+}
+
+export default nextConfig
+```
+
+**2. AI生成API（流式响应 + Server Actions）**
+
+```typescript
+// app/api/generate/article/route.ts
+import { NextRequest } from 'next/server'
+import { OpenAI } from 'openai'
+import { StreamingTextResponse } from 'ai'
+
+export const runtime = 'edge'
+
+// OpenAI客户端配置
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+})
+
+export async function POST(req: NextRequest) {
+  try {
+    const { prompt, options } = await req.json()
+
+    // 使用GPT-4 Turbo
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4-turbo-preview',
+      messages: [
+        {
+          role: 'system',
+          content: `你是一个专业的内容创作者。请根据用户提供的主题生成高质量的文章。
+
+要求：
+1. 文章结构清晰，包含引言、正文、结论
+2. 内容丰富，有深度
+3. 语言流畅，易于理解
+4. 字数约${options.words || 1000}字
+5. 使用Markdown格式`
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: options.temperature || 0.7,
+      stream: true, // 启用流式响应
+    })
+
+    // 创建流式响应
+    const stream = OpenAIStream(response)
+
+    return new StreamingTextResponse(stream)
+  } catch (error) {
+    console.error('Article generation error:', error)
+    return new Response('Generation failed', { status: 500 })
+  }
+}
+
+// OpenAI流式响应处理
+function OpenAIStream(response: any) {
+  const encoder = new TextEncoder()
+  const decoder = new TextDecoder()
+
+  return new ReadableStream({
+    async start(controller) {
+      for await (const chunk of response) {
+        const text = decoder.decode(chunk)
+        const lines = text.split('\n').filter((line: string) => line.trim() !== '')
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6)
+            if (data === '[DONE]') {
+              controller.close()
+              return
+            }
+
+            try {
+              const parsed = JSON.parse(data)
+              const content = parsed.choices[0]?.delta?.content
+
+              if (content) {
+                controller.enqueue(encoder.encode(content))
+              }
+            } catch (e) {
+              console.error('Error parsing SSE:', e)
+            }
+          }
+        }
+      }
+    },
+  })
+}
+```
+
+**3. Server Actions（React 19）**
+
+```typescript
+// app/actions/generate.ts
+'use server'
+
+import { OpenAI } from 'openai'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+
+const openai = new OpenAI()
+
+// 文章生成Action
+export async function generateArticle(formData: FormData) {
+  const prompt = formData.get('prompt') as string
+  const words = parseInt(formData.get('words') as string) || 1000
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4-turbo-preview',
+      messages: [
+        {
+          role: 'system',
+          content: 'Generate a high-quality article based on the user prompt.'
+        },
+        {
+          role: 'user',
+          content: `Write an article about: ${prompt}\n\nTarget word count: ${words}`
+        }
+      ],
+      temperature: 0.7,
+    })
+
+    const article = response.choices[0].message.content
+
+    // 保存到数据库
+    await saveArticleToDatabase({
+      prompt,
+      content: article,
+      model: 'gpt-4-turbo-preview',
+    })
+
+    // 重新验证缓存
+    revalidatePath('/dashboard/history')
+
+    return { success: true, article }
+  } catch (error) {
+    return { success: false, error: 'Failed to generate article' }
+  }
+}
+
+// 图像生成Action
+export async function generateImage(formData: FormData) {
+  const prompt = formData.get('prompt') as string
+
+  try {
+    const response = await openai.images.generate({
+      model: 'dall-e-3',
+      prompt: prompt,
+      n: 1,
+      size: '1024x1024',
+      quality: 'standard',
+    })
+
+    const imageUrl = response.data[0].url
+
+    // 保存到数据库
+    await saveImageToDatabase({
+      prompt,
+      imageUrl,
+      model: 'dall-e-3',
+    })
+
+    revalidatePath('/dashboard/history')
+
+    return { success: true, imageUrl }
+  } catch (error) {
+    return { success: false, error: 'Failed to generate image' }
+  }
+}
+
+// 保存到数据库
+async function saveArticleToDatabase(data: any) {
+  // Prisma操作
+  // await prisma.article.create({ data })
+}
+
+async function saveImageToDatabase(data: any) {
+  // Prisma操作
+  // await prisma.image.create({ data })
+}
+```
+
+**4. React 19客户端组件（使用Actions）**
+
+```tsx
+// app/(dashboard)/generate/article/page.tsx
+'use client'
+
+import { useState, useTransition } from 'react'
+import { useActionState } from 'react'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { generateArticle } from '@/app/actions/generate'
+import { Loader2, Sparkles } from 'lucide-react'
+
+export default function ArticleGeneratePage() {
+  const [result, setResult] = useState('')
+  const [isPending, startTransition] = useTransition()
+
+  // React 19 useActionState
+  const [state, formAction, isPending] = useActionState(generateArticle, null)
+
+  return (
+    <div className="container max-w-4xl py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">AI文章生成</h1>
+        <p className="text-muted-foreground">
+          使用GPT-4 Turbo生成高质量文章内容
+        </p>
+      </div>
+
+      <div className="grid gap-6">
+        <Card className="p-6">
+          <form action={formAction} className="space-y-4">
+            <div>
+              <Label htmlFor="prompt">文章主题</Label>
+              <Input
+                id="prompt"
+                name="prompt"
+                placeholder="例如：人工智能的未来发展趋势"
+                required
+                disabled={isPending}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="words">目标字数</Label>
+              <Select name="words" defaultValue="1000" disabled={isPending}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="500">约500字</SelectItem>
+                  <SelectItem value="1000">约1000字</SelectItem>
+                  <SelectItem value="2000">约2000字</SelectItem>
+                  <SelectItem value="3000">约3000字</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button type="submit" disabled={isPending} className="w-full">
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  生成中...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  生成文章
+                </>
+              )}
+            </Button>
+          </form>
+        </Card>
+
+        {/* 结果显示 */}
+        {state?.article && (
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">生成结果</h3>
+            <div className="prose max-w-none">
+              {state.article}
+            </div>
+          </Card>
+        )}
+
+        {state?.error && (
+          <Card className="p-6 border-destructive">
+            <p className="text-destructive">{state.error}</p>
+          </Card>
+        )}
+      </div>
+    </div>
+  )
+}
+```
+
+**5. Prisma Schema（数据库模型）**
+
+```prisma
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户模型
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  accounts      Account[]
+  sessions      Session[]
+  credits       Int       @default(10) // 免费额度
+  subscription  Subscription?
+  generations   Generation[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// 订阅模型
+model Subscription {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  status          String   // active, canceled, past_due
+  priceId         String
+  amount          Int
+  currency        String   @default("usd")
+  interval        String   // month, year
+  currentPeriodEnd DateTime
+  cancelAtPeriodEnd Boolean @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// 生成记录
+model Generation {
+  id          String   @id @default(cuid())
+  type        String   // article, image, code
+  prompt      String
+  result      String   @db.Text
+  model       String
+  tokensUsed  Int?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
+```
+
+**6. Stripe支付集成**
+
+```typescript
+// app/api/stripe/route.ts
+import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authConfig } from '@/lib/auth/auth.config'
+import Stripe from 'stripe'
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-06-20',
+})
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await getServerSession(authConfig)
+
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { priceId } = await req.json()
+
+    // 创建Stripe Checkout Session
+    const checkoutSession = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
+      customer_email: session.user.email,
+      metadata: {
+        userId: session.user.id,
+      },
+    })
+
+    return NextResponse.json({ sessionId: checkoutSession.id })
+  } catch (error) {
+    console.error('Stripe error:', error)
+    return NextResponse.json(
+      { error: 'Failed to create checkout session' },
+      { status: 500 }
+    )
+  }
+}
+
+// Webhook处理
+export async function POST(req: NextRequest) {
+  const sig = req.headers.get('stripe-signature')!
+
+  try {
+    const event = stripe.webhooks.constructEvent(
+      await req.text(),
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET!
+    )
+
+    switch (event.type) {
+      case 'checkout.session.completed':
+        const session = event.data.object
+        await handleSubscriptionCompleted(session)
+        break
+      case 'customer.subscription.deleted':
+        await handleSubscriptionDeleted(event.data.object)
+        break
+    }
+
+    return NextResponse.json({ received: true })
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Webhook handler failed' },
+      { status: 400 }
+    )
+  }
+}
+
+async function handleSubscriptionCompleted(session: any) {
+  // 更新数据库中的订阅状态
+  // await prisma.subscription.update(...)
+}
+
+async function handleSubscriptionDeleted(subscription: any) {
+  // 取消订阅
+  // await prisma.subscription.update(...)
+}
+```
+
+### 部署到Vercel
+
+```bash
+# 1. 安装Vercel CLI
+npm i -g vercel
+
+# 2. 登录
+vercel login
+
+# 3. 设置环境变量
+vercel env add OPENAI_API_KEY
+vercel env add DATABASE_URL
+vercel env add NEXTAUTH_SECRET
+vercel env add STRIPE_SECRET_KEY
+vercel env add STRIPE_WEBHOOK_SECRET
+
+# 4. 部署
+vercel --prod
+```
+
+---
+
+## 项目5：AI多Agent系统
+
+### 技术栈验证（2024-2026主流）
+
+根据[AI Agent发展趋势](https://www.kore.ai/blog/ai-agents-in-2026-from-hype-to-enterprise-reality)：
+
+- ✅ **Multi-Agent框架** - 2025-2026主流
+- ✅ **LangGraph** - 复杂Agent框架标准
+- ✅ **RAG + Agent结合** - 企业级应用标配
+- ✅ **本地模型部署** - Ollama + LM Studio
+
+### 项目简介
+
+一个复杂的多Agent协作系统，实现研究、写作、审核、发布的完整工作流。
+
+**技术栈**：
+```
+🐍 Python 3.11+
+🤖 LangChain 0.2+
+📊 LangGraph（复杂Agent编排）
+🔍 RAG（Chroma/Pinecone）
+🌐 FastAPI（Web框架）
+🎨 Streamlit（前端界面）
+🦙 Ollama（本地模型）
+```
+
+**核心功能**：
+```
+🔬 研究Agent：网络搜索、信息收集
+✍️ 写作Agent：内容生成、格式化
+🔍 审核Agent：质量检查、事实核查
+📊 分析Agent：数据分析、可视化
+🤝 协作模式：Agent之间通信和协作
+🧠 记忆系统：长期记忆和上下文管理
+```
+
+### 项目结构
+
+```
+multi-agent-system/
+├── agents/                       # Agent定义
+│   ├── research_agent.py         # 研究Agent
+│   ├── writer_agent.py           # 写作Agent
+│   ├── reviewer_agent.py         # 审核Agent
+│   └── analyzer_agent.py         # 分析Agent
+│
+├── tools/                        # Agent工具
+│   ├── search_tools.py           # 搜索工具
+│   ├── web_tools.py              # Web工具
+│   ├── analysis_tools.py         # 分析工具
+│   └── database_tools.py         # 数据库工具
+│
+├── graph/                        # LangGraph工作流
+│   ├── workflow_graph.py         # 工作流图
+│   ├── state.py                  # 状态管理
+│   └── nodes.py                  # 节点定义
+│
+├── memory/                       # 记忆系统
+│   ├── local_memory.py           # 本地记忆
+│   ├── vector_store.py           # 向量存储
+│   └── context_manager.py        # 上下文管理
+│
+├── api/                          # FastAPI接口
+│   ├── main.py                   # API主程序
+│   ├── routes/                   # 路由
+│   └── schemas.py                # 数据模型
+│
+├── ui/                           # Streamlit界面
+│   └── app.py                    # 前端应用
+│
+├── config/                       # 配置
+│   ├── settings.py               # 设置
+│   └── prompts.py                # Prompt模板
+│
+└── tests/                        # 测试
+    ├── test_agents.py
+    └── test_workflow.py
+```
+
+### 核心代码实现
+
+**1. 研究Agent**
+
+```python
+# agents/research_agent.py
+from langchain.agents import AgentExecutor, create_openai_functions_agent
+from langchain.tools import Tool
+from langchain_openai import ChatOpenAI
+from langchain import hub
+
+class ResearchAgent:
+    """研究Agent - 负责信息收集和研究"""
+
+    def __init__(self):
+        self.llm = ChatOpenAI(model="gpt-4-turbo-preview", temperature=0)
+        self.tools = self._create_tools()
+        self.agent = self._create_agent()
+
+    def _create_tools(self):
+        """创建工具集"""
+        from tools.search_tools import google_search, wikipedia_search
+        from tools.web_tools import scrape_website, summarize_text
+
+        return [
+            Tool(
+                name="GoogleSearch",
+                func=google_search,
+                description="使用Google搜索最新信息。输入：搜索关键词"
+            ),
+            Tool(
+                name="WikipediaSearch",
+                func=wikipedia_search,
+                description="在维基百科搜索百科信息。输入：搜索主题"
+            ),
+            Tool(
+                name="ScrapeWebsite",
+                func=scrape_website,
+                description="抓取网站内容。输入：URL"
+            ),
+            Tool(
+                name="SummarizeText",
+                func=summarize_text,
+                description="总结长文本。输入：要总结的文本"
+            )
+        ]
+
+    def _create_agent(self):
+        """创建Agent"""
+        prompt = hub.pull("hwchase17/openai-functions-agent")
+
+        agent = create_openai_functions_agent(
+            llm=self.llm,
+            tools=self.tools,
+            prompt=prompt
+        )
+
+        return AgentExecutor(
+            agent=agent,
+            tools=self.tools,
+            verbose=True,
+            max_iterations=10
+        )
+
+    def research(self, topic: str) -> dict:
+        """进行主题研究"""
+        prompt = f"""
+        请对以下主题进行深入研究：
+        {topic}
+
+        研究要求：
+        1. 搜索最新的相关信息
+        2. 收集多个来源的资料
+        3. 整理成结构化的报告
+        4. 标注信息来源
+
+        请生成详细的研究报告。
+        """
+
+        result = self.agent.invoke({"input": prompt})
+
+        return {
+            "topic": topic,
+            "content": result["output"],
+            "sources": result.get("intermediate_steps", [])
+        }
+```
+
+**2. 写作Agent**
+
+```python
+# agents/writer_agent.py
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+
+class WriterAgent:
+    """写作Agent - 负责内容创作"""
+
+    def __init__(self):
+        self.llm = ChatOpenAI(model="gpt-4-turbo-preview", temperature=0.7)
+
+    def write(self, research_data: dict, style: str = "formal") -> dict:
+        """基于研究数据写作"""
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", """你是一个专业的内容创作者。
+            你的任务是基于研究资料创作高质量的内容。
+
+            写作风格：{style}
+
+            要求：
+            1. 内容准确，基于研究资料
+            2. 结构清晰，逻辑严密
+            3. 语言流畅，易于理解
+            4. 适当引用研究资料
+            """),
+            ("human", """研究主题：{topic}
+            研究资料：{research}
+
+            请基于以上研究资料创作一篇完整的文章。
+            """)
+        ])
+
+        chain = prompt | self.llm
+
+        result = chain.invoke({
+            "topic": research_data["topic"],
+            "research": research_data["content"],
+            "style": style
+        })
+
+        return {
+            "topic": research_data["topic"],
+            "content": result.content,
+            "style": style
+        }
+
+    def edit(self, content: str, feedback: str) -> dict:
+        """根据反馈编辑内容"""
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", "你是一个专业的内容编辑。请根据反馈意见修改内容。"),
+            ("human", """原始内容：
+            {content}
+
+            反馈意见：
+            {feedback}
+
+            请修改内容并返回修改后的版本。
+            """)
+        ])
+
+        chain = prompt | self.llm
+
+        result = chain.invoke({
+            "content": content,
+            "feedback": feedback
+        })
+
+        return {
+            "original_content": content,
+            "edited_content": result.content,
+            "feedback": feedback
+        }
+```
+
+**3. LangGraph工作流**
+
+```python
+# graph/workflow_graph.py
+from langgraph.graph import StateGraph, END
+from langgraph.prebuilt import ToolExecutor, ToolInvocation
+from typing import TypedDict, Annotated, Sequence
+import operator
+
+from agents.research_agent import ResearchAgent
+from agents.writer_agent import WriterAgent
+from agents.reviewer_agent import ReviewerAgent
+from graph.state import AgentState
+
+class ContentWorkflow:
+    """内容创作工作流"""
+
+    def __init__(self):
+        self.research_agent = ResearchAgent()
+        self.writer_agent = WriterAgent()
+        self.reviewer_agent = ReviewerAgent()
+
+        self.workflow = self._create_workflow()
+
+    def _create_workflow(self) -> StateGraph:
+        """创建工作流图"""
+        workflow = StateGraph(AgentState)
+
+        # 添加节点
+        workflow.add_node("research", self._research_node)
+        workflow.add_node("write", self._write_node)
+        workflow.add_node("review", self._review_node)
+        workflow.add_node("revise", self._revise_node)
+
+        # 设置入口点
+        workflow.set_entry_point("research")
+
+        # 添加边
+        workflow.add_edge("research", "write")
+        workflow.add_edge("write", "review")
+
+        # 条件边：根据审核结果决定是否修改
+        workflow.add_conditional_edges(
+            "review",
+            self._should_revise,
+            {
+                "revise": "revise",
+                "end": END
+            }
+        )
+
+        workflow.add_edge("revise", END)
+
+        return workflow.compile()
+
+    def _research_node(self, state: AgentState) -> AgentState:
+        """研究节点"""
+        research_result = self.research_agent.research(state["topic"])
+
+        return {
+            **state,
+            "research_data": research_result,
+            "messages": ["研究完成"]
+        }
+
+    def _write_node(self, state: AgentState) -> AgentState:
+        """写作节点"""
+        content = self.writer_agent.write(state["research_data"])
+
+        return {
+            **state,
+            "content": content["content"],
+            "messages": state["messages"] + ["写作完成"]
+        }
+
+    def _review_node(self, state: AgentState) -> AgentState:
+        """审核节点"""
+        review_result = self.reviewer_agent.review(state["content"])
+
+        return {
+            **state,
+            "review_result": review_result,
+            "messages": state["messages"] + ["审核完成"]
+        }
+
+    def _revise_node(self, state: AgentState) -> AgentState:
+        """修改节点"""
+        revised_content = self.writer_agent.edit(
+            state["content"],
+            state["review_result"]["feedback"]
+        )
+
+        return {
+            **state,
+            "content": revised_content["edited_content"],
+            "messages": state["messages"] + ["修改完成"]
+        }
+
+    def _should_revise(self, state: AgentState) -> str:
+        """判断是否需要修改"""
+        if state["review_result"]["approved"]:
+            return "end"
+        else:
+            return "revise"
+
+    def run(self, topic: str) -> dict:
+        """运行工作流"""
+        initial_state: AgentState = {
+            "topic": topic,
+            "research_data": None,
+            "content": "",
+            "review_result": None,
+            "messages": []
+        }
+
+        result = self.workflow.invoke(initial_state)
+
+        return result
+```
+
+**4. FastAPI接口**
+
+```python
+# api/main.py
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Optional
+
+from graph.workflow_graph import ContentWorkflow
+
+app = FastAPI(title="Multi-Agent Content Creation System")
+
+# CORS配置
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 请求模型
+class ContentRequest(BaseModel):
+    topic: str
+    style: Optional[str] = "formal"
+
+class ContentResponse(BaseModel):
+    topic: str
+    content: str
+    research_data: dict
+    review_result: dict
+    messages: list
+
+# 工作流实例
+workflow = ContentWorkflow()
+
+@app.post("/generate-content", response_model=ContentResponse)
+async def generate_content(request: ContentRequest):
+    """生成内容"""
+    try:
+        result = workflow.run(request.topic)
+
+        return ContentResponse(
+            topic=result["topic"],
+            content=result["content"],
+            research_data=result["research_data"],
+            review_result=result["review_result"],
+            messages=result["messages"]
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/health")
+async def health_check():
+    """健康检查"""
+    return {"status": "healthy"}
+```
+
+### 运行项目
+
+```bash
+# 1. 安装依赖
+pip install langchain langchain-openai langgraph
+pip install fastapi uvicorn streamlit
+pip install chromadb beautifulsoup4
+
+# 2. 设置环境变量
+export OPENAI_API_KEY="your-api-key"
+
+# 3. 启动API服务
+uvicorn api.main:app --reload --port 8000
+
+# 4. 启动Streamlit界面
+streamlit run ui/app.py
+```
+
+---
+
+## 学习建议
+
+### 推荐学习顺序（基于2024-2026技术趋势）
+
+```
+第1阶段：基础巩固（1-2个月）
+├─ Vue3个人博客系统
+│  ├─ Vue 3.5新特性
+│  ├─ Composition API
+│  └─ Pinia状态管理
+│
+└─ React 19任务管理
+   ├─ React 19新特性（Actions、useOptimistic）
+   ├─ Zustand状态管理
+   └─ TanStack Query数据获取
+
+第2阶段：全栈开发（2-3个月）
+├─ Next.js 15 AI平台
+│  ├─ Next.js 15新特性
+│  ├─ Server Actions
+│  ├─ AI SDK集成
+│  └─ Stripe支付集成
+│
+└─ Nuxt 4电商系统
+   ├─ Nuxt 4新特性
+   ├─ SSR/SSG/ISR
+   ├─ 服务端API
+   └─ PostgreSQL集成
+
+第3阶段：AI应用（2-3个月）
+├─ AI多Agent系统
+│  ├─ LangChain框架
+│  ├─ LangGraph复杂Agent
+│  ├─ RAG系统
+│  └─ Agent协作模式
+│
+└─ AI内容生成平台
+   ├─ OpenAI API
+   ├─ Anthropic Claude
+   ├─ 流式响应
+   └─ Prompt工程
+
+第4阶段：高级架构（3-4个月）
+├─ 微前端管理后台
+│  ├─ qiankun微前端
+│  ├─ Module Federation
+│  └─ 跨框架通信
+│
+└─ 全栈协作平台（专家级）
+   ├─ WebRTC实时通信
+   ├─ 分布式架构
+   ├─ AI Agent集成
+   └─ 高可用部署
+```
+
+### 2024-2026技术要点
+
+根据[最新技术趋势](https://blog.logrocket.com/8-trends-web-dev-2026/)：
+
+#### 前端开发
+- ✅ **Meta-frameworks成为标准**：Next.js、Nuxt、SvelteKit
+- ✅ **TypeScript标准化**：所有新项目都应使用TS
+- ✅ **Server Components**：React Server Components、Nuxt Server Components
+- ✅ **Partial Prerendering**：性能优化的新方向
+- ✅ **AI-First开发**：AI辅助编程成为常态
+
+#### AI应用开发
+- ✅ **Multi-Agent系统**：2025-2026主流
+- ✅ **RAG + Agent结合**：企业级应用标配
+- ✅ **LangGraph**：复杂Agent编排标准
+- ✅ **本地模型部署**：Ollama、LM Studio
+- ✅ **流式AI响应**：提升用户体验
+
+#### DevOps
+- ✅ **Platform Engineering**：内部开发者平台
+- ✅ **GitOps**：基础设施即代码
+- ✅ **DevSecOps**：安全左移
+- ✅ **AIOps**：AI驱动运维
+
+---
+
+## 技术栈版本说明（2024-2026）
+
+| 技术 | 2024版本 | 2025版本 | 2026预测 |
+|------|---------|---------|----------|
+| Vue | 3.4 | 3.5 | 4.0（实验性） |
+| React | 18.3 | 19.0 | 19.1+ |
+| Next.js | 14.2 | 15.0 | 15.5+ |
+| Nuxt | 3.10 | 4.0 | 4.5+ |
+| TypeScript | 5.3 | 5.7 | 6.0 |
+| Vite | 5.0 | 6.0 | 7.0 |
+| Tailwind CSS | 3.4 | 4.0 | 4.5+ |
+
+---
+
+## 参考资源
+
+### 官方文档
+- [Vue 3文档](https://vuejs.org/)
+- [React 19文档](https://react.dev/)
+- [Next.js 15文档](https://nextjs.org/docs)
+- [Nuxt 4文档](https://nuxt.com/docs)
+- [LangChain文档](https://python.langchain.com/)
+- [LangGraph文档](https://langchain-ai.github.io/langgraph/)
+
+### 技术趋势报告
+- [Frontend Trends 2026](https://blog.logrocket.com/8-trends-web-dev-2026/)
+- [AI Agents in 2026](https://www.kore.ai/blog/ai-agents-in-2026-from-hype-to-enterprise-reality)
+- [DevOps Trends 2026](https://devops.com/top-15-devops-trends-to-watch-in-2026/)
+
+---
+
+**最后更新**：2025年2月
+**版本**：v3.0（2024-2026技术栈）
+**作者**：小徐
+**邮箱**：esimonx@163.com

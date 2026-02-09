@@ -5,39 +5,39 @@ features:
   - title: 🔧 Git版本控制
     details: Git基础, 分支管理, 团队协作与版本控制最佳实践
     link: /git/
-    linkText: 开始充电 →
+    linkText: 掌握版本控制 →
   - title: 📚 前端开发
     details: Vue3, React, TypeScript, 现代前端工程化体系
     link: /guide/
-    linkText: 开始充电 →
+    linkText: 构建现代应用 →
   - title: ☕ Java开发
     details: SpringBoot, MyBatis, 微服务架构与分布式系统
     link: /guide/
-    linkText: 敬请期待 →
+    linkText: 即将上线 →
   - title: 🐍 Python开发
     details: FastAPI, Django, 数据分析与自动化脚本
     link: /ai/
-    linkText: 敬请期待 →
+    linkText: 即将上线 →
   - title: 🤖 AI应用
     details: LangChain, LLM, 大模型应用开发与RAG实践
     link: /ai/
-    linkText: 开始充电 →
+    linkText: 探索AI世界 →
   - title: 📝 面试题库
     details: 前端, AI, Git 按模块分类的中高级面试题精选
     link: /interview/
-    linkText: 开始刷题 →
+    linkText: 刷题备战 →
   - title: 🗄️ 数据库
     details: MySQL, Redis, MongoDB, 数据库设计与优化
     link: /guide/
-    linkText: 敬请期待 →
+    linkText: 即将上线 →
   - title: 🔧 DevOps
     details: Docker, Kubernetes, CI/CD, 云原生技术栈
-    link: /guide/
-    linkText: 敬请期待 →
+    link: /devops/
+    linkText: 实践云原生 →
   - title: 🐧 Linux
     details: Shell脚本, 系统运维, 服务器管理与性能优化
     link: /guide/
-    linkText: 敬请期待 →
+    linkText: 即将上线 →
 ---
 
 <div class="hero-layout">
