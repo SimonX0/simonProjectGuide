@@ -1,0 +1,168 @@
+name: CI 检查
+
+on:
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+
+jobs:
+  lint-and-test:
+    name: 代码质量检查
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: 安装依赖
+        run: pnpm install
+
+      - name: 构建检查
+        name: 🏗️ 构建项目
+        run: pnpm docs:build
+
+      - name: 链接检查
+        name: 🔍 检查断开的链接
+        run: |
+          echo "检查文档链接完整性..."
+          # TODO: 添加链接检查工具
+          exit 0
+
+  commit-lint:
+    name: 提交信息检查
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 检查提交信息格式
+        run: |
+          echo "检查 PR 的提交信息..."
+          # 获取 PR 的所有提交
+          COMMITS=$(git log --format=%s origin/main..HEAD)
+
+          # 检查每个提交是否符合规范
+          while IFS= read -r commit; do
+            echo "检查提交: $commit"
+
+            # 检查是否符合格式：type(scope): description
+            if [[ ! $commit =~ ^(feat|fix|docs|style|refactor|test|chore|perf)\(.*\): .+ ]]; then
+              echo "❌ 提交信息格式不符合规范"
+              echo "期望格式: type(scope): description"
+              echo "示例: feat(用户): 添加登录功能"
+              exit 1
+            fi
+
+            echo "✅ 提交信息格式正确"
+          done <<< "$COMMITS"
+
+  changes-lint:
+    name: 文件变更检查
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 检查敏感文件
+        run: |
+          echo "检查是否有敏感文件被提交..."
+
+          # 获取变更的文件
+          FILES=$(git diff --name-only origin/main...HEAD)
+
+          # 敏感文件列表
+          SENSITIVE_FILES=(
+            ".env"
+            ".env.local"
+            "*.key"
+            "*.pem"
+            "password"
+            "secret"
+            "credentials.json"
+          )
+
+          # 检查是否有敏感文件
+          for file in $FILES; do
+            for sensitive in "${SENSITIVE_FILES[@]}"; do
+              if [[ $file == $sensitive ]]; then
+                echo "❌ 检测到敏感文件: $file"
+                echo "请立即从提交中移除敏感信息！"
+                exit 1
+              fi
+            done
+          done
+
+          echo "✅ 未发现敏感文件"
+
+      - name: 检查大文件
+        run: |
+          echo "检查是否有大文件被提交..."
+
+          # 获取变更的文件
+          FILES=$(git diff --name-only origin/main...HEAD)
+
+          # 检查文件大小
+          for file in $FILES; do
+            if [ -f "$file" ]; then
+              SIZE=$(du -b "$file" | cut -f1)
+              # 大于 5MB
+              if [ $SIZE -gt 5242880 ]; then
+                echo "⚠️ 检测到大文件: $file ($(du -h "$file" | cut -f1))"
+                echo "大文件应该使用 Git LFS 或其他方式管理"
+              fi
+            fi
+          done
+
+          echo "✅ 文件大小检查完成"
+
+  pr-title-check:
+    name: PR 标题检查
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: 检查 PR 标题
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          echo "PR 标题: $TITLE"
+
+          # 检查 PR 标题是否符合规范
+          if [[ ! $TITLE =~ ^(feat|fix|docs|style|refactor|test|chore|perf)\(.*\): .+ ]]; then
+            echo "❌ PR 标题格式不符合规范"
+            echo "期望格式: type(scope): description"
+            echo "示例: feat(AI模块): 添加 Agent Skills 章节"
+            echo ""
+            echo "允许的类型:"
+            echo "  - feat: 新功能"
+            echo "  - fix: 修复bug"
+            echo "  - docs: 文档更新"
+            echo "  - style: 代码格式"
+            echo "  - refactor: 重构"
+            echo "  - test: 测试"
+            echo "  - chore: 构建/工具"
+            echo "  - perf: 性能优化"
+            exit 1
+          fi
+
+          echo "✅ PR 标题格式正确"
