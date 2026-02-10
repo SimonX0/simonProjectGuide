@@ -295,6 +295,7 @@ export const sidebar = {
         },
         { text: '第6章：RAG检索增强', link: '/ai/chapter-04' },
         { text: '第7章：AI Agent', link: '/ai/chapter-05' },
+        { text: '第8章：2026 Agent Skills 完全指南', link: '/ai/chapter-08-agent-skills' },
       ]
     },
     {
@@ -302,9 +303,9 @@ export const sidebar = {
       collapsible: true,
       collapsed: false,
       items: [
-        { text: '第8章：AI 完全实战项目 - 企业级智能客服系统', link: '/ai/chapter-08' },
-        { text: '第9章：AI 完全实战项目 - 企业级数据分析与商业智能平台', link: '/ai/chapter-09' },
-        { text: '第10章：AI 完全实战项目 - 多模态内容生成与管理平台', link: '/ai/chapter-10' },
+        { text: '第9章：AI 完全实战项目 - 企业级智能客服系统', link: '/ai/chapter-08' },
+        { text: '第10章：AI 完全实战项目 - 企业级数据分析与商业智能平台', link: '/ai/chapter-09' },
+        { text: '第11章：AI 完全实战项目 - 多模态内容生成与管理平台', link: '/ai/chapter-10' },
       ]
     },
     {
@@ -313,7 +314,7 @@ export const sidebar = {
       collapsed: false,
       items: [
         {
-          text: '第12章：应用进阶',
+          text: '第13章：应用进阶',
           link: '/ai/chapter-07',
           items: [
             { text: '主流LLM模型', link: '/ai/chapter-07#主流llm模型对比' },

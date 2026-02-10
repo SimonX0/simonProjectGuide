@@ -93,7 +93,7 @@ npm install -D @types/markdown-it sass
 
 #### 步骤 2：配置 Vite
 
-[vite.config.ts](../guide/vite-config)
+创建 **vite.config.ts** 配置文件：
 
 ```typescript
 import { defineConfig } from "vite";

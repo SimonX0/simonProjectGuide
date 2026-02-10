@@ -3401,4 +3401,5 @@ legal_advice = await legal_agent.advise("合同条款...")
 ---
 
 **下一章：[2026 Agent Skills 完全指南 →](chapter-08-agent-skills)**
-**或跳转到：[实战项目 →](chapter-06)**
+
+**或直接跳转到：[第9章：企业级智能客服系统 →](chapter-08)** | [第10章：数据分析平台 →](chapter-09)** | **[第11章：多模态内容生成平台 →](chapter-10)**
