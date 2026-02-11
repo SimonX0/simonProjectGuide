@@ -568,7 +568,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/about',
-    // 分组打包
+    // 分组打包（Vite 5.4+ 兼容 Webpack 魔法注释）
     component: () => import(
       /* webpackChunkName: "about" */
       /* webpackPrefetch: true */

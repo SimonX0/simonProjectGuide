@@ -4,690 +4,855 @@ title: Java高级面试题 - 实战项目面试题
 
 # Java高级面试题 - 实战项目面试题
 
-> **难度等级**：⭐⭐⭐⭐⭐ | **出现频率**：80% | **建议掌握时间**：4周
-
-## 📚 本章目录
-
-- [项目一：电商平台微服务版](#项目一电商平台微服务版)
-- [项目二：秒杀系统设计](#项目二秒杀系统设计)
-- [项目三：高并发系统设计](#项目三高并发系统设计)
-- [项目四：微服务架构完整系统](#项目四微服务架构完整系统)
-
----
-
-## 项目一：电商平台微服务版
+## 项目一：个人博客系统
 
 ### 技术栈
 
-**后端**：Spring Cloud Alibaba + Nacos + Gateway + Sentinel + Seata
-**数据库**：MySQL 8.0 + Redis 7.x + RabbitMQ
-**部署**：Docker + Kubernetes
+**后端**：Spring Boot 3.2 + MyBatis + Thymeleaf
+**数据库**：MySQL 8.0 + Redis
+**前端**：HTML5 + CSS3 + Bootstrap 5
+**构建工具**：Maven
 
-### 核心问题
-
-#### Q30: 微服务如何拆分？你的拆分原则是什么？
-
-**参考答案**：
-
-```
-┌─────────────────────────────────────┐
-│         电商平台微服务架构             │
-├─────────────────────────────────────┤
-│  用户服务（User Service）             │  用户注册、登录、个人信息
-│  商品服务（Product Service）          │  商品管理、库存管理
-│  订单服务（Order Service）            │  订单创建、订单查询
-│  支付服务（Payment Service）          │  支付对接、支付回调
-│  营销服务（Marketing Service）        │  优惠券、秒杀活动
-│  搜索服务（Search Service）           │  商品搜索、Elasticsearch
-└─────────────────────────────────────┘
-```
-
-**拆分原则**：
-1. **业务边界**：按业务领域（DDD）划分
-2. **数据独立**：每个服务独占数据库
-3. **职责单一**：一个服务只做一件事
-4. **通信方式**：内部同步（Feign），外部异步（MQ）
-
-#### Q31: 如何保证分布式事务一致性（下单+扣库存+扣余额）？
+### Q1: 如何设计博客系统的数据库架构？
 
 **参考答案**：
 
-```mermaid
-sequenceDiagram
-    participant 订单服务
-    participant 库存服务
-    participant 余额服务
-    participant Seata TC
+博客系统的数据库设计需要考虑文章、用户、评论、分类标签等多个实体及其关系。
 
-    订单服务->>Seata TC: 1. 开启全局事务
-    Seata TC->>订单服务: 2. 返回XID
+**核心表结构**：
 
-    订单服务->>订单服务: 3. 创建订单（待支付）
-    订单服务->>库存服务: 4. 扣减库存（AT模式）
-    库存服务->>Seata TC: 5. 注册分支
-    订单服务->>余额服务: 6. 扣减余额（AT模式）
-    余额服务->>Seata TC: 7. 注册分支
-
-    订单服务->>Seata TC: 8. 提交全局事务
-    Seata TC->>库存服务: 9. 释放锁、删除undo log
-    Seata TC->>余额服务: 10. 释放锁、删除undo log
-```
-
-**Seata AT模式实现**：
-```java
-@GlobalTransactional(name = "create-order")
-public void createOrder(OrderDTO orderDTO) {
-    // 1. 创建订单
-    Order order = new Order();
-    order.setUserId(orderDTO.getUserId());
-    order.setProductId(orderDTO.getProductId());
-    order.setCount(orderDTO.getCount());
-    orderMapper.insert(order);
-
-    // 2. 扣减库存
-    productClient.deductStock(orderDTO.getProductId(), orderDTO.getCount());
-
-    // 3. 扣减余额
-    accountClient.deductBalance(orderDTO.getUserId(), orderDTO.getTotalAmount());
-}
-```
-
-#### Q32: 如何防止商品超卖？
-
-**参考答案**：
-
-**方案1：Redis + Lua脚本（推荐）**
-```lua
--- seckill.lua
-local stock = redis.call('get', KEYS[1])
-if tonumber(stock) <= 0 then
-    return 0  -- 库存不足
-end
-
-redis.call('decr', KEYS[1])
-redis.call('sadd', KEYS[2], ARGV[1])  -- 记录已抢购用户
-return 1  -- 抢购成功
-```
-
-```java
-public boolean seckill(Long userId, Long productId) {
-    String lua = "seckill.lua";
-    DefaultRedisScript<Long> script = new DefaultRedisScript<>(lua, Long.class);
-
-    Long result = redisTemplate.execute(
-        script,
-        Arrays.asList("stock:" + productId, "user:" + productId + ":" + userId),
-        String.valueOf(userId)
-    );
-
-    if (result == 1) {
-        // 发送MQ消息，异步创建订单
-        mqProducer.send(new SeckillMessage(userId, productId));
-        return true;
-    }
-    return false;
-}
-```
-
-**方案2：数据库乐观锁**
 ```sql
--- 库存表增加version字段
-UPDATE product
-SET stock = stock - 1,
-    version = version + 1
-WHERE id = 123
-  AND stock > 0
-  AND version = 5;  -- 当前版本
+-- 用户表
+CREATE TABLE `user` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',
+  `username` VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
+  `password` VARCHAR(100) NOT NULL COMMENT 'BCrypt加密密码',
+  `email` VARCHAR(100) NOT NULL UNIQUE COMMENT '邮箱',
+  `nickname` VARCHAR(50) COMMENT '昵称',
+  `avatar` VARCHAR(255) COMMENT '头像URL',
+  `role` VARCHAR(20) DEFAULT 'USER' COMMENT '角色：ADMIN/USER',
+  `status` TINYINT DEFAULT 1 COMMENT '状态：0-禁用，1-正常',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_username` (`username`),
+  INDEX `idx_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+
+-- 文章表
+CREATE TABLE `post` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT COMMENT '文章ID',
+  `title` VARCHAR(200) NOT NULL COMMENT '文章标题',
+  `summary` VARCHAR(500) COMMENT '文章摘要',
+  `content` MEDIUMTEXT NOT NULL COMMENT 'Markdown内容',
+  `cover_image` VARCHAR(255) COMMENT '封面图',
+  `author_id` INT NOT NULL COMMENT '作者ID',
+  `category_id` INT COMMENT '分类ID',
+  `view_count` INT DEFAULT 0 COMMENT '浏览次数',
+  `comment_count` INT DEFAULT 0 COMMENT '评论数',
+  `status` TINYINT DEFAULT 1 COMMENT '状态：0-草稿，1-发布',
+  `is_top` TINYINT DEFAULT 0 COMMENT '是否置顶',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`author_id`) REFERENCES `user`(`id`),
+  FOREIGN KEY (`category_id`) REFERENCES `category`(`id`),
+  INDEX `idx_author` (`author_id`),
+  INDEX `idx_category` (`category_id`),
+  INDEX `idx_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章表';
+
+-- 评论表（支持多级回复）
+CREATE TABLE `comment` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `post_id` INT NOT NULL COMMENT '文章ID',
+  `user_id` INT NOT NULL COMMENT '评论用户ID',
+  `parent_id` INT DEFAULT 0 COMMENT '父评论ID',
+  `content` TEXT NOT NULL COMMENT '评论内容',
+  `status` TINYINT DEFAULT 1 COMMENT '状态：0-待审核，1-已通过',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`post_id`) REFERENCES `post`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
+  INDEX `idx_post` (`post_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='评论表';
 ```
 
-#### Q33: 服务熔断降级如何配置？
+**ER图设计要点**：
+- **一对多关系**：User → Post（一个用户多篇文章）
+- **一对多关系**：Post → Comment（一篇文章多条评论）
+- **多对多关系**：Post ↔ Tag（通过 post_tag 关联表）
+- **级联删除**：删除文章时级联删除评论
+
+### Q2: 如何实现文章浏览量统计和缓存？
 
 **参考答案**：
 
-```yaml
-# Sentinel流控规则
-spring:
-  cloud:
-    sentinel:
-      datasource:
-        flow:
-          nacos:
-            server-addr: localhost:8848
-            data-id: ${spring.application.name}-flow-rules
-            group-id: SENTINEL_GROUP
-            rule-type: flow
+使用 Redis 计数器 + 定时同步到数据库的方式实现高性能浏览量统计。
 
-# 流控规则示例
-[
-  {
-    "resource": "orderService",
-    "limitApp": "default",
-    "grade": 1,
-    "count": 100,
-    "strategy": 0,
-    "controlBehavior": 0,
-    "clusterMode": false
-  }
-]
-```
+**1. Redis 浏览量计数器**
 
 ```java
-// 代码方式配置
-@SentinelResource(
-    value = "orderService",
-    blockHandler = "handleBlock",
-    fallback = "handleFallback"
-)
-public Order createOrder(Order order) {
-    return orderService.save(order);
-}
+@Service
+@RequiredArgsConstructor
+public class ViewCountService {
 
-// 限流处理
-public Order handleBlock(Order order, BlockException e) {
-    log.warn("限流了：{}", e.getClass().getSimpleName());
-    throw new BusinessException("系统繁忙，请稍后重试");
-}
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final PostMapper postMapper;
 
-// 降级处理
-public Order handleFallback(Order order, Throwable e) {
-    log.error("异常了：{}", e.getMessage());
-    return Order.getDefault();  // 返回默认值
-}
-```
+    private static final String POST_VIEW_KEY = "post:view:";
 
-#### Q34: 如何实现分布式锁？
+    /**
+     * 增加浏览量
+     */
+    public void incrementView(Long postId) {
+        String key = POST_VIEW_KEY + postId;
+        redisTemplate.opsForValue().increment(key);
 
-**参考答案**：
+        // 设置过期时间（7天）
+        redisTemplate.expire(key, 7, TimeUnit.DAYS);
+    }
 
-**Redis分布式锁（Redisson）**：
-```java
-@Autowired
-private RedissonClient redissonClient;
+    /**
+     * 获取浏览量（优先从Redis获取）
+     */
+    public Long getViewCount(Long postId) {
+        String key = POST_VIEW_KEY + postId;
 
-public void deductStock(Long productId) {
-    RLock lock = redissonClient.getLock("lock:product:" + productId);
-    try {
-        // 尝试加锁，最多等待10秒，锁30秒后自动释放
-        boolean locked = lock.tryLock(10, 30, TimeUnit.SECONDS);
-        if (!locked) {
-            throw new BusinessException("系统繁忙，请稍后重试");
+        // 从Redis获取
+        Object count = redisTemplate.opsForValue().get(key);
+        if (count != null) {
+            return Long.parseLong(count.toString());
         }
 
-        // 扣减库存
-        int rows = productMapper.deductStock(productId, 1);
-        if (rows == 0) {
-            throw new BusinessException("库存不足");
+        // Redis没有，从数据库获取
+        Post post = postMapper.selectById(postId);
+        if (post != null) {
+            // 回写到Redis
+            redisTemplate.opsForValue().set(key, post.getViewCount(), 7, TimeUnit.DAYS);
+            return post.getViewCount();
         }
-    } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        throw new BusinessException("系统异常");
-    } finally {
-        lock.unlock();
+
+        return 0L;
+    }
+
+    /**
+     * 定时任务：同步Redis浏览量到数据库
+     * 每小时执行一次
+     */
+    @Scheduled(cron = "0 0 * * * ?")
+    public void syncViewCountToDB() {
+        Set<String> keys = redisTemplate.keys(POST_VIEW_KEY + "*");
+        if (keys == null || keys.isEmpty()) {
+            return;
+        }
+
+        Map<Long, Long> viewCountMap = new HashMap<>();
+
+        // 批量获取Redis中的浏览量
+        List<Object> values = redisTemplate.opsForValue().multiGet(keys);
+        if (values != null) {
+            int i = 0;
+            for (String key : keys) {
+                Long postId = Long.parseLong(key.substring(POST_VIEW_KEY.length()));
+                Long count = Long.parseLong(values.get(i).toString());
+                viewCountMap.put(postId, count);
+                i++;
+            }
+        }
+
+        // 批量更新数据库
+        if (!viewCountMap.isEmpty()) {
+            viewCountMap.forEach(this::updateViewCount);
+        }
+    }
+
+    private void updateViewCount(Long postId, Long count) {
+        postMapper.updateViewCount(postId, count);
     }
 }
 ```
 
-**Zookeeper分布式锁**：
+**2. Controller 中使用**
+
 ```java
-@Autowired
-private CuratorFramework curatorFramework;
+@Controller
+@RequestMapping("/post")
+@RequiredArgsConstructor
+public class PostController {
 
-public void deductStock(Long productId) {
-    InterProcessMutex lock = new InterProcessMutex(
-        curatorFramework,
-        "/locks/product/" + productId
-    );
-    try {
-        // 获取锁
-        lock.acquire(10, TimeUnit.SECONDS);
+    private final ViewCountService viewCountService;
 
-        // 扣减库存
-        int rows = productMapper.deductStock(productId, 1);
-        if (rows == 0) {
-            throw new BusinessException("库存不足");
-        }
-    } finally {
-        lock.release();
+    /**
+     * 文章详情页
+     */
+    @GetMapping("/{id}")
+    public String detail(@PathVariable Long id, Model model) {
+        // 获取文章
+        Post post = postService.getById(id);
+        model.addAttribute("post", post);
+
+        // 增加浏览量（异步，不阻塞页面）
+        CompletableFuture.runAsync(() -> viewCountService.incrementView(id));
+
+        // 获取浏览量
+        Long viewCount = viewCountService.getViewCount(id);
+        model.addAttribute("viewCount", viewCount);
+
+        return "post/detail";
     }
 }
 ```
 
----
+**3. MyBatis Mapper**
 
-## 项目二：秒杀系统设计
+```java
+@Mapper
+public interface PostMapper extends BaseMapper<Post> {
 
-### 技术架构
-
-```
-┌─────────────────────────────────────────────┐
-│                   CDN                        │  静态资源
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│              负载均衡（LVS/Nginx）             │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│            API网关（限流、熔断、鉴权）          │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│         秒杀服务（Redis库存扣减）              │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│         消息队列（RabbitMQ/Kafka）            │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│         订单服务（异步创建订单）               │
-└─────────────────────────────────────────────┘
+    /**
+     * 更新浏览量
+     */
+    @Update("UPDATE post SET view_count = #{viewCount} WHERE id = #{id}")
+    int updateViewCount(@Param("id") Long id, @Param("viewCount") Long viewCount);
+}
 ```
 
-### 核心问题
+**架构优势**：
+- **高性能**：Redis 计数器，QPS 可达 10万+
+- **数据持久化**：定时同步到 MySQL
+- **防止刷量**：可以结合 IP 限流
+- **容错性**：Redis 故障时降级到数据库
 
-#### Q35: 如何设计一个高并发秒杀系统？
+### Q3: 如何实现文章评论的多级回复功能？
 
 **参考答案**：
 
-**1. 页面静态化**
+使用递归查询或一次性加载构建评论树的方式实现多级评论。
+
+**1. 评论实体设计**
+
+```java
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("comment")
+public class Comment extends BaseEntity {
+
+    @TableId(type = IdType.AUTO)
+    private Long id;
+
+    private Long postId;
+    private Long userId;
+    private Long parentId;  // 父评论ID，0表示一级评论
+    private String content;
+    private Integer status;
+
+    @TableField(exist = false)
+    private String username;
+
+    @TableField(exist = false)
+    private String avatar;
+
+    @TableField(exist = false)
+    private List<Comment> children;  // 子评论列表
+
+    @TableField(exist = false)
+    private Integer likeCount;  // 点赞数
+}
+```
+
+**2. 评论树构建**
+
+```java
+@Service
+@RequiredArgsConstructor
+public class CommentService {
+
+    private final CommentMapper commentMapper;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    /**
+     * 获取文章评论树
+     */
+    public List<Comment> getCommentTree(Long postId) {
+        // 先从Redis缓存获取
+        String cacheKey = "comment:tree:" + postId;
+        List<Comment> cached = (List<Comment>) redisTemplate.opsForValue().get(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+
+        // 查询所有已通过的评论
+        LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Comment::getPostId, postId)
+               .eq(Comment::getStatus, 1)
+               .orderByAsc(Comment::getCreateTime);
+
+        List<Comment> comments = commentMapper.selectList(wrapper);
+
+        // 构建评论树
+        List<Comment> tree = buildCommentTree(comments);
+
+        // 缓存5分钟
+        redisTemplate.opsForValue().set(cacheKey, tree, 5, TimeUnit.MINUTES);
+
+        return tree;
+    }
+
+    /**
+     * 构建评论树（递归方式）
+     */
+    private List<Comment> buildCommentTree(List<Comment> comments) {
+        // 按ID分组
+        Map<Long, List<Comment>> commentMap = new HashMap<>();
+        List<Comment> rootComments = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            if (comment.getParentId() == 0) {
+                rootComments.add(comment);
+            } else {
+                commentMap.computeIfAbsent(
+                    comment.getParentId(),
+                    k -> new ArrayList<>()
+                ).add(comment);
+            }
+        }
+
+        // 递归构建树
+        buildChildren(rootComments, commentMap);
+
+        return rootComments;
+    }
+
+    private void buildChildren(List<Comment> comments, Map<Long, List<Comment>> commentMap) {
+        for (Comment comment : comments) {
+            List<Comment> children = commentMap.get(comment.getId());
+            if (children != null && !children.isEmpty()) {
+                comment.setChildren(children);
+                buildChildren(children, commentMap);
+            }
+        }
+    }
+
+    /**
+     * 发表评论
+     */
+    @Transactional
+    public void addComment(Comment comment) {
+        // 验证文章是否存在
+        Post post = postMapper.selectById(comment.getPostId());
+        if (post == null) {
+            throw new BusinessException("文章不存在");
+        }
+
+        // 验证父评论是否存在（如果有）
+        if (comment.getParentId() != 0) {
+            Comment parent = commentMapper.selectById(comment.getParentId());
+            if (parent == null || !parent.getPostId().equals(comment.getPostId())) {
+                throw new BusinessException("父评论不存在");
+            }
+        }
+
+        comment.setUserId(SecurityUtils.getCurrentUserId());
+        comment.setStatus(1);  // 自动通过，也可以设置为待审核
+        commentMapper.insert(comment);
+
+        // 更新文章评论数
+        postMapper.incrementCommentCount(comment.getPostId());
+
+        // 清除缓存
+        redisTemplate.delete("comment:tree:" + comment.getPostId());
+    }
+}
+```
+
+**3. 前端展示（Thymeleaf）**
+
 ```html
-<!-- 秒杀页面提前生成，部署到CDN -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>秒杀活动</title>
-</head>
-<body>
-    <h1>iPhone 15 Pro 秒杀</h1>
-    <p>价格：¥7999</p>
-    <p>库存：<span id="stock">1000</span></p>
-    <button onclick="seckill()">立即抢购</button>
-</body>
-</html>
+<div class="comment-list" th:if="${comments != null}">
+  <div th:each="comment : ${comments}" class="comment-item">
+    <div class="comment-content">
+      <img th:src="${comment.avatar}" class="avatar" />
+      <div class="comment-body">
+        <span class="username" th:text="${comment.username}"></span>
+        <p class="text" th:text="${comment.content}"></p>
+      </div>
+    </div>
+
+    <!-- 递归渲染子评论 -->
+    <div th:if="${comment.children != null and not #lists.isEmpty(comment.children)}">
+      <div th:replace="~{comment/children :: childComments(${
+          comment.children
+      })}"></div>
+    </div>
+  </div>
+</div>
+
+<!-- comment/children.html 模板片段 -->
+<div th:fragment="childComments(comments)" class="comment-children">
+  <div th:each="comment : ${comments}" class="comment-item child">
+    <div class="comment-content">
+      <div class="comment-body">
+        <span class="username" th:text="${comment.username}"></span>
+        <p class="text" th:text="${comment.content}"></p>
+      </div>
+    </div>
+    <div th:if="${comment.children != null}">
+      <div th:replace="~{comment/children :: childComments(${
+          comment.children
+      })}"></div>
+    </div>
+  </div>
+</div>
 ```
 
-**2. 网关限流**
-```yaml
-spring:
-  cloud:
-    gateway:
-      routes:
-        - id: seckill
-          uri: lb://seckill-service
-          predicates:
-            - Path=/api/seckill/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 100  # 每秒补充100个令牌
-                redis-rate-limiter.burstCapacity: 200  # 桶容量200
-```
+**关键点**：
+- **递归构建**：内存中构建树形结构
+- **缓存优化**：Redis 缓存评论树
+- **性能考虑**：限制评论层级（如最多3层）
+- **事务保证**：评论数更新使用事务
 
-**3. Redis库存扣减（Lua保证原子性）**
-```lua
-local stock = redis.call('get', KEYS[1])
-if tonumber(stock) <= 0 then
-    return 0
-end
-redis.call('decr', KEYS[1])
-redis.call('sadd', KEYS[2], ARGV[1])
-return 1
-```
+### Q4: 如何实现文章归档功能（按日期分组）？
 
-**4. MQ异步下单**
+**参考答案**：
+
+使用 SQL 的 DATE_FORMAT 函数或 Java Stream 分组实现归档。
+
+**1. Mapper 层实现**
+
 ```java
-@RabbitListener(queues = "seckill_order_queue")
-public void createOrder(SeckillMessage message) {
-    // 创建订单
-    Order order = new Order();
-    order.setUserId(message.getUserId());
-    order.setProductId(message.getProductId());
-    orderMapper.insert(order);
+@Mapper
+public interface PostMapper extends BaseMapper<Post> {
 
-    // 扣减DB库存
-    int rows = productMapper.deductStock(message.getProductId());
-    if (rows == 0) {
-        order.setStatus(OrderStatus.CANCELLED);
-        orderMapper.updateById(order);
+    /**
+     * 查询文章归档统计（按年月分组）
+     */
+    @Select("SELECT DATE_FORMAT(create_time, '%Y-%m') AS archive_date, " +
+            "COUNT(*) AS count " +
+            "FROM post " +
+            "WHERE status = 1 " +
+            "GROUP BY DATE_FORMAT(create_time, '%Y-%m') " +
+            "ORDER BY archive_date DESC")
+    List<ArchiveDTO> getArchiveStats();
+
+    /**
+     * 根据归档日期查询文章
+     */
+    @Select("SELECT * FROM post " +
+            "WHERE status = 1 " +
+            "AND DATE_FORMAT(create_time, '%Y-%m') = #{archiveDate} " +
+            "ORDER BY create_time DESC")
+    List<Post> getPostsByArchive(@Param("archiveDate") String archiveDate);
+}
+
+/**
+ * 归档DTO
+ */
+@Data
+@AllArgsConstructor
+public class ArchiveDTO {
+    private String archiveDate;  // 格式：2024-01
+    private Integer count;
+}
+```
+
+**2. Service 层**
+
+```java
+@Service
+@RequiredArgsConstructor
+public class ArchiveService {
+
+    private final PostMapper postMapper;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    /**
+     * 获取文章归档
+     */
+    public List<ArchiveDTO> getArchives() {
+        // 从缓存获取
+        String cacheKey = "archives";
+        List<ArchiveDTO> cached = (List<ArchiveDTO>) redisTemplate.opsForValue().get(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+
+        // 查询数据库
+        List<ArchiveDTO> archives = postMapper.getArchiveStats();
+
+        // 缓存1小时
+        redisTemplate.opsForValue().set(cacheKey, archives, 1, TimeUnit.HOURS);
+
+        return archives;
+    }
+
+    /**
+     * 获取归档下的文章
+     */
+    public List<Post> getPostsByArchive(String archiveDate) {
+        return postMapper.getPostsByArchive(archiveDate);
     }
 }
 ```
 
-**5. 防刷策略**
-- 验证码：防止机器刷单
-- 限流：单用户限制请求频率
-- 黑名单：IP限制、设备指纹
-- 预热：提前加载库存到Redis
+**3. Controller 层**
 
----
-
-## 项目三：高并发系统设计
-
-### 核心问题
-
-#### Q36: 高并发系统如何设计？
-
-**参考答案**：
-
-```
-┌─────────────────────────────────────────────┐
-│                   CDN                        │  静态资源
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│              负载均衡（LVS/Nginx）             │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│            API网关（限流、熔断、鉴权）          │
-└─────────────────────────────────────────────┘
-                    ↓
-┌───────────────┬───────────────┬───────────────┐
-│   服务A       │   服务B       │   服务C       │
-├───────────────┼───────────────┼───────────────┤
-│ Redis缓存     │ Redis缓存     │ Redis缓存     │
-│ 消息队列      │ 消息队列      │ 消息队列      │
-└───────────────┴───────────────┴───────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│          数据库（读写分离、分库分表）          │
-└─────────────────────────────────────────────┘
-```
-
-**优化策略**：
-
-**1. 无状态服务**
 ```java
-// 用户状态存Redis，不存Session
-@RestController
-public class UserController {
-    @GetMapping("/user/info")
-    public User getUserInfo(@RequestHeader("Authorization") String token) {
-        Long userId = JwtUtil.parseToken(token);
-        return redisTemplate.opsForValue().get("user:" + userId);
+@Controller
+@RequestMapping("/archive")
+@RequiredArgsConstructor
+public class ArchiveController {
+
+    private final ArchiveService archiveService;
+
+    /**
+     * 归档页面
+     */
+    @GetMapping
+    public String archives(Model model) {
+        List<ArchiveDTO> archives = archiveService.getArchives();
+        model.addAttribute("archives", archives);
+        return "archive/list";
+    }
+
+    /**
+     * 归档详情页
+     */
+    @GetMapping("/{archiveDate}")
+    public String archiveDetail(
+        @PathVariable String archiveDate,
+        Model model
+    ) {
+        List<Post> posts = archiveService.getPostsByArchive(archiveDate);
+        model.addAttribute("posts", posts);
+        model.addAttribute("archiveDate", archiveDate);
+        return "archive/detail";
     }
 }
 ```
 
-**2. 异步处理**
+**4. Thymeleaf 模板**
+
+```html
+<!-- 归档列表 -->
+<div class="archive-list" th:each="archive : ${archives}">
+  <a th:href="@{/archive/{date}(date=${archive.archiveDate})}">
+    <span th:text="${#strings.substring(archive.archiveDate, 0, 4)}">2024</span>年
+    <span th:text="${#strings.substring(archive.archiveDate, 5, 7)}">01</span>月
+    <span class="count" th:text="${archive.count}"></span> 篇文章
+  </a>
+</div>
+
+<!-- 归档详情 -->
+<div class="archive-posts">
+  <h2 th:text="${archiveDate} + ' 的文章'"></h2>
+  <div th:each="post : ${posts}">
+    <a th:href="@{/post/{id}(id=${post.id})}" th:text="${post.title}"></a>
+    <span th:text="${#temporals.format(post.createTime, 'MM-dd')}"></span>
+  </div>
+</div>
+```
+
+### Q5: 如何实现文章搜索功能（标题+内容）？
+
+**参考答案**：
+
+使用 MySQL 全文索引或 Elasticsearch 实现高性能搜索。
+
+**方案1：MySQL LIKE 模糊查询（简单场景）**
+
 ```java
-// 同步：串行执行，耗时长
-public void register(User user) {
-    userService.save(user);          // 100ms
-    emailService.send(user);         // 500ms
-    smsService.send(user);           // 300ms
-}
-// 总耗时：900ms
+@Mapper
+public interface PostMapper extends BaseMapper<Post> {
 
-// 异步：并行执行，耗时短
-@Async
-public void register(User user) {
-    userService.save(user);          // 100ms
-    emailService.sendAsync(user);    // 异步
-    smsService.sendAsync(user);      // 异步
+    @Select("SELECT * FROM post " +
+            "WHERE status = 1 " +
+            "AND (title LIKE CONCAT('%', #{keyword}, '%') " +
+            "     OR content LIKE CONCAT('%', #{keyword}, '%')) " +
+            "ORDER BY create_time DESC " +
+            "LIMIT #{limit}")
+    List<Post> searchPosts(@Param("keyword") String keyword, @Param("limit") int limit);
 }
-// 总耗时：100ms
 ```
 
-**3. 多级缓存**
+**方案2：MySQL 全文索引（推荐）**
+
+```sql
+-- 创建全文索引
+ALTER TABLE post ADD FULLTEXT INDEX ft_title_content (title, content);
+
+-- 全文搜索查询
+SELECT *,
+       MATCH(title, content) AGAINST('${keyword}' IN NATURAL LANGUAGE MODE) AS score
+FROM post
+WHERE status = 1
+  AND MATCH(title, content) AGAINST('${keyword}' IN NATURAL LANGUAGE MODE)
+ORDER BY score DESC, create_time DESC
+LIMIT 20;
+```
+
 ```java
-@Cacheable(value = "user", key = "#id")
-public User getUser(Long id) {
-    // L1: 本地缓存（Caffeine）
-    // L2: Redis缓存
-    // L3: 数据库
-    return userMapper.selectById(id);
+@Mapper
+public interface PostMapper extends BaseMapper<Post> {
+
+    /**
+     * 全文搜索
+     */
+    @Select("SELECT *, " +
+            "MATCH(title, content) AGAINST(${keyword} IN NATURAL LANGUAGE MODE) AS score " +
+            "FROM post " +
+            "WHERE status = 1 " +
+            "AND MATCH(title, content) AGAINST(${keyword} IN NATURAL LANGUAGE MODE) " +
+            "ORDER BY score DESC, create_time DESC " +
+            "LIMIT #{limit}")
+    @Results({
+        @Result(property = "id", column = "id"),
+        @Result(property = "title", column = "title"),
+        @Result(property = "score", column = "score")
+    })
+    List<PostScoreVO> fullTextSearch(
+        @Param("keyword") String keyword,
+        @Param("limit") int limit
+    );
 }
 ```
 
-**4. 数据库读写分离**
+**方案3：Elasticsearch（大数据量场景）**
+
 ```java
-@DS("master")  // 主库
-public void createOrder(Order order) {
-    orderMapper.insert(order);
+@Service
+@RequiredArgsConstructor
+public class SearchService {
+
+    private final ElasticsearchRestTemplate elasticsearchTemplate;
+
+    /**
+     * 搜索文章
+     */
+    public List<Post> search(String keyword) {
+        NativeSearchQuery query = new NativeSearchQueryBuilder()
+            .withQuery(QueryBuilders.multiMatchQuery(keyword)
+                .field("title")
+                .field("content")
+                .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
+                .fuzziness(Fuzziness.AUTO))
+            .withHighlightFields(
+                new HighlightBuilder.Field("title"),
+                new HighlightBuilder.Field("content")
+            )
+            .withPageable(PageRequest.of(0, 20))
+            .build();
+
+        SearchHits<Post> hits = elasticsearchTemplate.search(query, Post.class);
+
+        return hits.stream()
+            .map(hit -> {
+                Post post = hit.getContent();
+                // 高亮处理
+                if (hit.getHighlightFields().containsKey("title")) {
+                    post.setTitle(hit.getHighlightFields().get("title").get(0));
+                }
+                return post;
+            })
+            .collect(Collectors.toList());
+    }
+}
+```
+
+**性能对比**：
+- **LIKE**：适合数据量小（<1万条）
+- **Fulltext**：适合中等数据量（1万-100万），性能提升10倍
+- **Elasticsearch**：适合大数据量（>100万），支持分词、高亮、拼音搜索
+
+### Q6: 如何实现用户权限控制（管理员 vs 普通用户）？
+
+**参考答案**：
+
+使用 Spring Security + 自定义注解实现基于角色的权限控制。
+
+**1. Spring Security 配置**
+
+```java
+@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+public class SecurityConfig {
+
+    private final CustomUserDetailsService userDetailsService;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf().disable()
+            .authorizeHttpRequests(auth -> auth
+                // 静态资源允许访问
+                .requestMatchers("/static/**", "/css/**", "/js/**").permitAll()
+                // 登录注册页面
+                .requestMatchers("/login", "/register", "/api/auth/**").permitAll()
+                // 管理员页面
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                // API接口
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "USER")
+                // 其他需要登录
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .defaultSuccessUrl("/")
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+            )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(authenticationEntryPoint)
+            );
+
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+```
+
+**2. 自定义权限注解**
+
+```java
+/**
+ * 管理员权限注解
+ */
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@PreAuthorize("hasRole('ADMIN')")
+public @interface RequireAdmin {
 }
 
-@DS("slave")   // 从库
-public Order getOrder(Long orderId) {
-    return orderMapper.selectById(orderId);
+/**
+ * 使用示例
+ */
+@Controller
+@RequestMapping("/admin")
+@RequireAdmin  // 类级别：所有方法都需要管理员权限
+public class AdminController {
+
+    @GetMapping("/users")
+    public String users(Model model) {
+        // 自动验证管理员权限
+        List<User> users = userService.list();
+        model.addAttribute("users", users);
+        return "admin/users";
+    }
+
+    @PostMapping("/user/{id}/delete")
+    @ResponseBody
+    @RequireAdmin  // 方法级别：单独验证
+    public Result<Void> deleteUser(@PathVariable Long id) {
+        userService.removeById(id);
+        return Result.success();
+    }
 }
 ```
 
-**5. 分库分表**
-```yaml
-# ShardingSphere配置
-spring:
-  shardingsphere:
-    sharding:
-      tables:
-        t_order:
-          actual-data-nodes: ds$->{0..1}.t_order_$->{0..1}
-          database-strategy:
-            inline:
-              sharding-column: user_id
-              algorithm-expression: ds$->{user_id % 2}
-          table-strategy:
-            inline:
-              sharding-column: order_id
-              algorithm-expression: t_order_$->{order_id % 2}
+**3. Thymeleaf 模板权限控制**
+
+```html
+<!-- 引入Spring Security标签 -->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<!-- 只对管理员显示 -->
+<div sec:authorize="hasRole('ADMIN')">
+  <a href="/admin/users">用户管理</a>
+  <a href="/admin/settings">系统设置</a>
+</div>
+
+<!-- 对所有登录用户显示 -->
+<div sec:authorize="isAuthenticated()">
+  <span>欢迎，<span sec:authentication="name"></span></span>
+  <a href="/logout">登出</a>
+</div>
+
+<!-- 显示当前用户角色 -->
+<div sec:authorize="hasAnyRole('ADMIN', 'USER')">
+  角色：<span sec:authentication="principal.authorities"></span>
+</div>
 ```
 
----
+**4. 自定义 PermissionEvaluator**
 
-## 项目四：微服务架构完整系统
-
-### 技术架构
-
-**后端**：Spring Cloud全家桶 + Docker + Kubernetes + Skywalking
-**监控**：Prometheus + Grafana + ELK
-**部署**：ArgoCD GitOps + 蓝绿部署 + 金丝雀发布
-
-### 核心问题
-
-#### Q37: 微服务架构如何设计？
-
-**参考答案**：
-
-```
-┌─────────────────────────────────────────────┐
-│            API Gateway（网关层）              │
-│         鉴权、限流、熔断、路由、日志            │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│            核心服务层（Core Services）         │
-├─────────────┬─────────────┬─────────────────┤
-│  用户服务    │  商品服务    │   订单服务       │
-│  认证服务    │  库存服务    │   支付服务       │
-├─────────────┼─────────────┼─────────────────┤
-│  营销服务    │  搜索服务    │   消息服务       │
-│  通知服务    │  文件服务    │   工作流服务     │
-└─────────────┴─────────────┴─────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│          基础服务层（Infrastructure）          │
-├─────────────┬─────────────┬─────────────────┤
-│ Nacos（注册+配置）                          │
-│ Sentinel（流控熔断）                         │
-│ Seata（分布式事务）                          │
-│ Skywalking（链路追踪）                       │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│          数据层（Data Layer）                 │
-├─────────────┬─────────────┬─────────────────┤
-│ MySQL集群    │ Redis集群    │  RabbitMQ集群   │
-│ Elasticsearch│ MinIO对象    │  MongoDB       │
-└─────────────┴─────────────┴─────────────────┘
-```
-
-#### Q38: 如何保证高可用（多级容灾）？
-
-**参考答案**：
-
-**1. 服务高可用**
-```yaml
-# Deployment多副本
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: order-service
-spec:
-  replicas: 3  # 3个副本
-  selector:
-    matchLabels:
-      app: order-service
-  template:
-    metadata:
-      labels:
-        app: order-service
-    spec:
-      containers:
-      - name: order-service
-        image: order-service:1.0.0
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
-        livenessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /actuator/health/readiness
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 5
-```
-
-**2. 数据库高可用**
-```bash
-# MySQL主从复制 + MHA自动故障转移
-Master（写）
-  ↓
-Slave1（读） ← Slave2（读） ← Slave3（读）
-  ↓
-MHA Manager（监控+自动故障转移）
-```
-
-**3. Redis高可用**
-```bash
-# Redis Sentinel哨兵模式
-Master
-  ↓
-Slave1 ← Slave2
-  ↓
-Sentinel1 ← Sentinel2 ← Sentinel3（监控+自动故障转移）
-```
-
-**4. 多机房容灾**
-```
-┌─────────┐    ┌─────────┐    ┌─────────┐
-│ 机房A    │    │ 机房B    │    │ 机房C    │
-│ (主机房)  │    │ (备机房)  │    │ (灾备)   │
-└─────────┘    └─────────┘    └─────────┘
-     ↓              ↓              ↓
-  同步复制        异步复制        异步复制
-```
-
-#### Q39: 如何进行链路追踪与问题排查？
-
-**参考答案**：
-
-**Skywalking集成**：
-```yaml
-# JVM参数
--javaagent:/path/to/skywalking-agent.jar=
-  agent.service_name=order-service
-  agent.collector.backend_service=127.0.0.1:11800
-  agent.logging.level=INFO
-```
-
-**链路追踪分析**：
-1. **请求链路图**：可视化展示请求经过的所有服务
-2. **性能分析**：每个服务的响应时间
-3. **异常定位**：快速定位错误发生的链路
-4. **依赖分析**：服务之间的依赖关系
-
-#### Q40: 如何设计灰度发布（金丝雀发布）？
-
-**参考答案**：
-
-**Gateway灰度路由**：
 ```java
 @Component
-public class GrayRouteFilter implements GlobalFilter {
+public class CustomPermissionEvaluator implements PermissionEvaluator {
+
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String userId = exchange.getRequest().getHeaders().getFirst("X-User-Id");
-
-        // 灰度用户列表（从Redis获取）
-        Set<String> grayUsers = redisTemplate.opsForSet().members("gray:users");
-
-        if (grayUsers != null && grayUsers.contains(userId)) {
-            // 灰度用户路由到新版本
-            ServerHttpRequest request = exchange.getRequest().mutate()
-                .header("X-Version", "v2")
-                .build();
-            return chain.filter(exchange.mutate().request(request).build());
+    public boolean hasPermission(
+        Authentication auth,
+        Serializable targetId,
+        String permission
+    ) {
+        // 检查用户是否有对特定资源的权限
+        if (auth == null || !auth.isAuthenticated()) {
+            return false;
         }
 
-        // 普通用户路由到旧版本
-        return chain.filter(exchange);
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+        // 检查是否为文章作者
+        if ("edit".equals(permission)) {
+            return postService.isAuthor(targetId, userDetails.getId());
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean hasPermission(
+        Authentication auth,
+        Object targetId,
+        String permission
+    ) {
+        return hasPermission(auth, (Serializable) targetId, permission);
     }
 }
 ```
 
-**Kubernetes金丝雀发布**：
-```yaml
-# 10%流量到新版本
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: order-service
-spec:
-  http:
-  - match:
-    - headers:
-        x-user-id:
-          regex: "1|2|3|4|5"  # 前5个用户（灰度）
-    route:
-    - destination:
-        host: order-service
-        subset: v2  # 新版本
-      weight: 100
-  - route:
-    - destination:
-        host: order-service
-        subset: v1  # 旧版本
-      weight: 90
-    - destination:
-        host: order-service
-        subset: v2  # 新版本
-      weight: 10
-```
+---
+
+## 本章小结
+
+### Java项目核心要点
+
+| 功能模块 | 技术方案 | 关键点 |
+|---------|---------|--------|
+| **数据库设计** | MySQL 8.0 + 外键约束 | ER图设计、索引优化 |
+| **浏览量统计** | Redis 计数器 + 定时同步 | 高性能、数据持久化 |
+| **评论系统** | 递归树构建 + Redis缓存 | 多级回复、事务保证 |
+| **文章归档** | DATE_FORMAT 分组 | 按日期统计 |
+| **搜索功能** | 全文索引 / Elasticsearch | 高性能搜索 |
+| **权限控制** | Spring Security + RBAC | 基于角色的访问控制 |
+
+### 面试准备重点
+
+**技术深度**：
+- Spring Boot 3.x 新特性
+- MyBatis 高级查询和动态SQL
+- Redis 缓存策略
+- Spring Security 权限管理
+- MySQL 索引和优化
+
+**架构能力**：
+- 分层架构设计
+- 缓存架构设计
+- 安全架构设计
 
 ---
 
-## 📚 推荐学习资源
+**小徐带你飞系列教程**
 
-### 开源项目
-- [mall-swarm：微服务电商系统](https://github.com/macrozheng/mall-swarm)
-- [mall4cloud：B2B2C商城系统](https://github.com/gz-yami/mall4cloud)
-
-### 面试题资源
-- [2025年大厂实战场景面试题精析](https://blog.csdn.net/x1ao_fe1/article/details/148543649)
-- [Java后端面试必考场景题大全](https://blog.csdn.net/2501_91139003/article/details/148095690)
-
----
-
-**更新时间**：2026年2月 | **版本**：v2.0
-
-**祝你面试成功！** 🎉
+**最后更新：2026年2月**
+**版本：v1.0**
+**作者：小徐**
+**邮箱：esimonx@163.com**

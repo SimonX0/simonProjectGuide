@@ -1,12 +1,12 @@
 ---
-title: React 18+与Next.js 14+面试题
+title: React 19+与Next.js 15+面试题
 ---
 
-# React 18+与Next.js 14+面试题
+# React 19+与Next.js 15+面试题
 
-## React 18+新特性
+## React 19+新特性
 
-### React 18有哪些核心新特性？
+### React 19有哪些核心新特性？
 
 **React 18** 带来了许多重要的新特性：
 
@@ -421,60 +421,69 @@ app.get('/', (req, res) => {
 });
 ```
 
-## Next.js 14+新特性
+## Next.js 15+新特性
 
-### Next.js 14有哪些新特性？
+### Next.js 15有哪些新特性？
 
-**Next.js 14** 带来了重要的改进：
+**Next.js 15**（2024年11月发布）带来了革命性的改进：
 
-**1. Turbopack（稳定版）**:
+**1. Turbopack（默认启用）** ⭐:
 
 ```javascript
-// next.config.js
+// Next.js 15: Turbopack 在开发模式默认启用
+// 无需配置，直接启动即可享受700x启动速度提升
+
+// 启动命令
+npm run dev  // 自动使用 Turbopack
+
+// 如果需要自定义（next.config.ts）
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 启用Turbopack（开发模式）
-  experimental: {
-    turbo: {
-      // Turbopack配置
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
-  },
+  // Next.js 15 中不再需要 experimental.turbo
+  // Turbopack 已成为默认构建引擎
 };
 
-module.exports = nextConfig;
+export default nextConfig;
 ```
 
-**2. Server Actions（稳定版）**:
+**2. Server Actions 增强**:
 
 ```javascript
-// app/actions.js
+// app/actions.ts
 'use server';
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
+
+// 定义验证schema（Next.js 15 新特性）
+const TodoSchema = z.object({
+  title: z.string().min(1, "标题不能为空"),
+  completed: z.boolean().default(false),
+});
 
 // 创建Server Action
-export async function createTodo(formData) {
-  const title = formData.get('title');
+export async function createTodo(prevState, formData: FormData) {
+  // 1. 验证输入
+  const validatedData = TodoSchema.parse({
+    title: formData.get('title'),
+    completed: formData.get('completed'),
+  });
 
-  // 数据库操作
-  await db.todos.create({ data: { title } });
+  // 2. 数据库操作
+  const todo = await db.todos.create({
+    data: validatedData,
+  });
 
-  // 重新验证缓存
+  // 3. 重新验证缓存（Next.js 15 增强）
   revalidatePath('/todos');
 
-  // 可选：重定向
+  // 4. 返回数据或重定向
   redirect('/todos');
 }
 
-// 在组件中使用
-// app/todos/page.js
+// 在组件中使用（Next.js 15: 支持直接传递 FormData）
+// app/todos/page.tsx
 import { createTodo } from '../actions';
 
 export default function TodosPage() {
@@ -487,34 +496,64 @@ export default function TodosPage() {
 }
 ```
 
-**3. 部分预渲染（PPR）**:
+**3. 部分预渲染（PPR）- 稳定版** ⭐:
 
 ```javascript
-// next.config.js
+// Next.js 15: PPR 进入稳定版
+// next.config.ts
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // PPR 不再是实验性功能
   experimental: {
-    // 启用部分预渲染
-    ppr: 'incremental',
+    ppr: 'incremental',  // 增量静态再验证
   },
 };
 
-// 在页面级别启用
-export const experimental_ppr = true;
+// 在页面级别启用 PPR
+export const ppr = true;  // 直接使用，不需要 experimental 前缀
 
-export default function Page() {
+export default function ProductPage({ params }) {
   return (
     <div>
-      {/* 静态部分 */}
-      <header>静态标题</header>
+      {/* 静态部分：外壳 */}
+      <header>商品详情</header>
 
-      {/* 动态部分 */}
-      <Suspense fallback={<Loading />}>
-        <DynamicContent />
+      {/* 动态部分：评论 */}
+      <Suspense fallback={<CommentsSkeleton />}>
+        <Comments productId={params.id} />
       </Suspense>
     </div>
   );
 }
+```
+
+**4. 其他重要改进**:
+
+```javascript
+// 1. fetch API 增强
+async function getTodos() {
+  const res = await fetch('https://api.example.com/todos', {
+    // Next.js 15: 更好的缓存控制
+    next: { revalidate: 60 }, // 60秒后重新验证
+  });
+  return res.json();
+}
+
+// 2. 更好的类型支持
+import type { Route } from 'next';
+import type { Metadata } from 'next';
+
+// Next.js 15: 完整的 TypeScript 类型支持
+export const metadata: Metadata = {
+  title: '我的应用',
+  description: 'Next.js 15 应用',
+};
+
+// 3. 视口元数据（新增）
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
 ```
 
 **4. 元数据改进**:
@@ -822,17 +861,17 @@ export async function getServerSideProps() {
 }
 ```
 
-### Next.js 14的性能优化技巧？
+### Next.js 15+的性能优化技巧？
 
-**1. 使用Turbopack**:
+**1. Turbopack（默认启用）**:
 
 ```javascript
-// next.config.js
-module.exports = {
-  experimental: {
-    turbo: {},
-  },
-};
+// Next.js 15+ - Turbopack 默认启用
+// 开发时自动使用，无需配置
+npm run dev  // 直接使用 Turbopack
+
+// 生产构建也可使用
+npm run build -- --turbo
 ```
 
 **2. 优化图片加载**:
@@ -1099,17 +1138,19 @@ export default function InfiniteList() {
 
 ## 本章小结
 
-### React 18+核心要点
+### React 19+核心要点
 
 | 特性 | 关键点 |
 |------|--------|
+| **Server Components** | 服务器端组件，减少客户端JavaScript |
+| **Actions** | 简化表单处理和数据变更 |
+| **useOptimistic** | 乐观UI更新Hook |
+| **use() API** | 简化资源读取 |
 | **并发渲染** | 可中断的渲染，更好的用户体验 |
 | **自动批处理** | 所有状态更新自动批处理 |
-| **Transitions** | 标记低优先级更新 |
-| **Suspense** | 改进的数据加载方式 |
-| **新Hooks** | useId、useSyncExternalStore、useDeferredValue、useTransition |
+| **新Hooks** | useActionState、useFormStatus |
 
-### Next.js 14+核心要点
+### Next.js 15+核心要点
 
 | 特性 | 关键点 |
 |------|--------|

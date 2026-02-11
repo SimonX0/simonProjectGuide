@@ -1,6 +1,6 @@
 # 附录：DevOps工具速查手册
 
-> **DevOps工具链完全指南**
+> **DevOps工具链完全指南（2024-2025最新版本）**
 >
 > 本附录提供：
 > - Docker常用命令速查
@@ -8,8 +8,35 @@
 > - Terraform命令速查
 > - Ansible命令速查
 > - CI/CD工具命令
+> - GitOps工具命令（NEW）
 
-## 附录A：Docker命令速查
+## 版本要求（2024-2025标准）
+
+```yaml
+# Docker & 容器化
+Docker: >= 26.x (2024年最新稳定版)
+Docker Compose: >= V2.27.0 (V2默认启用)
+
+# Kubernetes
+Kubernetes: >= 1.30+ (支持最新Pod Security Standards)
+kubectl: >= 1.30+
+
+# 基础设施即代码
+Terraform: >= 1.9+
+Ansible: >= 2.17+
+
+# GitOps工具
+ArgoCD: >= 2.10+
+Flux CD: >= 2.3+
+KubeVela: >= 1.9+
+
+# CI/CD
+GitHub Actions: 最新版
+GitLab CI: >= 17.0
+Jenkins: >= 2.450+
+```
+
+## 附录A：Docker命令速查（Docker 26.x + Compose V2）
 
 ### 🐳 镜像操作
 
@@ -57,17 +84,31 @@
 | `docker volume rm <name>` | 删除卷 | ⭐⭐⭐ |
 | `docker volume inspect <name>` | 查看卷详情 | ⭐⭐⭐ |
 
-### 🛠️ Docker Compose
+### 🛠️ Docker Compose V2（注意：V2已无连字符）
+
+> **重要变化**：Docker Compose V2 已集成到 Docker CLI 中，使用 `docker compose`（无连字符）
 
 | 命令 | 说明 | 频率 |
 |------|------|------|
-| `docker-compose up -d` | 后台启动服务 | ⭐⭐⭐⭐⭐ |
-| `docker-compose down` | 停止并删除服务 | ⭐⭐⭐⭐⭐ |
-| `docker-compose ps` | 列出服务 | ⭐⭐⭐⭐⭐ |
-| `docker-compose logs` | 查看日志 | ⭐⭐⭐⭐⭐ |
-| `docker-compose exec <service> sh` | 进入服务容器 | ⭐⭐⭐⭐ |
-| `docker-compose restart` | 重启服务 | ⭐⭐⭐⭐ |
-| `docker-compose build` | 构建服务镜像 | ⭐⭐⭐⭐⭐ |
+| `docker compose up -d` | 后台启动服务 | ⭐⭐⭐⭐⭐ |
+| `docker compose down` | 停止并删除服务 | ⭐⭐⭐⭐⭐ |
+| `docker compose ps` | 列出服务 | ⭐⭐⭐⭐⭐ |
+| `docker compose logs` | 查看日志 | ⭐⭐⭐⭐⭐ |
+| `docker compose logs -f <service>` | 实时查看服务日志 | ⭐⭐⭐⭐⭐ |
+| `docker compose exec <service> sh` | 进入服务容器 | ⭐⭐⭐⭐ |
+| `docker compose restart` | 重启服务 | ⭐⭐⭐⭐ |
+| `docker compose build` | 构建服务镜像 | ⭐⭐⭐⭐⭐ |
+| `docker compose pull` | 拉取服务镜像 | ⭐⭐⭐⭐ |
+| `docker compose top` | 查看运行进程 | ⭐⭐⭐ |
+
+**V1 迁移到 V2 变化**：
+```bash
+# ❌ V1命令（已废弃）
+docker-compose up -d
+
+# ✅ V2命令（新标准）
+docker compose up -d
+```
 
 ---
 
@@ -239,7 +280,160 @@
 
 ---
 
-## 附录F：监控和日志工具
+## 附录F：GitOps工具速查（2024-2025标准）
+
+> **GitOps = 基础设施的声明式配置 + Git作为单一事实来源**
+
+### 🚢 Argo CD（Kubernetes原生GitOps）
+
+**安装与初始化**：
+```bash
+# 安装 Argo CD
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# 访问 UI
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+# 初始密码（用户名：admin）
+argocd admin initial-password | head -1
+```
+
+**应用管理**：
+| 命令 | 说明 | 频率 |
+|------|------|------|
+| `argocd app list` | 列出应用 | ⭐⭐⭐⭐⭐ |
+| `argocd app get <app>` | 查看应用状态 | ⭐⭐⭐⭐⭐ |
+| `argocd app sync <app>` | 手动同步应用 | ⭐⭐⭐⭐⭐ |
+| `argocd app create <app> --repo <url> --path <path>` | 创建应用 | ⭐⭐⭐⭐ |
+| `argocd app delete <app>` | 删除应用 | ⭐⭐⭐ |
+| `argocd app sync <app> --dry-run` | 预览同步（不执行） | ⭐⭐⭐⭐ |
+
+**仓库管理**：
+| 命令 | 说明 | 频率 |
+|------|------|------|
+| `argocd repo add <url> --type git` | 添加Git仓库 | ⭐⭐⭐⭐ |
+| `argocd repo list` | 列出仓库 | ⭐⭐⭐⭐ |
+| `argocd repo rm <url>` | 删除仓库 | ⭐⭐⭐ |
+
+**集群管理**：
+| 命令 | 说明 | 频率 |
+|------|------|------|
+| `argocd cluster add` | 添加集群 | ⭐⭐⭐⭐ |
+| `argocd cluster list` | 列出集群 | ⭐⭐⭐⭐ |
+
+### 🔄 Flux CD（CNCF孵化项目）
+
+**安装与初始化**：
+```bash
+# 安装 Flux CLI
+# macOS
+brew install fluxcd/tap/flux
+
+# Linux
+curl -s https://fluxcd.io/install.sh | sudo bash
+
+# 检查先决条件
+flux check --pre
+
+# 在集群上安装 Flux
+flux install --namespace=flux-system --export
+```
+
+**源管理（Git Sources）**：
+| 命令 | 说明 | 频率 |
+|------|------|------|
+| `flux create source git <name> --url <url> --branch <branch>` | 创建Git源 | ⭐⭐⭐⭐⭐ |
+| `flux get sources git` | 列出Git源 | ⭐⭐⭐⭐⭐ |
+| `flux suspend source git <name>` | 暂停源 | ⭐⭐⭐ |
+| `flux resume source git <name>` | 恢复源 | ⭐⭐⭐ |
+
+**Kustomization管理**：
+| 命令 | 说明 | 频率 |
+|------|------|------|
+| `flux create kustomization <name> --source <source> --path <path>` | 创建Kustomization | ⭐⭐⭐⭐⭐ |
+| `flux get kustomizations` | 列出Kustomization | ⭐⭐⭐⭐⭐ |
+| `flux reconcile kustomization <name>` | 手动同步 | ⭐⭐⭐⭐ |
+
+**HelmRelease管理**：
+| 命令 | 说明 | 频率 |
+|------|------|------|
+| `flux create helmrelease <name> --source <source>` | 创建Helm发布 | ⭐⭐⭐⭐⭐ |
+| `flux get helmreleases` | 列出Helm发布 | ⭐⭐⭐⭐⭐ |
+
+### 🎯 KubeVela（应用交付平台）
+
+**安装**：
+```bash
+# 安装 KubeVela CLI
+# macOS
+brew install kubevela
+
+# Linux
+curl -fsSl https://kubevela.net/script/install.sh | bash
+
+# 在集群上安装 KubeVela
+vela install
+```
+
+**应用管理**：
+| 命令 | 说明 | 频率 |
+|------|------|------|
+| `vela up <app>` | 部署应用 | ⭐⭐⭐⭐⭐ |
+| `vela ls` | 列出应用 | ⭐⭐⭐⭐⭐ |
+| `vela status <app>` | 查看应用状态 | ⭐⭐⭐⭐⭐ |
+| `vela delete <app>` | 删除应用 | ⭐⭐⭐ |
+
+### 🔧 GitOps最佳实践
+
+**声明式配置示例**：
+```yaml
+# Argo CD Application
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/org/infrastructure.git
+    targetRevision: main
+    path: apps/my-app
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+```
+
+**GitOps工作流**：
+```bash
+# 1. 修改配置
+git clone https://github.com/org/infrastructure.git
+cd infrastructure
+vim apps/my-app/deployment.yaml
+
+# 2. 提交变更
+git add .
+git commit -m "feat: update my-app to v2.0"
+git push origin main
+
+# 3. 自动同步（Argo CD/Flux自动检测并应用）
+# 或手动触发：
+argocd app sync my-app
+
+# 4. 验证状态
+argocd app get my-app
+```
+
+---
+
+## 附录G：监控和日志工具
 
 ### 📊 Prometheus
 
@@ -268,7 +462,7 @@
 
 ---
 
-## 附录G：常用速查表
+## 附录H：常用速查表
 
 ### 🐳 Dockerfile常用指令
 

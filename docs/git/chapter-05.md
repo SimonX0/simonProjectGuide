@@ -167,6 +167,810 @@ closes #102"
 
 ---
 
+## 分支保护与 PR 策略 - 团队协作必备
+
+### 什么是分支保护？
+
+**分支保护** = 给重要分支（如 main）加"锁"，防止误操作
+
+**为什么需要分支保护？**
+
+```bash
+❌ 没有分支保护的后果：
+- 小明直接推代码到 main → 把线上搞崩了
+- 小红强制推送 → 覆盖了大家的代码
+- 没有代码审查 → Bug 轻易混入主分支
+- 没有测试检查 → 低质量代码合并
+
+✅ 有分支保护的好处：
+- 必须通过 PR 审查
+- 必须通过 CI 测试
+- 禁止直接推送
+- 代码质量有保障
+```
+
+### 分支保护工作流程图
+
+```mermaid
+graph TB
+    A[开发者创建功能分支] --> B[开发并提交代码]
+    B --> C[推送到远程]
+    C --> D[创建 Pull Request]
+
+    D --> E{分支保护检查}
+
+    E --> F[CI 自动测试]
+    F --> G{测试通过?}
+    G -->|否| H[修复问题]
+    H --> B
+
+    G -->|是| I[代码审查]
+    I --> J{获得批准?}
+    J -->|否| K[修改代码]
+    K --> B
+
+    J -->|是| L{满足所有条件?}
+    L -->|否| M[等待其他检查]
+    M --> L
+
+    L -->|是| N[可以合并 PR]
+    N --> O[合并到 main]
+
+    O --> P[删除功能分支]
+
+    style E fill:#fff4e6
+    style G fill:#e8f5e9
+    style J fill:#e8f5e9
+    style L fill:#fff4e6
+    style N fill:#c8e6c9
+```
+
+### GitHub 分支保护配置 - 完整步骤
+
+#### 步骤 1：进入分支保护设置
+
+```
+GitHub 仓库页面
+  ↓
+点击 Settings（设置）
+  ↓
+左侧菜单找到 "Branches"（分支）
+  ↓
+点击 "Add branch protection rule"（添加分支保护规则）
+```
+
+#### 步骤 2：配置保护规则
+
+**界面展示（文字描述）**：
+
+```
+┌─────────────────────────────────────────────────────┐
+│ Branch protection rule for:  main                    │
+├─────────────────────────────────────────────────────┤
+│                                                       │
+│ Branch name pattern                                  │
+│ ┌─────────────────────────────────────────────────┐ │
+│ │ main                                            │ │
+│ └─────────────────────────────────────────────────┘ │
+│                                                       │
+│ ☑ Require a pull request before merging             │
+│                                                       │
+│   ┌─────────────────────────────────────────────┐   │
+│   │ Require approvals                            │   │
+│   │   Number: 2  👥                             │   │
+│   └─────────────────────────────────────────────┘   │
+│                                                       │
+│   ☑ Dismiss stale reviews when new commits are pushed│
+│   ☑ Require review from CODEOWNERS                  │
+│                                                       │
+│ ☑ Require status checks to pass before merging      │
+│                                                       │
+│   Required status checks:                             │
+│   ┌─────────────────────────────────────────────┐   │
+│   │ ✓ ci/ci.yml                                 │   │
+│   │ ✓ lint                                      │   │
+│   │ ✓ test                                      │   │
+│   └─────────────────────────────────────────────┘   │
+│                                                       │
+│   ☑ Require branches to be up to date before merging │
+│                                                       │
+│ ☑ Do not allow bypassing the above settings          │
+│                                                       │
+│ ☑ Restrict who can push to matching branches         │
+│   People who can push:                                │
+│   - @team-lead                                        │
+│   - @devops-team                                      │
+│                                                       │
+│ ☑ Require signed commits                             │
+│                                                       │
+│ ☑ Include administrators                             │
+│                                                       │
+│ ☐ Allow force pushes                                 │
+│                                                       │
+│ ☑ Allow deletions                                    │
+│                                                       │
+│                    [ Create ]  [ Cancel ]            │
+└─────────────────────────────────────────────────────┘
+```
+
+#### 步骤 3：配置说明（详细）
+
+```yaml
+# 1. 分支名称模式
+Branch name pattern: main
+# 也可以使用通配符保护多个分支
+# - main
+# - release/*
+# - production
+
+# 2. PR 审查要求
+Require a pull request before merging:
+  - Required approvals: 2
+    说明：至少需要 2 个人审核批准
+
+  - Dismiss stale reviews: yes
+    说明：新提交推送后，旧的审批自动失效
+    举例：你提交后，张三批准了 ✅
+         你又改了代码 → 张三的批准自动失效 ❌
+         需要重新审查
+
+  - Require review from CODEOWNERS: yes
+    说明：代码所有者必须批准
+    举例：修改 payment 目录 → @payment-team 必须批准
+
+# 3. 状态检查要求
+Require status checks to pass before merging:
+  Required checks:
+    - ci/ci.yml      # CI 工作流必须通过
+    - lint           # 代码检查必须通过
+    - test           # 测试必须通过
+
+  Require branches to be up to date: yes
+  说明：合并前必须同步最新代码
+  举例：你创建 PR 后，main 有新提交
+       你必须 rebase 后才能合并
+
+# 4. 权限限制
+Restrict who can push to matching branches:
+  - 只有管理员可以推送
+  - 或者指定团队/用户
+
+# 5. 签名提交
+Require signed commits: yes
+说明：必须使用 GPG 签名的提交
+
+# 6. 管理员也受限制
+Include administrators: yes
+说明：即使是仓库管理员也必须遵守规则
+
+# 7. 强制推送
+Allow force pushes: NO
+说明：禁止强制推送，防止历史被改写
+
+# 8. 删除保护
+Allow deletions: NO
+说明：禁止删除被保护的分支
+```
+
+### CODEOWNERS 配置 - 自动指定审查人
+
+**CODEOWNERS** = 代码所有者，自动指定谁来审查代码
+
+#### 创建 CODEOWNERS 文件
+
+```bash
+# 文件位置：.github/CODEOWNERS
+
+# ========================================
+# 全局所有者（适用于所有文件）
+# ========================================
+* @team-lead @tech-lead
+
+# ========================================
+# 按目录划分
+# ========================================
+# 前端代码
+/src/frontend/ @frontend-team
+/src/components/ @frontend-lead
+/src/views/ @frontend-developer-a
+
+# 后端代码
+/src/backend/ @backend-team
+/src/api/ @api-lead
+/src/models/ @backend-lead
+
+# 数据库
+/migrations/ @db-admin
+/seeders/ @db-admin
+
+# ========================================
+# 按文件类型划分
+# ========================================
+*.js @javascript-team
+*.ts @typescript-team
+*.py @python-team
+*.go @golang-team
+*.java @java-team
+
+# 配置文件
+*.yml @devops-team
+*.yaml @devops-team
+Dockerfile @devops-team
+docker-compose.yml @devops-team
+
+# ========================================
+# 关键文件需要特定人员批准
+# ========================================
+package.json @frontend-lead @security-team
+requirements.txt @backend-lead @security-team
+*.key @security-admin
+*.pem @security-admin
+.env.* @admin-only
+
+# ========================================
+# 文档
+# ========================================
+*.md @doc-team
+README.md @project-manager
+CHANGELOG.md @release-manager
+
+# ========================================
+# 特殊规则
+# ========================================
+# 紧急修复可以绕过审查
+/urgent/ @admin @tech-lead
+
+# 第三方库由指定人管理
+/vendor/ @dependency-manager
+/node_modules/ @dependency-manager
+```
+
+#### CODEOWNERS 工作流程图
+
+```mermaid
+graph LR
+    A[创建 PR] --> B{检查修改的文件}
+    B --> C[.github/CODEOWNERS]
+    C --> D[匹配规则]
+
+    D --> E1[修改了 .js 文件]
+    D --> E2[修改了 /src/payment/]
+    D --> E3[修改了 Dockerfile]
+
+    E1 --> F1[@javascript-team 必须审查]
+    E2 --> F2[@payment-team 必须审查]
+    E3 --> F3[@devops-team 必须审查]
+
+    F1 --> G[自动请求审查]
+    F2 --> G
+    F3 --> G
+
+    G --> H[等待批准]
+    H --> I[所有所有者批准 ✅]
+    I --> J[可以合并]
+
+    style A fill:#e3f2fd
+    style C fill:#fff3e0
+    style G fill:#f3e5f5
+    style I fill:#c8e6c9
+```
+
+### 实际案例：配置完整的分支保护
+
+#### 案例 1：小型团队配置
+
+```yaml
+# 场景：5人团队，1个技术负责人 + 4个开发者
+
+# 分支保护规则
+main 分支：
+  ✅ Require pull request reviews before merging
+    - Required approvals: 1（技术负责人必须批准）
+    - Dismiss stale reviews: yes
+    - Require review from CODEOWNERS: no（团队小，不需要）
+
+  ✅ Require status checks to pass before merging
+    - Required checks: test, lint
+    - Require branches to be up to date: yes
+
+  ✅ Do not allow bypassing the above settings
+
+  ✅ Restrict who can push:
+    - 只有技术负责人可以推送
+
+  ✅ Include administrators: yes
+
+  ❌ Allow force pushes: NO
+
+  ❌ Allow deletions: NO
+
+# .github/CODEOWNERS
+* @tech-lead
+/urgent/* @tech-lead @developer-a
+```
+
+#### 案例 2：中型团队配置
+
+```yaml
+# 场景：20人团队，分为前端、后端、DevOps 3个小组
+
+# 分支保护规则
+main 分支：
+  ✅ Require pull request reviews before merging
+    - Required approvals: 2（至少2人批准）
+    - Dismiss stale reviews: yes
+    - Require review from CODEOWNERS: yes（代码所有者必须批准）
+
+  ✅ Require status checks to pass before merging
+    - Required checks:
+      - ci/ci.yml（CI 工作流）
+      - lint（代码检查）
+      - test（单元测试）
+      - integration-test（集成测试）
+    - Require branches to be up to date: yes
+
+  ✅ Do not allow bypassing the above settings
+
+  ✅ Restrict who can push:
+    - @tech-lead
+    - @frontend-lead
+    - @backend-lead
+    - @devops-lead
+
+  ✅ Require signed commits: yes（重要项目要求签名）
+
+  ✅ Include administrators: yes
+
+  ❌ Allow force pushes: NO
+
+  ❌ Allow deletions: NO
+
+# .github/CODEOWNERS
+# 全局批准
+* @tech-lead
+
+# 前端
+/src/frontend/** @frontend-team
+/src/components/** @frontend-lead
+/src/views/** @frontend-team
+*.tsx @frontend-team
+*.vue @frontend-team
+
+# 后端
+/src/backend/** @backend-team
+/src/api/** @backend-lead
+/src/models/** @backend-team
+/src/controllers/** @backend-team
+
+# DevOps & 基础设施
+.github/** @devops-team
+Dockerfile @devops-team
+docker-compose.yml @devops-team
+*.yml @devops-team
+*.yaml @devops-team
+
+# 安全
+*.env @security-team
+*.key @security-admin
+/secrets/** @security-admin
+
+# 数据库
+/migrations/** @db-admin
+/seeders/** @db-admin
+```
+
+#### 案例 3：大型企业级配置
+
+```yaml
+# 场景：50+人企业团队，多团队协作，严格合规
+
+# 分支保护规则
+main 分支：
+  ✅ Require pull request reviews before merging
+    - Required approvals: 2
+    - Dismiss stale reviews: yes
+    - Require review from CODEOWNERS: yes
+    - Require review from:
+      - @security-team（安全团队必须审查）
+      - @tech-lead（技术负责人必须审查）
+
+  ✅ Require status checks to pass before merging
+    - Required checks:
+      - ci/ci.yml
+      - lint
+      - test
+      - integration-test
+      - security-scan（安全扫描）
+      - dependency-check（依赖检查）
+    - Require branches to be up to date: yes
+
+  ✅ Do not allow bypassing the above settings
+
+  ✅ Restrict who can push:
+    - @release-manager
+    - @tech-lead
+
+  ✅ Require signed commits: yes
+
+  ✅ Require linear history: yes（要求线性历史，不允许合并提交）
+
+  ✅ Include administrators: yes
+
+  ❌ Allow force pushes: NO
+
+  ❌ Allow deletions: NO
+
+# .github/CODEOWNERS
+# 全局批准（需要 2 个技术负责人）
+* @tech-lead @architect-lead
+
+# 按部门
+/src/frontend/** @frontend-team @security-team
+/src/backend/** @backend-team @security-team
+/src/infrastructure/** @devops-team @sre-team
+
+# 关键模块需要安全审查
+/src/auth/** @security-team @auth-team
+/src/payment/** @payment-team @security-team @compliance-team
+/src/user-data/** @privacy-team @legal-team
+
+# 基础设施
+.github/** @devops-team @security-team
+/docker/** @devops-team
+/kubernetes/** @devops-team @sre-team
+
+# 配置文件
+*.yml @devops-team @security-team
+*.yaml @devops-team @security-team
+.env.* @security-admin
+
+# 依赖管理
+package.json @frontend-lead @security-team
+requirements.txt @backend-lead @security-team
+go.mod @backend-lead @security-team
+```
+
+### PR 审查流程详解
+
+#### 完整的 PR 工作流
+
+```mermaid
+sequenceDiagram
+    participant D as 开发者
+    participant G as GitHub
+    participant R as 审查者
+    participant C as CI 系统
+    participant M as main 分支
+
+    D->>G: 创建功能分支
+    D->>D: 开发并提交代码
+    D->>G: 推送到远程
+    D->>G: 创建 Pull Request
+
+    G->>G: 检查 CODEOWNERS
+    G->>R: 自动请求审查
+
+    G->>C: 触发 CI 检查
+    C->>C: 运行测试、lint、安全扫描
+    C-->>G: 检查结果
+
+    alt 检查失败
+        C-->>D: ❌ 检查失败
+        D->>D: 修复问题
+        D->>G: 推送修复
+        G->>C: 重新触发检查
+    end
+
+    alt 检查通过
+        C-->>G: ✅ 所有检查通过
+        G->>R: 通知审查者
+    end
+
+    R->>G: 审查代码
+
+    alt 请求修改
+        R-->>D: 💬 请求修改
+        D->>D: 修改代码
+        D->>G: 推送修改
+        Note over G: 旧的批准失效
+        G->>R: 重新请求审查
+        R->>G: 批准 ✅
+    end
+
+    alt 批准
+        R-->>G: ✅ 批准 PR
+    end
+
+    G->>G: 检查所有条件
+    alt 所有条件满足
+        G->>M: 合并到 main
+        G->>D: 自动删除功能分支
+    end
+```
+
+#### PR 状态检查清单
+
+```bash
+✅ PR 可以合并的条件：
+
+□ 1. CI 检查通过
+   └─ ☑ ci/ci.yml 成功
+   └─ ☑ lint 通过
+   └─ ☑ test 通过
+   └─ ☑ integration-test 通过
+
+□ 2. 代码审查通过
+   └─ ☑ 至少 2 人批准
+   └─ ☑ CODEOWNERS 批准
+   └─ ☑ 没有请求修改的评论
+
+□ 3. 分支状态
+   └─ ☑ 分支是最新的（已 rebase）
+   └─ ☑ 没有冲突
+
+□ 4. 其他要求
+   └─ ☑ 提交已签名
+   └─ ☑ 描述信息完整
+   └─ ☑ 关联了 Issue
+
+❌ PR 无法合并的情况：
+
+□ 1. CI 检查失败
+   └─ ❌ 测试失败
+   └─ ❌ 代码检查不通过
+   └─ ❌ 安全扫描发现问题
+
+□ 2. 审查未通过
+   └─ ❌ 批准人数不足
+   └─ ❌ CODEOWNERS 未批准
+   └─ ❌ 有请求修改的评论
+
+□ 3. 分支过期
+   └─ ❌ 落后于 main 分支
+   └─ ❌ 有合并冲突
+
+□ 4. 其他问题
+   └─ ❌ 提交未签名
+   └─ ❌ 描述不完整
+```
+
+### 实用技巧和最佳实践
+
+#### 技巧 1：使用 Draft PR 提前创建审查
+
+```bash
+# 场景：功能还没开发完，但想提前让团队知道
+
+# 1. 创建 Draft PR（草稿 PR）
+git push -u origin feature/new-feature
+# 在 GitHub 上创建 PR 时选择 "Create draft pull request"
+
+# 2. 继续开发
+git add .
+git commit -m "feat: 添加新功能"
+git push
+
+# 3. 开发完成后，转为正式 PR
+# 在 PR 页面点击 "Ready for review"
+
+# 好处：
+# - 团队可以提前看到代码
+# - 可以早期反馈
+# - 不会触发 CI（节省资源）
+```
+
+#### 技巧 2：使用模板规范 PR 描述
+
+```bash
+# 创建 PR 模板
+# 文件：.github/PULL_REQUEST_TEMPLATE.md
+
+## 📝 变更说明
+<!-- 简要描述这个 PR 做了什么 -->
+
+## 🔗 关联 Issue
+<!-- 关联的 Issue，例如：Closes #123 -->
+
+## 🎯 变更类型
+- [ ] 新功能
+- [ ] Bug 修复
+- [ ] 代码重构
+- [ ] 文档更新
+- [ ] 性能优化
+- [ ] 其他：_________
+
+## ✅ 检查清单
+- [ ] 代码通过了 lint 检查
+- [ ] 所有测试通过
+- [ ] 添加了必要的测试
+- [ ] 更新了相关文档
+- [ ] 没有引入新的警告
+
+## 📸 截图/演示
+<!-- 如果是 UI 变更，请提供截图或 GIF -->
+
+## 🧪 测试说明
+<!-- 如何测试这个变更 -->
+
+## 💬 备注
+<!-- 其他需要说明的内容 -->
+```
+
+#### 技巧 3：自动更新过期的分支
+
+```bash
+# 方法 1：使用 GitHub 自动更新功能
+# Settings > General > Pull Requests
+# ✅ Automatically update head branches
+
+# 方法 2：手动 rebase
+git checkout feature-branch
+git fetch origin main
+git rebase origin/main
+git push origin feature-branch --force-with-lease
+
+# 方法 3：使用 GitHub UI
+# 在 PR 页面底部点击 "Update branch" 按钮
+```
+
+#### 技巧 4：使用 Merge Commit vs Squash vs Rebase
+
+```bash
+# 三种合并策略对比：
+
+# 1. Merge commit（保留完整历史）
+# 结果：A → B → C → D → E ←─┐
+#      feature: A → B → F ───┘
+# 优点：保留所有历史，清晰看到分支
+# 缺点：历史有分叉
+
+# 2. Squash merge（压缩成一个提交）
+# 结果：A → B → C → D → E → S（所有变更压缩成 S）
+# 优点：历史干净，线性
+# 缺点：丢失了分支开发历史
+
+# 3. Rebase merge（变基合并）
+# 结果：A → B → C → D → E → F' → G'（提交被重新播放）
+# 优点：线性历史，保持提交顺序
+# 缺点：改写了历史
+
+# 推荐配置：
+# - feature 分支：使用 squash merge
+# - bugfix 分支：使用 merge commit
+# - hotfix 分支：使用 merge commit
+```
+
+### 常见问题和解决方案
+
+#### 问题 1：如何处理紧急修复？
+
+```bash
+# 场景：线上出现严重 bug，需要立即修复
+
+# 方案 1：临时禁用分支保护（不推荐）
+Settings > Branches > Edit rule
+❌ 取消勾选保护规则
+修复后重新启用
+
+# 方案 2：创建紧急分支（推荐）
+git checkout main
+git checkout -b hotfix/critical-bug
+
+# 开发修复
+git add .
+git commit -m "fix: 紧急修复崩溃问题"
+git push -u origin hotfix/critical-bug
+
+# 快速审查和合并
+# 找到技术负责人立即审查
+# 合并后删除分支
+
+# 方案 3：使用 CODEOWNERS 规则（最佳）
+# .github/CODEOWNERS
+/hotfix/** @tech-lead @admin
+# 紧急修复只需要少数人批准
+```
+
+#### 问题 2：CODEOWNERS 不生效？
+
+```bash
+# 检查清单：
+
+# 1. 文件位置是否正确？
+.github/CODEOWNERS  # ✅ 正确
+CODEOWNERS          # ❌ 错误
+
+# 2. 语法是否正确？
+# 正确格式
+*.js @team-name
+/src/path/ @username
+
+# 错误格式
+*.js @team-name @other  # ❌ 多个所有者应该换行
+
+# 3. 用户名是否正确？
+# 团队名：@team-name
+# 用户名：@username
+
+# 4. 检查 CODEOWNERS 是否生效
+# PR 页面会显示 "Required reviewers"
+```
+
+#### 问题 3：如何合并冲突的 PR？
+
+```bash
+# 场景：PR 与 main 分支有冲突
+
+# 方法 1：使用 GitHub UI（简单）
+# 在 PR 页面点击 "Resolve conflicts"
+# 在线编辑解决冲突
+# 标记为已解决
+
+# 方法 2：本地解决（推荐）
+git checkout feature-branch
+git fetch origin main
+git rebase origin/main
+
+# 解决冲突
+# 编辑冲突文件
+git add <resolved-files>
+git rebase --continue
+
+# 推送
+git push origin feature-branch --force-with-lease
+
+# 方法 3：使用 merge（保留历史）
+git checkout feature-branch
+git merge origin/main
+
+# 解决冲突
+git add <resolved-files>
+git commit -m "merge: 解决与 main 的冲突"
+
+git push origin feature-branch
+```
+
+### 学习清单
+
+检查你掌握了以下技能：
+
+### 基础配置 ✅
+
+- [ ] 理解分支保护的作用和意义
+- [ ] 会在 GitHub 上配置分支保护规则
+- [ ] 理解各种保护选项的含义
+- [ ] 会配置必需的审查人数
+
+### CODEOWNERS ✅
+
+- [ ] 会创建 CODEOWNERS 文件
+- [ ] 理解 CODEOWNERS 的匹配规则
+- [ ] 会按目录和文件类型配置审查人
+- [ ] 会配置特殊规则（如紧急修复）
+
+### PR 流程 ✅
+
+- [ ] 理解完整的 PR 审查流程
+- [ ] 会创建和管理 Pull Request
+- [ ] 会处理 PR 检查失败的情况
+- [ ] 会解决合并冲突
+
+### 最佳实践 ✅
+
+- [ ] 知道不同团队规模的配置策略
+- [ ] 会使用 Draft PR 提前沟通
+- [ ] 会创建 PR 模板规范描述
+- [ ] 理解不同合并策略的适用场景
+
+### 故障排查 ✅
+
+- [ ] 会诊断 CODEOWNERS 不生效的问题
+- [ ] 会处理紧急修复的流程
+- [ ] 会解决 PR 冲突
+- [ ] 知道如何更新过期分支
+
+---
+
 ## 实用技巧集合
 
 ### 技巧1：保存工作现场

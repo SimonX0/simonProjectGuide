@@ -1,19 +1,19 @@
-# Next.js 14+简介与环境搭建
+# Next.js 15 简介与环境搭建
 
-## Next.js 14+简介与环境搭建
+## Next.js 15 简介与环境搭建
 
-> **学习目标**：掌握Next.js 14+框架基础，能够独立搭建完整的开发环境
+> **学习目标**：掌握Next.js 15框架基础，能够独立搭建完整的开发环境
 > **核心内容**：Next.js核心特性、环境搭建、项目结构、开发命令、实战应用
 
 ### Next.js概述
 
 #### 什么是Next.js
 
-**Next.js** 是一个基于React的现代化全栈框架，提供了服务器端渲染（SSR）、静态站点生成（SSG）、API路由、文件路由等强大功能。Next.js 14+版本引入了App Router、Server Components等革命性特性。
+**Next.js** 是一个基于React的现代化全栈框架，提供了服务器端渲染（SSR）、静态站点生成（SSG）、API路由、文件路由等强大功能。**Next.js 15**（2024年发布）带来了Turbopack默认启用、更好的性能和开发体验。
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                   Next.js 14+ 架构                           │
+│                   Next.js 15 架构                            │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  ┌─────────────────────────────────────────────────────┐   │
@@ -27,7 +27,15 @@
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │          Rendering Strategies                        │   │
 │  │  ┌──────────────┐  ┌──────────────┐                 │   │
-│  │  │ SSR / SSG    │  │ ISR / CSP    │                 │   │
+│  │  │ SSR / SSG    │  │ ISR / PPR    │                 │   │
+│  │  └──────────────┘  └──────────────┘                 │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                         ↓                                   │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │          Turbopack (默认启用)                         │   │
+│  │  ┌──────────────┐  ┌──────────────┐                 │   │
+│  │  │ 700x faster  │  │ HMR          │                 │   │
+│  │  │ dev startup  │  │ optimized    │                 │   │
 │  │  └──────────────┘  └──────────────┘                 │   │
 │  └─────────────────────────────────────────────────────┘   │
 │                         ↓                                   │
@@ -41,16 +49,18 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-#### Next.js 14+核心特性
+#### Next.js 15 核心特性
 
 | 特性 | 说明 | 优势 |
 |------|------|------|
 | **App Router** | 新的路由系统 | 更灵活的布局、Server Components |
 | **Server Components** | React Server Components | 更好的性能、更小的客户端bundle |
-| **Server Actions** | 服务端数据变更 | 简化表单处理、无需API路由 |
-| **Streaming** | 渐进式渲染 | 更快的TTI（Time to Interactive） |
-| **Partial Prerendering** | 部分预渲染 | 静态+动态混合渲染 |
-| **Turbopack** | 新一代构建工具 | 开发启动速度提升700x |
+| **Server Actions** | 服务端数据变更（增强） | 简化表单处理、无需API路由、支持revalidate |
+| **Turbopack** | **默认启用** | 开发启动速度提升700x、HMR优化 |
+| **Partial Prerendering (PPR)** | 部分预渲染（稳定版） | 静态+动态混合渲染、最佳性能 |
+| **Improved Fetch** | fetch() API增强 | 更好的缓存控制、async request APIs |
+| **Form Handling** | 原生表单支持 | useActionState、useFormStatus hooks |
+| **Metadata** | 元数据优化 | 更灵活的SEO控制、视图端口元数据 |
 | **Image优化** | 自动图片优化 | 更快的加载速度、更小的体积 |
 | **Font优化** | 自动字体优化 | 零布局偏移、更好的性能 |
 
@@ -61,14 +71,14 @@
 开始Next.js开发前，确保你的环境满足以下要求：
 
 ```bash
-# Node.js版本要求
-Node.js >= 18.17.0  # 推荐使用20.x LTS版本
+# Node.js版本要求（Next.js 15）
+Node.js >= 18.18.0  # 推荐使用20.x LTS版本或22.x Current
 
 # 推荐的包管理器
 npm >= 9.0.0
 yarn >= 1.22.0
-pnpm >= 8.0.0
-bun >= 1.0.0
+pnpm >= 8.15.0  # 推荐，最快速
+bun >= 1.0.0    # 速度最快（实验性支持）
 
 # 操作系统
 Windows 10/11
@@ -133,21 +143,21 @@ mkdir -p src/app
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "^14.2.0",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0"
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
-    "typescript": "^5.0.0"
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.6.0"
   }
 }
 ```

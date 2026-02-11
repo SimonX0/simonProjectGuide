@@ -149,6 +149,12 @@ title: Java中高级面试题学习路线
 - **分布式配置中心选型**
 - **链路追踪系统**（Skywalking vs Zipkin vs Pinpoint）
 
+#### 现代 Java 技术 ⭐2024-2025热门
+- **Spring AI**（Chat Client、函数调用、RAG 系统）
+- **GraalVM**（原生镜像、启动优化、多语言支持）
+
+**详细面试题：[现代 Java 技术面试题 →](./advanced/modern-java)**
+
 ---
 
 ## 🚀 实战项目面试题

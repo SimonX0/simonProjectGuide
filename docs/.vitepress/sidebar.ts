@@ -295,6 +295,13 @@ export const sidebar = {
         },
         { text: '第6章：RAG检索增强', link: '/ai/chapter-04' },
         { text: '第7章：AI Agent', link: '/ai/chapter-05' },
+      ]
+    },
+    {
+      text: '🤖 Agent Skills',
+      collapsible: true,
+      collapsed: false,
+      items: [
         { text: '第8章：2026 Agent Skills 完全指南', link: '/ai/chapter-08-agent-skills' },
       ]
     },

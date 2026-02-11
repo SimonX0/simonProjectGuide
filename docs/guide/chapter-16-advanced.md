@@ -568,23 +568,25 @@ export async function setupPermissionRoutes() {
 ### 路由懒加载策略
 
 ```typescript
-// router/webpack.ts
-// webpack 魔法注释
+// router/lazy.ts
+// Vite 5.4+ 懒加载注释（兼容 Webpack 魔法注释）
 
 // 基础懒加载
 const Home = () => import('@/views/Home.vue')
 
-// 命名 chunk
+// 命名 chunk（Vite 标准写法）
+const About = () => import(/* @vite-ignore */ '@/views/About.vue')
+// 或者使用传统的 chunk 命名（Vite 也支持）
 const About = () => import(/* webpackChunkName: "about" */ '@/views/About.vue')
 
 // 分组 chunk（相同 chunkName 会被打包到一起）
 const UserProfile = () => import(/* webpackChunkName: "user" */ '@/views/user/Profile.vue')
 const UserSettings = () => import(/* webpackChunkName: "user" */ '@/views/user/Settings.vue')
 
-// 预获取
+// 预获取（Prefetch - 浏览器空闲时加载）
 const Dashboard = () => import(/* webpackPrefetch: true */ '@/views/admin/Dashboard.vue')
 
-// 预加载
+// 预加载（Preload - 与父并行加载）
 const Admin = () => import(/* webpackPreload: true */ '@/views/admin/Index.vue')
 
 // 完整示例
