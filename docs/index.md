@@ -27,9 +27,9 @@ features:
     link: /interview/
     linkText: 🎓 冲刺Offer →
   - title: 🗄️ 数据库实战
-    details: MySQL、Redis、MongoDB 数据库设计与优化实战
-    link: /guide/
-    linkText: 🔜 敬请期待 →
+    details: MySQL、PostgreSQL、OceanBase、TiDB 等 2024-2026 主流与国产数据库完全指南
+    link: /db/
+    linkText: 🚀 开始学习 →
   - title: 🚀 DevOps实战
     details: Docker、Kubernetes、GitOps 等云原生技术完全指南
     link: /devops/
@@ -65,6 +65,7 @@ features:
       <span class="hero-tag">💻 前端开发</span>
       <span class="hero-tag">☕ Java</span>
       <span class="hero-tag">🤖 AI</span>
+      <span class="hero-tag">🗄️ 数据库</span>
       <span class="hero-tag">🔧 DevOps</span>
     </div>
   </div>

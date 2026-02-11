@@ -58,6 +58,18 @@ export const nav = [
     ],
   },
   {
+    text: "🗄️ 数据库完全指南",
+    items: [
+      { text: "📚 学习路线", link: "/db/" },
+      { text: "🌱 基础入门", link: "/db/chapter-01" },
+      { text: "🧩 关系型数据库进阶", link: "/db/chapter-08" },
+      { text: "🏢 国产分布式数据库", link: "/db/chapter-15" },
+      { text: "🚀 NoSQL与NewSQL", link: "/db/chapter-22" },
+      { text: "🤖 时序与向量数据库", link: "/db/chapter-27" },
+      { text: "🔄 迁移与备份实战", link: "/db/chapter-migration" },
+    ],
+  },
+  {
     text: "🚀 DevOps 实战",
     items: [
       { text: "📚 学习路线", link: "/devops/" },

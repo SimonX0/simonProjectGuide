@@ -148,6 +148,35 @@ export const sidebar = {
       ]
     },
     {
+      text: '🗄️ 数据库面试题',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '学习路线', link: '/interview/database/' },
+        {
+          text: '中级面试题',
+          items: [
+            { text: 'MySQL基础与优化', link: '/interview/database/intermediate/mysql-basics' },
+            { text: 'PostgreSQL 16+面试题', link: '/interview/database/intermediate/postgresql' },
+            { text: 'Oracle数据库面试题', link: '/interview/database/intermediate/oracle' },
+            { text: 'Redis缓存', link: '/interview/database/intermediate/redis-cache' },
+            { text: '事务与锁机制', link: '/interview/database/intermediate/transaction-lock' },
+            { text: '主从复制与高可用', link: '/interview/database/intermediate/replication' }
+          ]
+        },
+        {
+          text: '高级面试题',
+          items: [
+            { text: '分库分表架构设计', link: '/interview/database/advanced/sharding-distributed' },
+            { text: '分布式事务解决方案', link: '/interview/database/advanced/distributed-transactions' },
+            { text: '国产分布式数据库', link: '/interview/database/advanced/domestic-databases' },
+            { text: 'NoSQL与向量数据库', link: '/interview/database/advanced/nosql-vector' },
+            { text: '数据库迁移与备份', link: '/interview/database/advanced/migration-backup' }
+          ]
+        }
+      ]
+    },
+    {
       text: 'AI面试题',
       collapsible: true,
       collapsed: false,
@@ -926,9 +955,10 @@ export const sidebar = {
         { text: '第14章：Spring Data JPA数据访问', link: '/java/chapter-126' },
         { text: '第15章：Spring Security + JWT认证', link: '/java/chapter-127' },
         { text: '第16章：Redis缓存与分布式锁', link: '/java/chapter-128' },
-        { text: '第17章：RabbitMQ/Kafka消息队列', link: '/java/chapter-129' },
-        { text: '第18章：响应式编程（WebFlux）', link: '/java/chapter-130' },
-        { text: '第19章：实战项目1：个人博客系统', link: '/java/chapter-131' }
+        { text: '第17章：主流数据库与企业级应用', link: '/java/chapter-128-database' },
+        { text: '第18章：RabbitMQ/Kafka消息队列', link: '/java/chapter-129' },
+        { text: '第19章：响应式编程（WebFlux）', link: '/java/chapter-130' },
+        { text: '第20章：实战项目1：个人博客系统', link: '/java/chapter-131' }
       ]
     },
     {
@@ -936,16 +966,16 @@ export const sidebar = {
       collapsible: true,
       collapsed: false,
       items: [
-        { text: '第20章：Nacos注册中心与配置中心', link: '/java/chapter-132' },
-        { text: '第21章：Sentinel熔断限流降级', link: '/java/chapter-133' },
-        { text: '第22章：Seata分布式事务', link: '/java/chapter-134' },
-        { text: '第23章：Spring Cloud Gateway网关', link: '/java/chapter-135' },
-        { text: '第24章：Skywalking链路追踪', link: '/java/chapter-136' },
-        { text: '第25章：定时任务与异步处理', link: '/java/chapter-137' },
-        { text: '第26章：日志管理与监控（ELK）', link: '/java/chapter-138' },
-        { text: '第27章：实战项目2：电商平台微服务版', link: '/java/chapter-139' },
-        { text: '第28章：实战项目3：在线教育平台（AI集成）', link: '/java/chapter-140' },
-        { text: '第29章：实战项目4：微服务架构完整系统', link: '/java/chapter-141' }
+        { text: '第21章：Nacos注册中心与配置中心', link: '/java/chapter-132' },
+        { text: '第22章：Sentinel熔断限流降级', link: '/java/chapter-133' },
+        { text: '第23章：Seata分布式事务', link: '/java/chapter-134' },
+        { text: '第24章：Spring Cloud Gateway网关', link: '/java/chapter-135' },
+        { text: '第25章：Skywalking链路追踪', link: '/java/chapter-136' },
+        { text: '第26章：定时任务与异步处理', link: '/java/chapter-137' },
+        { text: '第27章：日志管理与监控（ELK）', link: '/java/chapter-138' },
+        { text: '第28章：实战项目2：电商平台微服务版', link: '/java/chapter-139' },
+        { text: '第29章：实战项目3：在线教育平台（AI集成）', link: '/java/chapter-140' },
+        { text: '第30章：实战项目4：微服务架构完整系统', link: '/java/chapter-141' }
       ]
     },
     {
@@ -953,13 +983,13 @@ export const sidebar = {
       collapsible: true,
       collapsed: false,
       items: [
-        { text: '第30章：虚拟线程实战（Java 21）', link: '/java/chapter-142' },
-        { text: '第31章：GraalVM原生镜像', link: '/java/chapter-143' },
-        { text: '第32章：Spring AI完全指南', link: '/java/chapter-144' },
-        { text: '第33章：Quarkus云原生框架', link: '/java/chapter-145' },
-        { text: '第34章：事件驱动架构', link: '/java/chapter-146' },
-        { text: '第35章：JVM性能调优', link: '/java/chapter-147' },
-        { text: '第36章：企业级架构设计', link: '/java/chapter-148' }
+        { text: '第31章：虚拟线程实战（Java 21）', link: '/java/chapter-142' },
+        { text: '第32章：GraalVM原生镜像', link: '/java/chapter-143' },
+        { text: '第33章：Spring AI完全指南', link: '/java/chapter-144' },
+        { text: '第34章：Quarkus云原生框架', link: '/java/chapter-145' },
+        { text: '第35章：事件驱动架构', link: '/java/chapter-146' },
+        { text: '第36章：JVM性能调优', link: '/java/chapter-147' },
+        { text: '第37章：企业级架构设计', link: '/java/chapter-148' }
       ]
     },
     {
@@ -1060,6 +1090,89 @@ export const sidebar = {
       collapsed: false,
       items: [
         { text: '附录：DevOps工具速查手册', link: '/devops/appendix-tools' }
+      ]
+    }
+  ],
+  '/db/': [
+    {
+      text: '学习路线',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '学习路线', link: '/db/' }
+      ]
+    },
+    {
+      text: '基础入门（第1-7章）',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '第1章：数据库简介与环境搭建', link: '/db/chapter-01' },
+        { text: '第2章：SQL 核心基础', link: '/db/chapter-02' },
+        { text: '第3章：MySQL 8.0 快速入门', link: '/db/chapter-03' },
+        { text: '第4章：PostgreSQL 16 快速入门', link: '/db/chapter-04' },
+        { text: '第5章：Oracle 快速入门', link: '/db/chapter-05' },
+        { text: '第6章：Redis 7.x 快速入门', link: '/db/chapter-06' },
+        { text: '第7章：实战项目1 - 个人博客数据库设计', link: '/db/chapter-07' }
+      ]
+    },
+    {
+      text: '关系型数据库进阶（第8-14章）',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '第8章：MySQL 8.0+ 新特性深度解析', link: '/db/chapter-08' },
+        { text: '第9章：PostgreSQL 16+ 高级特性', link: '/db/chapter-09' },
+        { text: '第10章：索引优化与性能调优', link: '/db/chapter-10' },
+        { text: '第11章：事务与锁机制', link: '/db/chapter-11' },
+        { text: '第12章：主从复制与高可用', link: '/db/chapter-12' },
+        { text: '第13章：实战项目2 - 电商数据库设计', link: '/db/chapter-13' },
+        { text: '第14章：数据库性能调优完全指南', link: '/db/chapter-14' }
+      ]
+    },
+    {
+      text: '国产分布式数据库（第15-21章）',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '第15章：OceanBase 架构与实践', link: '/db/chapter-15' },
+        { text: '第16章：TiDB HTAP 架构', link: '/db/chapter-16' },
+        { text: '第17章：达梦 DM8 迁移实战', link: '/db/chapter-17' },
+        { text: '第18章：人大金仓 KingbaseES 实战', link: '/db/chapter-18' },
+        { text: '第19章：openGauss 与 GaussDB', link: '/db/chapter-19' },
+        { text: '第20章：TDSQL 腾讯云实践', link: '/db/chapter-20' },
+        { text: '第21章：GBase 南大通用数据库', link: '/db/chapter-21' }
+      ]
+    },
+    {
+      text: 'NoSQL 与 NewSQL（第22-26章）',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '第22章：MongoDB 文档数据库', link: '/db/chapter-22' },
+        { text: '第23章：Redis 高级应用', link: '/db/chapter-23' },
+        { text: '第24章：Elasticsearch 搜索引擎', link: '/db/chapter-24' },
+        { text: '第25章：分库分表架构设计', link: '/db/chapter-25' },
+        { text: '第26章：分布式事务解决方案', link: '/db/chapter-26' }
+      ]
+    },
+    {
+      text: '时序与向量数据库（第27-30章）',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '第27章：InfluxDB 时序数据库', link: '/db/chapter-27' },
+        { text: '第28章：TDengine IoT 数据库', link: '/db/chapter-28' },
+        { text: '第29章：Milvus 向量数据库', link: '/db/chapter-29' },
+        { text: '第30章：AI 应用数据库架构', link: '/db/chapter-30' }
+      ]
+    },
+    {
+      text: '🔄 实战案例',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { text: '数据库迁移与备份实战案例', link: '/db/chapter-migration' }
       ]
     }
   ]
